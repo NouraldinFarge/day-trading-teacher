@@ -1,5 +1,10 @@
 # Day-Trading Teacher
 
+[![CI](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/ci.yml/badge.svg)](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/codeql.yml/badge.svg)](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/codeql.yml)
+[![Release](https://img.shields.io/github/v/release/NouraldinFarge/day-trading-teacher)](https://github.com/NouraldinFarge/day-trading-teacher/releases)
+[![License: All rights reserved](https://img.shields.io/badge/license-all%20rights%20reserved-lightgrey.svg)](LICENSE.md)
+
 **A local-first Windows learning environment for deliberate trading practice, chart replay, paper trading, and evidence-based post-trade review.**
 
 Active development · 2026 · Version 0.32.0
@@ -7,6 +12,23 @@ Active development · 2026 · Version 0.32.0
 Day-Trading Teacher is built around a simple product decision: teach the process without generating live buy/sell signals. Lessons open contextual planning, replay, journaling, analytics, and practice tools; each activity records reasoning and learning evidence instead of rewarding trade count, profit, or time in market.
 
 > Educational software only. It does not provide investment advice, place orders, or promise trading outcomes.
+
+## Product preview
+
+![Day-Trading Teacher learning workspace](docs/images/day-trading-teacher-workspace.jpg)
+
+| Historical replay | Evidence journal |
+| --- | --- |
+| ![Historical chart replay workspace](docs/images/day-trading-teacher-chart.jpg) | ![Post-trade evidence and reflection workspace](docs/images/day-trading-teacher-journal.jpg) |
+
+```mermaid
+flowchart LR
+    A["Prepare: lessons and decision cards"] --> B["Apply: historical replay and paper trading"]
+    B --> C["Reflect: journal and post-trade review"]
+    C --> D["Measure: independent evidence and retention"]
+    D -->|Remediation needed| A
+    D -->|Standard met| E["Next learning objective"]
+```
 
 ## What it demonstrates
 
@@ -87,6 +109,12 @@ For unattended use:
 
 The portable desktop keeps application-controlled state in `data/state.json` beside the executable and provider credentials in separate ignored `config/market-data-<provider>.json` files.
 
+## Development approach
+
+AI agents assisted with research, implementation, and iteration. I retained ownership of product direction, architecture, technical review, testing, educational and financial-safety boundaries, source selection, and release approval. Generated suggestions were treated as untrusted until reviewed against deterministic calculations, schema checks, and automated verification.
+
+See [`ROADMAP.md`](ROADMAP.md), [`CONTRIBUTING.md`](CONTRIBUTING.md), and [`SECURITY.md`](SECURITY.md) for current priorities and project policies.
+
 ## License
 
-Copyright © 2026 Nouraldin Farge. Source is published for portfolio review; no license is granted unless a license file is added.
+Copyright © 2026 Nouraldin Farge. All rights reserved — see [`LICENSE.md`](LICENSE.md). The repository is available for portfolio review; no permission to copy, modify, or redistribute is granted.

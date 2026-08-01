@@ -1,0 +1,26 @@
+name: Feature request
+description: Propose an educational, replay, paper-trading, or review improvement.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: learning_problem
+    attributes:
+      label: Learning problem to solve
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence of improvement
+      description: Explain how a learner or reviewer could tell the feature is working.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Product boundary
+      options:
+        - label: This request does not add live signals, order placement, account scraping, or outcome promises.
+          required: true
+

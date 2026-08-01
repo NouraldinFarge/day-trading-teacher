@@ -2,6 +2,7 @@
 
 ## 0.32.0 — 2026-07-27
 
+- Added GitHub CI, CodeQL, dependency updates, private security reporting guidance, an explicit portfolio-review license, and contributor workflows.
 - Replaced one-buy/one-sell Fidelity pairing with position-level reconstruction that supports multiple entry fills and partial exits while preserving stable IDs for previously supported single-fill imports.
 - Added explicit reconciliation confidence, fill counts, quantity-unit provenance, unresolved-quantity reporting, and a clearer local import preview instead of silently forcing ambiguous Fidelity dollar/share interpretations.
 - Expanded the Fidelity export inbox to scan dated subfolders, process up to 100 recent supported exports oldest-first, deduplicate executions across copied exports, and keep individual malformed files from blocking the rest of the inbox.

@@ -1,0 +1,30 @@
+name: Bug report
+description: Report a reproducible learning, replay, import, or calculation problem.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Remove account numbers, credentials, and personal financial information before attaching any sample.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: 0.32.0
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened?
+      description: Include expected behavior and the smallest reproducible sequence.
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Data and privacy context
+      description: Describe the input format using redacted or synthetic values only.
+    validations:
+      required: true
+
