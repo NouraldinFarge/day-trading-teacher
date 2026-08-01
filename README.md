@@ -5,6 +5,8 @@
 [![Release](https://img.shields.io/github/v/release/NouraldinFarge/day-trading-teacher)](https://github.com/NouraldinFarge/day-trading-teacher/releases)
 [![License: All rights reserved](https://img.shields.io/badge/license-all%20rights%20reserved-lightgrey.svg)](LICENSE.md)
 
+**Try it:** [Download the latest verified Windows release](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest) · [Review source](https://github.com/NouraldinFarge/day-trading-teacher) · [Read the educational and financial-safety boundary](SECURITY.md)
+
 **A local-first Windows learning environment for deliberate trading practice, chart replay, paper trading, and evidence-based post-trade review.**
 
 Active development · 2026 · Version 0.32.0
@@ -100,6 +102,8 @@ Double-click `BUILD-LATEST.bat`, or run:
 ```
 
 The launcher inventories semantic versions across the workspace and release directories, validates registered SHA-256 values, reuses verified ZIPs, and preserves active `data/` and provider configuration. A source build runs every verification gate, compiles the Tauri executable without installer bundling, rejects installer artifacts, creates the portable ZIP, deploys it, and writes a release manifest.
+
+Future version tags are also built on GitHub's Windows runner from the tagged source. That workflow publishes the portable ZIP, SHA-256 checksum, SPDX SBOM, and GitHub artifact-provenance attestation.
 
 For unattended use:
 
