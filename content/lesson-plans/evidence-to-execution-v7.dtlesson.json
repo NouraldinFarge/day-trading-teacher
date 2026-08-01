@@ -1,0 +1,3504 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "evidence-to-execution-us-equity-sim-20260724-v7",
+  "version": "7.1.1",
+  "title": "Evidence to Execution v7: Secure Outcome-Hidden Simulation Practice for U.S. Equities",
+  "origin": {
+    "type": "external_generated",
+    "provider": "OpenAI",
+    "model": "GPT-5.6 Thinking"
+  },
+  "target_skill_ids": [
+    "AC-001",
+    "AC-002",
+    "AC-003",
+    "OE-001",
+    "OE-002",
+    "OE-004",
+    "OE-005",
+    "OE-006",
+    "PB-005",
+    "PB-006",
+    "RM-001",
+    "RM-002",
+    "RM-004",
+    "TF-009",
+    "TP-001",
+    "TP-002",
+    "TP-003",
+    "TR-001",
+    "TR-002",
+    "VC-001"
+  ],
+  "prerequisites": [
+    "OE-003",
+    "RM-002"
+  ],
+  "lessons": [
+    {
+      "lesson_id": "v7-scope-entry-diagnostic",
+      "version": "7.1.0",
+      "title": "Confirm the course boundary and prerequisite skills",
+      "skill_ids": [
+        "OE-003",
+        "RM-002",
+        "TR-001",
+        "AC-003"
+      ],
+      "objective": "State the simulation-only U.S.-equity scope, identify work this curriculum does not cover, and demonstrate the number, unit, source, and risk-per-share skills needed for later lessons.",
+      "estimated_minutes": 45,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Read number and unit together",
+          "body": "A dollar amount, share quantity, price, percentage, and timestamp are different facts. Keep the unit beside every number. A ticket that changes from dollars to shares has changed the instruction.",
+          "assessment_phase": "instruction",
+          "prompt": "A ticket shows Quantity: 25 and Unit: shares. What does 25 mean?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "A $25 request",
+              "A $25 maximum loss",
+              "25 percent of the account",
+              "25 shares"
+            ],
+            "correctOption": 3,
+            "success": "The unit controls the meaning of the number.",
+            "correction": "Read the number and its unit as one field."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Use the correct course boundary",
+          "body": "This course is simulation-only and focuses on U.S. listed stocks and exchange-traded funds in U.S. brokerage accounts. It does not teach options, futures, forex, cryptoassets, taxes, non-U.S. rules, live signals, or personalized security recommendations. Current broker documents control whenever they differ from a lesson example.",
+          "assessment_phase": "instruction"
+        },
+        {
+          "type": "worked_example",
+          "title": "Check basic risk arithmetic",
+          "body": "For a long simulation with a $20.00 planned entry and a $19.60 invalidation, technical risk is $0.40 per share. If the execution allowance is $0.05, planned risk is $0.45 per share. A $18 loss boundary allows 40 whole shares after rounding down.",
+          "assessment_phase": "instruction",
+          "prompt": "Which quantity stays within an $18 boundary at $0.45 planned risk per share?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "39 shares",
+              "40 shares",
+              "41 shares",
+              "45 shares"
+            ],
+            "correctOption": 1,
+            "success": "Forty shares plan $18.00 of risk.",
+            "correction": "Divide the loss boundary by planned risk per share and round down."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Read a quote and a ticket without guessing",
+          "body": "Use DIAG-01 in the learner case bank. Record the quote timestamp, bid, ask, spread, ticket quantity, unit, side, order type, session, and time in force. Mark any missing field unknown.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What should happen when the ticket unit is hidden?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Infer shares from the last trade",
+              "Submit a small test order",
+              "Stop and reveal the unit before continuing",
+              "Treat the number as dollars"
+            ],
+            "correctOption": 2,
+            "success": "A hidden unit is a blocking ambiguity.",
+            "correction": "Do not test an unclear ticket with an order. Reveal and read the field."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Choose the correct route after the diagnostic",
+          "body": "Use DIAG-02. If number-unit reading or risk-per-share arithmetic is wrong, complete the supplied prerequisite worksheet before Lesson 1. If the scope statement is misunderstood, reread it and explain the excluded markets in your own words.",
+          "assessment_phase": "review",
+          "prompt": "Does passing this diagnostic mean the learner is ready for live trading?",
+          "answer": "No. It only confirms entry skills for a simulation curriculum. Live-trading readiness is outside the course claim."
+        },
+        {
+          "type": "commitment",
+          "title": "Keep the claim narrow",
+          "body": "I will use fictional or historical simulation data, verify current broker rules, and treat course completion as evidence of practice rather than permission to trade live.",
+          "assessment_phase": "review"
+        }
+      ],
+      "mastery_criteria": [
+        "States the U.S.-listed-equity and ETF simulation scope",
+        "Reads numbers together with their units and timestamps",
+        "Calculates technical and planned risk per share",
+        "Routes a failed prerequisite check to remediation"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 2,
+        "minimum_successful_cases": 2,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve the failed diagnostic, complete the prerequisite worksheet, pass V7-DIAG-R, and then take unopened V7-DIAG-T2. Never repeat an opened transfer form."
+      },
+      "curriculum_role": "remediation",
+      "session_blocks": [
+        {
+          "title": "Scope and units",
+          "minutes": 7,
+          "focus": "Confirm included and excluded products and read values with units."
+        },
+        {
+          "title": "Diagnostic form A",
+          "minutes": 10,
+          "focus": "Read quote and ticket fields."
+        },
+        {
+          "title": "Diagnostic form B",
+          "minutes": 10,
+          "focus": "Calculate risk per share and identify scope boundaries."
+        },
+        {
+          "title": "Delayed transfer form",
+          "minutes": 15,
+          "focus": "Complete a changed-number transfer form on a later date."
+        },
+        {
+          "title": "Route",
+          "minutes": 3,
+          "focus": "Assign a repair and a new unopened transfer form when needed."
+        }
+      ],
+      "sources": [
+        {
+          "title": "FINRA Rule 2270 — Day-Trading Risk Disclosure Statement",
+          "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/2270",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "CAST — Universal Design for Learning Guidelines 3.0",
+          "url": "https://udlguidelines.cast.org/more/about-guidelines-3-0/",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "calculation_examples": [
+        {
+          "entry": "20.00",
+          "stop": "19.60",
+          "maximum_risk": "18.00",
+          "slippage_per_unit": "0.05",
+          "side": "long",
+          "expected_quantity": 40
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-scope-entry-diagnostic",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 30,
+        "required_delayed_retention_minutes": 15,
+        "conditional_remediation_minutes": 20
+      },
+      "delivery_schedule": [
+        "Date 1: scope plus DIAG-01 and DIAG-02",
+        "Date 2: V7-DIAG-T1 as the first delayed transfer form",
+        "Conditional: V7-DIAG-R followed by unopened V7-DIAG-T2; never repeat an opened form"
+      ],
+      "mastery_evidence": [
+        "DIAG-01 original",
+        "DIAG-02 original",
+        "V7-DIAG-T1 delayed original",
+        "V7-DIAG-R and V7-DIAG-T2 only when routed"
+      ],
+      "assessment_administration": {
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-evidence-timeline",
+      "version": "7.1.0",
+      "title": "Build the evidence timeline before judging the trade",
+      "skill_ids": [
+        "TR-001",
+        "TR-002",
+        "TF-009"
+      ],
+      "objective": "Given fixed orders, fills, notes, and chart records, build a source-labeled timeline, reconcile position state, and mark unsupported claims unknown before judging the decision.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Sort four kinds of evidence",
+          "body": "Observed means a source states it directly. Calculated means it follows from recorded facts. Reported means a timestamped note states the learner’s intent. Unknown means the record cannot support the claim.",
+          "prompt": "A broker export shows a buy fill at 10:01:14 and a sell fill at 10:02:07. Which claim is calculated rather than observed?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The holding interval was about 53 seconds",
+              "The two fill prices",
+              "The learner intended a breakout entry",
+              "The stop was below the prior candle"
+            ],
+            "correctOption": 0,
+            "success": "Elapsed time is calculated from two observed timestamps.",
+            "correction": "Use observed only for facts shown directly. A time interval derived from timestamps is calculated."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Use a six-event evidence clock",
+          "body": "Record context captured, trigger recorded, order submitted, fill received, exit condition recorded, and exit filled. Write unknown when an event is missing. Do not fill gaps with later price action."
+        },
+        {
+          "type": "worked_example",
+          "title": "Rebuild position state one fill at a time",
+          "body": "A $100 buy request receives 2 shares at $30 and 1 share at $31. The supported position is 3 shares at a $30.33 weighted-average price before fees. The request amount remains separate from executed quantity.",
+          "prompt": "What is the supported position after both fills?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "3.33 shares at $30.00",
+              "3 shares at $30.33",
+              "2 shares at $30.00",
+              "$100 of exposure with no known quantity"
+            ],
+            "correctOption": 1,
+            "success": "You used executed quantities and weighted prices.",
+            "correction": "Position state comes from fills, not the original dollar request."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Preserve cancellations and open positions",
+          "body": "A record shows a buy fill and a later canceled sell order, with no closing fill. Record the remaining open quantity, the canceled instruction, and the missing closing evidence.",
+          "prompt": "What does the canceled sell prove?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The position closed",
+              "The learner changed the stop",
+              "The order did not remain active",
+              "The last quote became the exit price"
+            ],
+            "correctOption": 2,
+            "success": "A cancellation is an order-status fact, not an execution.",
+            "correction": "Never treat a canceled order as a fill."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Keep conflicting clocks visible",
+          "body": "A screen recording and broker export disagree by five seconds. Keep both timestamps with source labels. Use only the ordering each source can support until a shared clock or third source resolves the conflict.",
+          "prompt": "Why should both timestamps remain in the record?",
+          "answer": "The conflict is evidence about capture quality. Removing one timestamp would hide uncertainty and could make the trade look more orderly than the source supports."
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-EVID-A and V7-EVID-B",
+          "body": "Use the fixed learner packets V7-EVID-A and V7-EVID-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-EVID-A and V7-EVID-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Turn one unknown into a capture rule",
+          "body": "Choose the most important unknown and name the smallest future artifact that would resolve it, such as a locked trigger, timestamped invalidation, or order-submission screenshot.",
+          "assessment_phase": "review",
+          "prompt": "The intended stop is unknown. What is the best correction?",
+          "answer": "Require a locked invalidation field before the next paper decision; do not infer a stop from later candles."
+        },
+        {
+          "type": "commitment",
+          "title": "Facts first, judgment second",
+          "body": "I will preserve source labels, calculations, conflicts, and unknowns before evaluating process. A profitable or losing outcome will not rewrite the evidence."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-EVID-T from the neutral key-free packet released by the facilitator without reopening V7-EVID-A, V7-EVID-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-EVID-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Builds a six-event timeline from source-labeled records",
+        "Reconciles fills and position quantity chronologically",
+        "Keeps cancellations, fees, replacements, and timestamp conflicts visible",
+        "Uses unknown instead of hindsight",
+        "Saves the original case artifact before outcome reveal"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-EVID-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-EVID-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-EVID-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [],
+      "materials_index": "START-HERE.html#v7-evidence-timeline",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-EVID-A and V7-EVID-B",
+        "Date 2: delayed transfer with V7-EVID-T",
+        "Conditional secure release: V7-EVID-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-EVID-A locked original",
+        "V7-EVID-B locked original",
+        "V7-EVID-T delayed original",
+        "V7-EVID-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-cash-settlement",
+      "version": "7.1.0",
+      "title": "Check cash and settlement before the setup",
+      "skill_ids": [
+        "AC-001",
+        "AC-003"
+      ],
+      "objective": "Given a dated U.S. cash-account ledger, separate settled cash, unsettled proceeds, and held deposits, then decide whether a purchase is supported without guessing.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Name the funding source",
+          "body": "Before reviewing a setup, identify settled cash, unsettled sale proceeds, deposits still on hold, and any payment deadline shown by the broker.",
+          "prompt": "Which balance is safest to treat as immediately available for a new cash-account purchase?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "A pending deposit",
+              "Expected proceeds from a future sale",
+              "The account market value",
+              "Settled cash shown as available to trade"
+            ],
+            "correctOption": 3,
+            "success": "Settled cash is the clearest supported funding source.",
+            "correction": "Do not treat account value or expected proceeds as settled cash."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Use T+1 as a starting point, not a complete answer",
+          "body": "Most U.S. stock and ETF trades settle on the next business day. Settlement alone does not answer every cash-account question. A purchase paid with unsettled proceeds and then sold before the purchase is fully paid may create a good-faith violation; buying and selling before paying can create freeriding. Use the dated broker ledger and current firm notice rather than memorizing labels from an example."
+        },
+        {
+          "type": "worked_example",
+          "title": "Separate purchase funding from later proceeds",
+          "body": "A cash account starts with $800 settled cash and buys $600 of stock. A second purchase that same day would use proceeds from a different sale that have not settled. The first purchase has a stated funding source. The second sequence needs a dated settlement check before it can count as eligible.",
+          "prompt": "What is the correct process response to the second purchase?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Verify the current settlement path and wait if funding is unclear",
+              "Assume every same-day sale makes cash immediately settled",
+              "Use margin rules in the cash account",
+              "Ignore settlement because the trade is small"
+            ],
+            "correctOption": 0,
+            "success": "Unclear funding fails closed until verified.",
+            "correction": "Trade size does not remove cash-account payment and settlement constraints."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Build a cash-account ledger",
+          "body": "For each event, record trade date, expected settlement date, settled cash before the event, purchase amount, sale proceeds, deposits on hold, and the broker message. Do not merge settled and unsettled balances."
+        },
+        {
+          "type": "transfer",
+          "title": "Handle a holiday and a deposit hold",
+          "body": "A sale occurs before a market holiday, and a recent bank transfer is still on hold. Recalculate the timeline using the broker’s dated settlement and deposit information. If either source is missing, mark the next purchase ineligible.",
+          "prompt": "Which rule should the learner memorize?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "All sale proceeds settle at midnight",
+              "Verify the dated settlement and hold information for the actual account",
+              "Deposits are always available immediately",
+              "Cash-account restrictions never apply after a sale"
+            ],
+            "correctOption": 1,
+            "success": "The reliable habit is current, account-specific verification.",
+            "correction": "Calendar and deposit details can change the usable-funds timeline."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-CASH-A and V7-CASH-B",
+          "body": "Use the fixed learner packets V7-CASH-A and V7-CASH-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-CASH-A and V7-CASH-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Explain the boundary in plain language",
+          "body": "Write a two-sentence explanation a beginner could follow: what cash is supported now, what is not yet supported, and what must be verified next.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Funding before opportunity",
+          "body": "I will verify the money and settlement path before evaluating a setup. Missing or conflicting account evidence means wait."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-CASH-T from the neutral key-free packet released by the facilitator without reopening V7-CASH-A, V7-CASH-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-CASH-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Distinguishes settled cash, unsettled proceeds, and held deposits",
+        "Builds a dated cash-account ledger",
+        "Uses broker-specific evidence instead of a memorized shortcut",
+        "Treats missing funding evidence as wait or no trade",
+        "Explains the decision in plain language"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-CASH-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-CASH-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-CASH-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "FINRA — Understanding Settlement Cycles",
+          "url": "https://www.finra.org/investors/insights/understanding-settlement-cycles",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "Investor.gov — Trading in Cash Accounts",
+          "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/updated-9",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "FINRA — Brokerage Accounts",
+          "url": "https://www.finra.org/investors/investing/investment-accounts/brokerage-accounts",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-cash-settlement",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-CASH-A and V7-CASH-B",
+        "Date 2: delayed transfer with V7-CASH-T",
+        "Conditional secure release: V7-CASH-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-CASH-A locked original",
+        "V7-CASH-B locked original",
+        "V7-CASH-T delayed original",
+        "V7-CASH-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-margin-suitability",
+      "version": "7.1.0",
+      "title": "Verify margin, intraday rules, and personal suitability",
+      "skill_ids": [
+        "AC-002",
+        "AC-003"
+      ],
+      "objective": "Use current broker documents to identify the applicable intraday margin method, calculate a sample deficit, and separate account permission from personal loss capacity and suitability.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "List the questions margin adds",
+          "body": "Record the account’s equity and buying power. Then record the maintenance rule, any stricter house rule, the interest rate, what happens after a deficit, and whether the firm has adopted the new intraday standard.",
+          "prompt": "Which source controls the account decision today?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "An old social-media summary",
+              "Another broker’s screen",
+              "The current rule plus the specific firm’s dated implementation and house policy",
+              "A remembered $25,000 shortcut"
+            ],
+            "correctOption": 2,
+            "success": "Current firm implementation and house rules must be verified.",
+            "correction": "Do not assume a past framework or another firm’s controls apply."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Treat 2026 as a transition period",
+          "body": "FINRA’s new intraday margin standards became effective June 4, 2026, with a firm implementation period ending October 20, 2027. During the transition, identify the broker’s method, effective date, house requirements, intraday margin calculation, and response to a deficit. Do not apply the former pattern-day-trader shortcut unless the current firm document still says it applies to that account."
+        },
+        {
+          "type": "worked_example",
+          "title": "Separate buying power from loss capacity",
+          "body": "A broker screen allows $8,000 of intraday exposure, but the learner’s written maximum planned loss is $40 and essential funds are excluded. A second example shows required intraday margin of $1,200 against $1,000 available, creating a $200 deficit under the stated example method. Permission, margin capacity, deficit handling, and personal loss capacity are separate checks.",
+          "prompt": "What does displayed buying power prove?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The trade is safe",
+              "The maximum loss is limited to the deposit",
+              "The setup has an edge",
+              "The broker may accept that exposure under current controls"
+            ],
+            "correctOption": 3,
+            "success": "Buying power is an account-control fact, not proof of safety or edge.",
+            "correction": "Leverage can increase losses and may lead to liquidation."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Build a margin rule card",
+          "body": "Save the firm and account type. Add the policy link or document date, current rule, stricter house rule, borrowing cost, deficit response, forced-sale rights, and the support channel used to answer any open question."
+        },
+        {
+          "type": "transfer",
+          "title": "Make suitability explicit",
+          "body": "List essential bills, emergency savings, debt, experience, and risk tolerance. Ask whether a large loss would harm a near-term need. If the money is needed for living costs or comes from consumer debt, the decision is no live trading.",
+          "prompt": "Which response is safest when the planned funds are needed for rent next month?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Keep the activity simulated and protect essential funds",
+              "Reduce size and proceed",
+              "Use margin so less cash is tied up",
+              "Trade only highly liquid stocks"
+            ],
+            "correctOption": 0,
+            "success": "Essential funds should not be exposed to day-trading risk.",
+            "correction": "Liquidity and smaller size do not make essential funds suitable for speculation."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-MARG-A and V7-MARG-B",
+          "body": "Use the fixed learner packets V7-MARG-A and V7-MARG-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-MARG-A and V7-MARG-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Write the uncertainty statement",
+          "body": "When the firm’s current implementation is unclear, state exactly what is unknown, where it will be verified, and why the trade remains ineligible until then.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Permission is not suitability",
+          "body": "I will separate what the broker permits from what my finances and risk tolerance can safely support. I will not use essential funds or an unverified margin rule."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-MARG-T from the neutral key-free packet released by the facilitator without reopening V7-MARG-A, V7-MARG-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-MARG-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Verifies the firm’s current intraday and house requirements",
+        "Separates buying power from affordable loss",
+        "Includes margin interest, deficits, and liquidation risk",
+        "Protects essential funds and evaluates personal suitability",
+        "Saves dated policy evidence with the case"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-MARG-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-MARG-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-MARG-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "FINRA Regulatory Notice 26-10 — New Intraday Margin Standards",
+          "url": "https://www.finra.org/rules-guidance/notices/26-10",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "FINRA Regulatory Notice 26-11 — Intraday Margin Implementation Guidance",
+          "url": "https://www.finra.org/rules-guidance/notices/26-11",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "FINRA — Frequent Intraday Trading: Understanding the Basics",
+          "url": "https://www.finra.org/investors/insights/frequent-intraday-trading",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "FINRA Rule 4210 — Margin Requirements",
+          "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/4210",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "FINRA Rule 2270 — Day-Trading Risk Disclosure Statement",
+          "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/2270",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-margin-suitability",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-MARG-A and V7-MARG-B",
+        "Date 2: delayed transfer with V7-MARG-T",
+        "Conditional secure release: V7-MARG-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-MARG-A locked original",
+        "V7-MARG-B locked original",
+        "V7-MARG-T delayed original",
+        "V7-MARG-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-broker-ticket-rules",
+      "version": "7.1.0",
+      "title": "Verify broker, session, and fractional-share behavior",
+      "skill_ids": [
+        "OE-005",
+        "OE-006",
+        "AC-003"
+      ],
+      "objective": "Read a broker ticket from number through time in force, verify firm-specific session and fractional-share rules, and fail closed when policy sources conflict.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Read number and unit together",
+          "body": "Read the number and unit together every time. A ticket can express dollars, whole shares, or fractional shares. After a partial fill, use the actual open quantity—not the original request—to plan a close.",
+          "prompt": "What is missing from “Sell 10”?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Only the ticker",
+              "The unit and the position context",
+              "Only the time of day",
+              "Nothing"
+            ],
+            "correctOption": 1,
+            "success": "The number is unsafe without its unit and position context.",
+            "correction": "A ticket must be read as a complete instruction."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Fractional behavior is firm specific",
+          "body": "Verify eligible securities, sessions, order types, minimums, execution timing, aggregation, price treatment, voting or dividend treatment when relevant, transfer limits, and how residual fractions are liquidated. Do not assume whole-share behavior applies."
+        },
+        {
+          "type": "worked_example",
+          "title": "Close the actual position, not the original request",
+          "body": "A $100 buy produces 3.217 shares. A later sell ticket defaults to dollars. To close the position, the learner must confirm the current share quantity, the sell unit, and the broker’s fractional sell rules.",
+          "prompt": "Which ticket evidence matters most?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The original $100 request",
+              "The last candle color",
+              "The current executed share position and sell unit",
+              "The learner’s intended profit"
+            ],
+            "correctOption": 2,
+            "success": "Closing quantity comes from the current position and ticket unit.",
+            "correction": "The original request does not define the remaining share position."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Create a broker behavior checklist",
+          "body": "Use a two-pass readback. Basic pass: symbol, side, quantity, and unit. Full eight-field pass: symbol, side, quantity, unit, order type and price fields, session, time in force, and estimated effect. Then verify fractional-share support, eligible order types, extended-hours limits, cancellation behavior, and how exact-position closing works."
+        },
+        {
+          "type": "transfer",
+          "title": "Handle a policy-page conflict",
+          "body": "The ticket allows a selection that an older help page says is unavailable. Save both sources, check their dates, use current in-app disclosures or firm support to reconcile the conflict, and fail closed until resolved.",
+          "prompt": "What should the learner do first?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Assume the ticket guarantees the behavior",
+              "Choose the more convenient source",
+              "Use a market order instead",
+              "Preserve both sources and verify the current policy"
+            ],
+            "correctOption": 3,
+            "success": "Conflicting broker evidence requires dated reconciliation.",
+            "correction": "Changing order type does not resolve an unknown ticket rule."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-BRKR-A and V7-BRKR-B",
+          "body": "Use the fixed learner packets V7-BRKR-A and V7-BRKR-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-BRKR-A and V7-BRKR-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Write a one-line fail-closed rule",
+          "body": "State which missing broker fact would cancel the attempt and where it will be verified.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "No ticket assumptions",
+          "body": "I will verify the complete ticket and current broker behavior before relying on an order, especially for fractional shares and extended sessions."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-BRKR-T from the neutral key-free packet released by the facilitator without reopening V7-BRKR-A, V7-BRKR-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-BRKR-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Reads action, symbol, unit, amount, account, session, order type, and time in force together",
+        "Verifies fractional eligibility and residual-share behavior",
+        "Plans for partial fill and no fill",
+        "Reconciles conflicting broker sources by date",
+        "Uses a clear fail-closed rule"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-BRKR-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-BRKR-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-BRKR-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "FINRA — Investing in Fractional Shares",
+          "url": "https://www.finra.org/investors/insights/investing-fractional-shares",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "Investor.gov — Types of Orders",
+          "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work/types-orders",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "FINRA — Extended-Hours Trading: Know the Risks",
+          "url": "https://www.finra.org/investors/insights/extended-hours-trading",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-broker-ticket-rules",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-BRKR-A and V7-BRKR-B",
+        "Date 2: delayed transfer with V7-BRKR-T",
+        "Conditional secure release: V7-BRKR-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-BRKR-A locked original",
+        "V7-BRKR-B locked original",
+        "V7-BRKR-T delayed original",
+        "V7-BRKR-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-market-data-readiness",
+      "version": "7.1.0",
+      "title": "Confirm market, data, and platform readiness",
+      "skill_ids": [
+        "VC-001",
+        "OE-004",
+        "TR-001"
+      ],
+      "objective": "Verify session, halt status, quote freshness, source agreement, and platform state; reconcile every order and position after a reconnect before making another decision.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Name the readiness gates",
+          "body": "Check session, quote timestamp, data source, bid and ask, displayed size, last trade, halt status, scheduled event risk, connection status, and whether orders can be canceled reliably.",
+          "prompt": "Which item is a data-readiness fact rather than setup evidence?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "A quote timestamp that is 90 seconds old",
+              "A trigger above resistance",
+              "A structural stop",
+              "A target based on prior range"
+            ],
+            "correctOption": 0,
+            "success": "A stale timestamp is a data-quality problem.",
+            "correction": "Do not analyze a setup before confirming the data can support the decision."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Regular and extended hours are different contexts",
+          "body": "Extended hours can have lower liquidity, higher volatility, wider spreads, unlinked venues, and different order availability. Recalculate every threshold and verify the broker’s session rules instead of carrying regular-hours assumptions forward."
+        },
+        {
+          "type": "worked_example",
+          "title": "Treat a halt as a state change",
+          "body": "A stock enters a volatility pause. The prior spread, stop distance, and displayed liquidity no longer describe the next executable market. Cancel or review open instructions when possible, preserve the halt evidence, and wait for a new post-resumption plan.",
+          "prompt": "What happens to the old eligibility decision?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "It remains valid until the stop is hit",
+              "It must be rebuilt after the market state changes",
+              "It becomes more urgent",
+              "It can be preserved by reducing size"
+            ],
+            "correctOption": 1,
+            "success": "A halt or major state change invalidates stale execution assumptions.",
+            "correction": "Size cannot repair missing post-resumption price and liquidity information."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Run the platform failure drill",
+          "body": "When the platform freezes or reconnects, stop new actions. Check the broker order-status source, open orders, fills, position quantity, and account messages. Use a unique client note or timestamp to identify the last known submission. Never click Submit again merely because the interface did not respond; a duplicate order may already be live."
+        },
+        {
+          "type": "transfer",
+          "title": "Compare two quote sources",
+          "body": "Two screens show different bids and asks. Record timestamps, sessions, and source labels. Do not average them. Use the source tied to the intended order path only after confirming it is current; otherwise stop.",
+          "prompt": "Which response preserves uncertainty?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Average the quotes",
+              "Use the tighter spread",
+              "Record both and stop until the intended source is verified",
+              "Use the last trade instead"
+            ],
+            "correctOption": 2,
+            "success": "Source and timestamp differences must remain visible.",
+            "correction": "Averaging quotes invents a market that may not exist."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-DATA-A and V7-DATA-B",
+          "body": "Use the fixed learner packets V7-DATA-A and V7-DATA-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-DATA-A and V7-DATA-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Add a readiness banner",
+          "body": "Display one of three states in the practice artifact: READY, WAIT—VERIFY, or STOP—RECONCILE. READY requires current quotes, known session, clear halt state, working controls, and reconciled orders and positions. The other states must name the blocking fact.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "No reliable market, no decision",
+          "body": "I will stop when quotes, session status, halt information, or platform controls are unreliable. I will not guess through a system failure."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-DATA-T from the neutral key-free packet released by the facilitator without reopening V7-DATA-A, V7-DATA-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-DATA-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Checks timestamp, source, session, spread, and halt status",
+        "Explains extended-hours differences without copying regular-hours thresholds",
+        "Treats halts and major state changes as plan-reset events",
+        "Uses a written platform-failure response",
+        "Stops when data or cancellation controls are unreliable"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-DATA-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-DATA-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-DATA-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "FINRA — Extended-Hours Trading: Know the Risks",
+          "url": "https://www.finra.org/investors/insights/extended-hours-trading",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "FINRA — Trading Halts, Delays and Suspensions",
+          "url": "https://www.finra.org/investors/investing/investment-products/stocks/trading-halts-delays-suspensions",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "Investor.gov — Stock Market Circuit Breakers",
+          "url": "https://www.investor.gov/introduction-investing/investing-basics/glossary/stock-market-circuit-breakers",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-market-data-readiness",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-DATA-A and V7-DATA-B",
+        "Date 2: delayed transfer with V7-DATA-T",
+        "Conditional secure release: V7-DATA-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-DATA-A locked original",
+        "V7-DATA-B locked original",
+        "V7-DATA-T delayed original",
+        "V7-DATA-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-risk-boundary",
+      "version": "7.1.0",
+      "title": "Set the loss boundary and exposure before size",
+      "skill_ids": [
+        "RM-001",
+        "RM-002",
+        "RM-004"
+      ],
+      "objective": "Calculate whole-share size from maximum planned loss, invalidation distance, and execution allowance, then apply remaining session and correlated-exposure limits before accepting quantity.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Write risk inputs before quantity",
+          "body": "Record maximum dollar risk, planned entry, structural invalidation, total adverse execution allowance, side, and existing exposure. Buying power is checked later.",
+          "prompt": "Which value must be set first?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Desired share count",
+              "Target profit",
+              "Available buying power",
+              "Maximum dollar risk"
+            ],
+            "correctOption": 3,
+            "success": "The loss boundary comes before quantity.",
+            "correction": "Starting from shares or buying power can make risk expand to fit the trade."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Define the execution allowance clearly",
+          "body": "State whether the allowance covers adverse entry, adverse exit, or the total expected execution gap. Use one convention consistently so the same slippage is not omitted or counted twice."
+        },
+        {
+          "type": "worked_example",
+          "title": "Calculate and round down",
+          "body": "Long example: planned entry $25.00, invalidation $24.60, total adverse execution allowance $0.05, and maximum risk $45. Risk per share is $0.45. Quantity is floor($45 ÷ $0.45) = 100 shares.",
+          "prompt": "What quantity keeps planned risk at or below $45?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "100 shares",
+              "99 shares",
+              "101 shares",
+              "112 shares"
+            ],
+            "correctOption": 0,
+            "success": "One hundred shares uses the full $45 boundary without exceeding it.",
+            "correction": "Add the execution allowance to the structural distance, then round down."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Accept zero as a valid answer",
+          "body": "If one share would exceed the maximum risk, or if the invalidation cannot be defined, the correct quantity is zero. Do not widen the stop or hide execution cost to force eligibility."
+        },
+        {
+          "type": "transfer",
+          "title": "Check combined and correlated exposure",
+          "body": "Example: a $50 session boundary has $25 already committed to a highly related position. A new short has $0.49 planned risk per share. Only $25 remains, so the size cap is floor($25 ÷ $0.49) = 51 shares, not the 61 shares allowed by a separate $30 trade limit. State the chosen grouping rule before the session; correlation is a risk-control assumption, not a precise live statistic.",
+          "prompt": "What should happen when combined planned loss exceeds the session boundary?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Take both because each passes alone",
+              "Reduce or reject exposure until the combined boundary is met",
+              "Ignore correlation",
+              "Increase the daily limit"
+            ],
+            "correctOption": 1,
+            "success": "The portfolio and session limits constrain each new position.",
+            "correction": "Per-trade compliance does not override combined exposure."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-RISK-A and V7-RISK-B",
+          "body": "Use the fixed learner packets V7-RISK-A and V7-RISK-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-RISK-A and V7-RISK-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Explain planned versus realized loss",
+          "body": "Write why gaps, slippage, liquidity loss, halts, and platform failures can make realized loss differ from planned risk. Planned risk is a boundary and estimate, not a guarantee.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Risk can veto the trade",
+          "body": "I will define the loss boundary first, show the math, round down, and accept zero when the position cannot fit the full risk system."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-RISK-T from the neutral key-free packet released by the facilitator without reopening V7-RISK-A, V7-RISK-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-RISK-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Defines maximum dollar risk before size",
+        "Calculates long and short risk per share with a stated execution allowance",
+        "Rounds down and accepts zero",
+        "Checks combined, correlated, and daily exposure",
+        "Distinguishes planned risk from guaranteed loss"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-RISK-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-RISK-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-RISK-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "FINRA Rule 2270 — Day-Trading Risk Disclosure Statement",
+          "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/2270",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "calculation_examples": [
+        {
+          "entry": "52.40",
+          "stop": "51.90",
+          "maximum_risk": "50.00",
+          "slippage_per_unit": "0.05",
+          "side": "long",
+          "expected_quantity": 90
+        },
+        {
+          "entry": "28.10",
+          "stop": "28.55",
+          "maximum_risk": "25.00",
+          "slippage_per_unit": "0.04",
+          "side": "short",
+          "expected_quantity": 51
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-risk-boundary",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-RISK-A and V7-RISK-B",
+        "Date 2: delayed transfer with V7-RISK-T",
+        "Conditional secure release: V7-RISK-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-RISK-A locked original",
+        "V7-RISK-B locked original",
+        "V7-RISK-T delayed original",
+        "V7-RISK-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-setup-eligibility",
+      "version": "7.1.0",
+      "title": "Make the setup pass a calibrated eligibility gate",
+      "skill_ids": [
+        "VC-001",
+        "TP-001",
+        "TP-002",
+        "OE-004"
+      ],
+      "objective": "Build a simultaneous eligibility gate with units, sources, baselines, and missing-data rules, then apply it consistently to passing, borderline, and failing cases.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Separate context from permission",
+          "body": "Fast movement and high volume describe context. They do not by themselves permit entry. Permission comes from a written trigger, invalidation, and all required gates passing together.",
+          "prompt": "Which statement is an observable trigger?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The stock looks strong",
+              "Momentum feels good",
+              "Price trades above $42.10 and holds above it for the next completed bar",
+              "The move should continue"
+            ],
+            "correctOption": 2,
+            "success": "The trigger names a visible event and test window.",
+            "correction": "A trigger must be observable and reviewable."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Calibrate every threshold",
+          "body": "Every threshold needs a unit, dated source, development sample, baseline, review date, and missing-data rule. Do not copy a threshold to a different symbol, session, volatility regime, or broker without new evidence."
+        },
+        {
+          "type": "worked_example",
+          "title": "Use simultaneous gates",
+          "body": "Worked calibration: over 20 development observations, acceptable regular-hours examples had quote age at or below 2 seconds, spread at or below 0.15% of midpoint, and visible size at or above 800 shares. A candidate with 1-second data, 0.12% spread, and 600 visible shares fails because all gates must pass. These numbers are fictional demonstration thresholds, not universal market rules.",
+          "prompt": "Can a valid trigger override failed spread and data gates?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Yes, because the trigger is the main signal",
+              "Yes, with half size",
+              "Only after a market order preview",
+              "No, all required gates must still pass"
+            ],
+            "correctOption": 3,
+            "success": "Eligibility is the intersection of all required gates.",
+            "correction": "Do not improvise around a failed condition."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Define liquidity without false certainty",
+          "body": "Displayed size can change, cancel, or exist on only one venue. Use it as one input, not a fill guarantee. Pair it with spread, recent trade activity, order size, session, and the consequence of partial or no fill."
+        },
+        {
+          "type": "transfer",
+          "title": "Build passing, borderline, and failing cases",
+          "body": "Apply the same gate structure to three different volatility conditions. Recalculate thresholds from each context. Borderline cases should identify the exact evidence needed to move to eligible or no trade.",
+          "prompt": "What transfers across symbols?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The gate structure and fail-closed rule",
+              "Exact spread and stop values",
+              "The same confidence score",
+              "The same order size"
+            ],
+            "correctOption": 0,
+            "success": "The decision structure transfers; market-specific numbers do not.",
+            "correction": "Rebuild thresholds from the current frame."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-GATE-A and V7-GATE-B",
+          "body": "Use the fixed learner packets V7-GATE-A and V7-GATE-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-GATE-A and V7-GATE-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Audit one vague threshold",
+          "body": "Replace a phrase such as “tight spread” or “enough volume” with a measurable rule and a reason tied to risk or execution.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Excitement is context, not permission",
+          "body": "I will make every required gate pass together. Missing evidence, stale data, excessive extension, or unacceptable execution friction completes the decision as wait or no trade."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-GATE-T from the neutral key-free packet released by the facilitator without reopening V7-GATE-A, V7-GATE-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-GATE-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Writes an observable trigger and structural invalidation",
+        "Calibrates thresholds with units, source, timestamp, and baseline",
+        "Uses spread, liquidity, extension, event, and data failures as no-trade conditions",
+        "Treats displayed liquidity as uncertain",
+        "Transfers the gate structure without copying values"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-GATE-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-GATE-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-GATE-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "FINRA — Extended-Hours Trading: Know the Risks",
+          "url": "https://www.finra.org/investors/insights/extended-hours-trading",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "Investor.gov — Types of Orders",
+          "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work/types-orders",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-setup-eligibility",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-GATE-A and V7-GATE-B",
+        "Date 2: delayed transfer with V7-GATE-T",
+        "Conditional secure release: V7-GATE-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-GATE-A locked original",
+        "V7-GATE-B locked original",
+        "V7-GATE-T delayed original",
+        "V7-GATE-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-strategy-evidence",
+      "version": "7.1.0",
+      "title": "Test the playbook before trusting the setup",
+      "skill_ids": [
+        "TF-009",
+        "TR-001",
+        "TP-001",
+        "TP-002"
+      ],
+      "objective": "Write a frozen strategy test protocol, include execution costs, separate development from evaluation data, and report sample uncertainty without presenting a small result as proof.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Name the evidence a playbook needs",
+          "body": "A strategy claim needs a written rule. It also needs a market and session, a test window, exclusions, a result measure, costs, data checks, and a separate set of evaluation cases.",
+          "prompt": "Which statement is a testable hypothesis?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Breakouts work",
+              "In regular hours, cases meeting rules A through D will be evaluated over the next 10 bars after stated costs",
+              "This pattern usually wins",
+              "The chart looks clean"
+            ],
+            "correctOption": 1,
+            "success": "The statement defines conditions, window, and evaluation.",
+            "correction": "A hypothesis must be specific enough to reproduce and disconfirm."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Separate development from evaluation",
+          "body": "Use one group of cases to build the rule. Use a different group to evaluate it. If the rule changes after those results are seen, those cases are no longer a fair evaluation. A new evaluation group is needed."
+        },
+        {
+          "type": "worked_example",
+          "title": "Include friction before judging expectancy",
+          "body": "Use DEMO-V7-TEST-A in the case bank. It supplies a small table with gross R, spread cost, slippage, and fees. Compute net R for each observation, then report count, win rate, mean, median, range, and the number of rule violations. A positive mean in a small sample is a hypothesis, not validation.",
+          "prompt": "What should be reported?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The strategy is permanently impossible",
+              "The gross result proves an edge",
+              "The tested sample was negative after stated costs",
+              "Remove the losing cases"
+            ],
+            "correctOption": 2,
+            "success": "Report the bounded result with its assumptions.",
+            "correction": "Do not overgeneralize or delete inconvenient observations."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Write exclusions before looking",
+          "body": "Before viewing evaluation outcomes, lock the setup definition, data source, inclusion and exclusion rules, cost model, missing-data rule, metrics, and stopping point. Record every rule variant tried. Selecting the best result from many variants without adjustment is a form of backtest overfitting."
+        },
+        {
+          "type": "transfer",
+          "title": "Treat small samples as hypotheses",
+          "body": "Do not use one universal minimum sample size. State the decision the test must support, the variability, the number of tried rule variants, and an uncertainty interval appropriate to the measure. For a win proportion, use a binomial interval; for payoff, report dispersion or a justified resampling interval. If the interval is wide, the correct conclusion is uncertainty.",
+          "prompt": "Which conclusion is calibrated?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Five wins prove the setup works",
+              "Five losses prove it can never work",
+              "Increase size while confidence is high",
+              "The small sample is suggestive but insufficient; keep the rules fixed and test more independent cases"
+            ],
+            "correctOption": 3,
+            "success": "Small samples support cautious next steps, not certainty.",
+            "correction": "Keep the rule fixed and gather independent evidence."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-TEST-A and V7-TEST-B",
+          "body": "Use the fixed learner packets V7-TEST-A and V7-TEST-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-TEST-A and V7-TEST-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Find one source of bias",
+          "body": "Identify selection, look-ahead, survivorship, repeated tuning, or missing-cost bias in an unfamiliar study and state the repair.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Evidence before confidence",
+          "body": "I will not treat a familiar chart pattern, a short streak, or a gross result as proof. I will keep rules and evaluation cases separate and report uncertainty."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-TEST-T from the neutral key-free packet released by the facilitator without reopening V7-TEST-A, V7-TEST-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-TEST-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "States a reproducible hypothesis and outcome window",
+        "Defines inclusion and exclusion rules before outcomes",
+        "Includes realistic execution costs and missed fills",
+        "Separates development from evaluation data",
+        "Reports small samples and uncertainty without certainty claims"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-TEST-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-TEST-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-TEST-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Bailey et al. — The Probability of Backtest Overfitting",
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "NIST/SEMATECH — Confidence Intervals and Small Samples",
+          "url": "https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-strategy-evidence",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-TEST-A and V7-TEST-B",
+        "Date 2: delayed transfer with V7-TEST-T",
+        "Conditional secure release: V7-TEST-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-TEST-A locked original",
+        "V7-TEST-B locked original",
+        "V7-TEST-T delayed original",
+        "V7-TEST-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-decision-card",
+      "version": "7.1.0",
+      "title": "Write the complete decision before opening the ticket",
+      "skill_ids": [
+        "TP-001",
+        "TP-002",
+        "TP-003",
+        "RM-004"
+      ],
+      "objective": "Complete a basic decision card before opening a ticket, add advanced execution fields only when relevant, and cancel the plan when a required premise changes.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Start with the essential six",
+          "body": "Basic card: evidence time, setup or no-setup, objective trigger, invalidation, maximum planned loss, and cancellation condition. Advanced fields—quantity, spread limit, order behavior, partial-fill response, exit architecture, and session stop—appear only after the basic card is complete and the case requires them.",
+          "prompt": "Which field tells when the idea is wrong?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Structural invalidation",
+              "Trigger",
+              "Target",
+              "Confidence"
+            ],
+            "correctOption": 0,
+            "success": "Invalidation defines when the premise fails.",
+            "correction": "The trigger permits entry; invalidation ends the premise."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Give every field one job",
+          "body": "Use a progressive readback. First confirm the six basic fields in plain language. Then add only the advanced fields needed for the simulated order path. This reduces working-memory load without removing required controls."
+        },
+        {
+          "type": "worked_example",
+          "title": "Read one complete numeric card",
+          "body": "Example: trigger above $42.10 after a completed hold; invalidation $41.70; maximum risk $40; total adverse execution allowance $0.05; risk per share $0.45; maximum 88 shares after rounding down; limit order at or below the written boundary; cancel after two bars or if spread exceeds the gate; reduce or exit only under the written strength, weakness, or time rules.",
+          "prompt": "Why is 88 the maximum quantity?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Because buying power allows 88",
+              "Because $40 ÷ $0.45 is 88.88 and quantity rounds down",
+              "Because the target is $42.55",
+              "Because 88 is a round number"
+            ],
+            "correctOption": 1,
+            "success": "The quantity follows the loss boundary and rounds down.",
+            "correction": "Use maximum risk divided by total risk per share, then round down."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Say the exit before the entry",
+          "body": "Write separate responses for favorable movement, invalidation, no progress, partial fill, and no fill. A price target alone is not an exit plan."
+        },
+        {
+          "type": "transfer",
+          "title": "Cancel when context changes",
+          "body": "After the card is locked, spread widens and price reaches the trigger in one extended candle. The old card is canceled because required gates no longer pass. A new idea requires new evidence and a new card.",
+          "prompt": "What is the correct response?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Enter because the trigger occurred",
+              "Widen the stop",
+              "Cancel the old plan and wait for a new eligible frame",
+              "Use half size without recalculation"
+            ],
+            "correctOption": 2,
+            "success": "The locked plan includes cancellation conditions.",
+            "correction": "A trigger does not override failed risk or eligibility gates."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-PLAN-A and V7-PLAN-B",
+          "body": "Use the fixed learner packets V7-PLAN-A and V7-PLAN-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-PLAN-A and V7-PLAN-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Score plan quality and adherence separately",
+          "body": "A learner can follow a weak card exactly. Review whether the card had evidence and complete fields separately from whether the learner followed it.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Plan, read back, then decide",
+          "body": "I will finish and read back the card before opening a ticket. Missing exit or cancellation logic means the plan is unfinished."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-PLAN-T from the neutral key-free packet released by the facilitator without reopening V7-PLAN-A, V7-PLAN-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-PLAN-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Completes the essential six before advanced fields",
+        "Connects risk, quantity, execution, and exits",
+        "Defines responses to strength, weakness, stagnation, partial fill, and no fill",
+        "Cancels the old plan when required conditions fail",
+        "Separates plan quality from adherence"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-PLAN-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-PLAN-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-PLAN-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "CAST — Universal Design for Learning Guidelines 3.0",
+          "url": "https://udlguidelines.cast.org/more/about-guidelines-3-0/",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-decision-card",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-PLAN-A and V7-PLAN-B",
+        "Date 2: delayed transfer with V7-PLAN-T",
+        "Conditional secure release: V7-PLAN-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-PLAN-A locked original",
+        "V7-PLAN-B locked original",
+        "V7-PLAN-T delayed original",
+        "V7-PLAN-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-order-failure-modes",
+      "version": "7.1.0",
+      "title": "Choose the order by the failure the plan can accept",
+      "skill_ids": [
+        "OE-001",
+        "OE-002",
+        "OE-004",
+        "OE-005",
+        "OE-006"
+      ],
+      "objective": "Choose among market, limit, stop, stop-limit, wait, and cancel by comparing the price, non-fill, trigger, gap, partial-fill, and cancellation failures the plan can tolerate.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Match order to uncertainty",
+          "body": "Name the uncertainty first: current execution price, non-fill, trigger activation, gap, partial fill, or stale premise. Then select an order behavior or no-order response whose worst plausible failure stays inside the plan.",
+          "prompt": "Which order can trigger and still remain unfilled because of its limit?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Market",
+              "Limit entry only",
+              "Stop",
+              "Stop-limit"
+            ],
+            "correctOption": 3,
+            "success": "A stop-limit becomes a limit order after triggering.",
+            "correction": "The limit boundary can prevent execution in a fast move."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Compare friction with risk",
+          "body": "Calculate the visible spread and compare it with the stop distance and risk budget. The quote can change before execution, so the estimate is context, not a guaranteed fill cost."
+        },
+        {
+          "type": "worked_example",
+          "title": "Price a wide spread",
+          "body": "Bid $38.02 and ask $38.35 create a $0.33 visible spread. If structural invalidation is only $0.25 away, immediate crossing friction already exceeds the technical distance before added slippage or fees.",
+          "prompt": "What is the strongest conclusion?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The trade must be reconsidered for eligibility, size, or price control",
+              "A market order is required",
+              "The stop should be widened automatically",
+              "The spread is irrelevant on a fast mover"
+            ],
+            "correctOption": 0,
+            "success": "Execution friction must fit the risk system.",
+            "correction": "Speed does not make spread and slippage disappear."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Write the six-door decision",
+          "body": "For each case, compare six doors: market, limit, stop, stop-limit, wait, and cancel. Market prioritizes execution but not price. Limit controls price but may not fill. A stop becomes a market order after its trigger. A stop-limit controls the post-trigger price but may remain unfilled. Wait and cancel are valid when no order failure fits the plan."
+        },
+        {
+          "type": "transfer",
+          "title": "Respond to a partial fill",
+          "body": "Treat the filled quantity as the current position. Recalculate exposure. Follow the prewritten partial-fill rule. Do not replace missing shares with a market order unless that behavior and risk were already allowed.",
+          "prompt": "What happens first after a partial fill?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Chase the remaining shares",
+              "Recalculate actual exposure and apply the written rule",
+              "Cancel the stop",
+              "Increase the risk limit"
+            ],
+            "correctOption": 1,
+            "success": "The actual fill changes exposure and must be reconciled first.",
+            "correction": "Do not improvise a second order under pressure."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-EXEC-A and V7-EXEC-B",
+          "body": "Use the fixed learner packets V7-EXEC-A and V7-EXEC-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-EXEC-A and V7-EXEC-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Test a gap through the stop",
+          "body": "Explain what may happen to a stop order and a stop-limit order when price moves through both the stop and intended exit range. State which failure the plan is prepared to accept.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Order labels are not execution plans",
+          "body": "I will choose an order only after defining the price, fill, partial-fill, and no-fill uncertainty the plan can tolerate."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-EXEC-T from the neutral key-free packet released by the facilitator without reopening V7-EXEC-A, V7-EXEC-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-EXEC-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Explains market, limit, stop, and stop-limit failure modes",
+        "Calculates visible spread and compares it with risk",
+        "Reads the complete ticket and current position",
+        "Plans for partial fill and no fill",
+        "States the accepted execution failure before action"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-EXEC-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-EXEC-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-EXEC-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Investor.gov — Types of Orders",
+          "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work/types-orders",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "Investor.gov — Stop, Stop-Limit, and Trailing Stop Orders",
+          "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-15",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-order-failure-modes",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-EXEC-A and V7-EXEC-B",
+        "Date 2: delayed transfer with V7-EXEC-T",
+        "Conditional secure release: V7-EXEC-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-EXEC-A locked original",
+        "V7-EXEC-B locked original",
+        "V7-EXEC-T delayed original",
+        "V7-EXEC-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-short-sale-gate",
+      "version": "7.1.0",
+      "title": "Make a short sale pass an operational gate",
+      "skill_ids": [
+        "AC-002",
+        "OE-006",
+        "RM-004",
+        "VC-001"
+      ],
+      "objective": "Distinguish the broker-dealer locate requirement from displayed retail short availability, verify borrow terms and Rule 201 constraints, and reject a short simulation when cover or operational risk is unsupported.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Name what shorting adds",
+          "body": "Shorting adds borrow availability and cost, possible recall or buy-in, rising-price loss, dividend or corporate-action obligations, halt and gap risk, cover execution risk, and possible Rule 201 price-test restrictions after a qualifying decline.",
+          "prompt": "Which missing fact makes the short ineligible?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The learner’s profit target",
+              "The prior candle color",
+              "Borrow or locate availability",
+              "A social-media opinion"
+            ],
+            "correctOption": 2,
+            "success": "A short cannot rely on shares that may not be available to borrow.",
+            "correction": "Operational availability comes before the chart setup."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Loss can expand as price rises",
+          "body": "A short position can lose more than the initial proceeds as the price rises. Gaps, halts, recalls, and forced buy-ins can make the planned cover price unavailable. Planned risk is not a guarantee."
+        },
+        {
+          "type": "worked_example",
+          "title": "Include borrow cost and cover failure",
+          "body": "A broker shows a hard-to-borrow estimate, but fees may change and availability can disappear. If Rule 201 is active, the permitted short-sale price path may also change. The simulation must state the displayed evidence, its timestamp, the cover order behavior, and what happens if no compliant or supported order is available.",
+          "prompt": "Does smaller size fix unknown borrow terms?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Yes",
+              "Only in regular hours",
+              "Only with a stop-limit order",
+              "No, the operational gate still fails"
+            ],
+            "correctOption": 3,
+            "success": "Size does not create borrow availability or known terms.",
+            "correction": "A failed operational gate remains failed."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Build the short-sale checklist",
+          "body": "Retail learner checks: broker-displayed shortability, current borrow availability, estimated fee, possible recall or buy-in terms, order and session support, Rule 201 status, halt state, cover path, and worst-case gap. The broker-dealer—not the learner—has the Regulation SHO locate obligation. A “shortable” label is not a guaranteed borrow or execution."
+        },
+        {
+          "type": "transfer",
+          "title": "Handle a halt while short",
+          "body": "A volatility halt interrupts the position. Preserve the last reliable data, check open orders and broker messages, and do not assume the stop will execute at its trigger after resumption.",
+          "prompt": "What should the review avoid claiming?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The stop price guarantees the cover fill",
+              "The position is short",
+              "A halt occurred",
+              "The broker message needs review"
+            ],
+            "correctOption": 0,
+            "success": "A stop trigger is not a guaranteed execution price.",
+            "correction": "Post-halt execution can differ sharply from the planned level."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-SHORT-A and V7-SHORT-B",
+          "body": "Use the fixed learner packets V7-SHORT-A and V7-SHORT-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-SHORT-A and V7-SHORT-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Explain the gate to a beginner",
+          "body": "In three sentences, explain why a bearish chart is not enough to make a short sale executable or suitable.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Borrow first, chart second",
+          "body": "I will not plan a short from chart evidence alone. Unknown borrow, fee, recall, or cover behavior means no trade."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-SHORT-T from the neutral key-free packet released by the facilitator without reopening V7-SHORT-A, V7-SHORT-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-SHORT-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Verifies margin and borrow or locate status",
+        "Includes hard-to-borrow fees and recall or buy-in risk",
+        "Explains that short loss and cover price can exceed the plan",
+        "Plans for halts, gaps, and cover-order failure",
+        "Treats unknown operational terms as no trade"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-SHORT-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-SHORT-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-SHORT-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "SEC — Key Points About Regulation SHO",
+          "url": "https://www.sec.gov/investor/pubs/regsho.htm",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "SEC — Short Sale Price Test Restrictions (Rule 201)",
+          "url": "https://www.sec.gov/files/rules/final/2010/34-61595-secg.htm",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "Investor.gov — Types of Orders",
+          "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work/types-orders",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-short-sale-gate",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-SHORT-A and V7-SHORT-B",
+        "Date 2: delayed transfer with V7-SHORT-T",
+        "Conditional secure release: V7-SHORT-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-SHORT-A locked original",
+        "V7-SHORT-B locked original",
+        "V7-SHORT-T delayed original",
+        "V7-SHORT-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-reset-session-stop",
+      "version": "7.1.0",
+      "title": "Reset the next decision and honor the session stop",
+      "skill_ids": [
+        "PB-005",
+        "PB-006",
+        "RM-001",
+        "TF-009"
+      ],
+      "objective": "Rebuild the next decision from current evidence and end simulated execution at the first observable risk, process, attention, or operational stop condition.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Separate sequence from motive",
+          "body": "A rapid series of attempts proves frequency and timing. It does not prove revenge, fear, or greed unless the learner recorded those states. Review behavior neutrally and ask what current evidence supported each attempt.",
+          "prompt": "Which statement is supported by the record alone?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The learner was revenge trading",
+              "Three entries occurred within six minutes",
+              "The learner felt fear",
+              "The last loss caused the next trade"
+            ],
+            "correctOption": 1,
+            "success": "The timing and count are observed; motive requires evidence.",
+            "correction": "Do not diagnose emotion from sequence alone."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Use a reset that fits the learner and risk level",
+          "body": "Define observable reset triggers before the session. Examples: two required fields omitted, the same rule reread three times without a clear answer, two serious rule violations, an unreconciled order, uncertain position state, or a preset planned-loss boundary. A serious violation is one that bypasses a risk, eligibility, account, or position-state control—not any ordinary mistake."
+        },
+        {
+          "type": "worked_example",
+          "title": "Let the earliest stop condition control",
+          "body": "The session policy ends execution after the daily loss boundary, two serious rule violations, degraded attention, unreliable data, or platform failure. Two rule violations occur before a later profitable trade. The session ended at the second violation.",
+          "prompt": "Can later profit reopen the session?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Yes",
+              "Only with smaller size",
+              "No",
+              "Only after 90 seconds"
+            ],
+            "correctOption": 2,
+            "success": "A preset stop is not renegotiated by outcome.",
+            "correction": "The earliest satisfied safety condition controls."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Write the five-part reset",
+          "body": "Record: current evidence, new trigger, new invalidation, remaining risk, and body or attention status. Add the minimum pause or workspace change that helps this learner complete the steps without urgency."
+        },
+        {
+          "type": "transfer",
+          "title": "Add operational stop conditions",
+          "body": "Stop immediately for an uncertain live or simulated position, unresolved duplicate-order risk, missing market data, failed controls, or an account state that cannot be reconciled. Attention warnings should be observable, such as repeated omitted fields or inability to explain the current plan, rather than a vague mood label.",
+          "prompt": "Which condition should end execution practice immediately?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "A missed move",
+              "A small paper loss",
+              "Low confidence alone",
+              "An uncertain live position after a platform failure"
+            ],
+            "correctOption": 3,
+            "success": "An uncertain position and failed controls create operational risk.",
+            "correction": "Stop and reconcile before any new decision."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-RESET-A and V7-RESET-B",
+          "body": "Use the fixed learner packets V7-RESET-A and V7-RESET-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-RESET-A and V7-RESET-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Design the shutdown checklist",
+          "body": "Close or leave the ticket, save evidence, reconcile positions and orders, record one neutral note, and end execution practice. Review later, outside outcome pressure.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "The next decision must stand alone",
+          "body": "I will rebuild the next decision from current evidence and obey the first preset session stop. I will not use another trade as a reward, recovery attempt, or system test."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-RESET-T from the neutral key-free packet released by the facilitator without reopening V7-RESET-A, V7-RESET-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-RESET-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Describes rapid sequences without inventing motive",
+        "Completes a configurable five-part evidence reset",
+        "Applies the same reset after wins, losses, and misses",
+        "Uses the earliest risk, process, attention, data, or platform stop",
+        "Ends practice and reconciles records without another trade"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-RESET-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-RESET-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-RESET-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "FINRA Rule 2270 — Day-Trading Risk Disclosure Statement",
+          "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/2270",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-reset-session-stop",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-RESET-A and V7-RESET-B",
+        "Date 2: delayed transfer with V7-RESET-T",
+        "Conditional secure release: V7-RESET-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-RESET-A locked original",
+        "V7-RESET-B locked original",
+        "V7-RESET-T delayed original",
+        "V7-RESET-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-process-review",
+      "version": "7.1.0",
+      "title": "Score process with observable anchors and preserve uncertainty",
+      "skill_ids": [
+        "TF-009",
+        "TR-001",
+        "TR-002"
+      ],
+      "objective": "Given deficient and strong fictional process artifacts, accurately score the artifact with observable anchors, use NS only for missing evidence, separate outcome from process, and write a neutral correction. The learner is scored on review accuracy—not on the fictional trader’s original score.",
+      "estimated_minutes": 70,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Keep process and outcome on separate lines",
+          "body": "A profitable trade can have weak evidence or poor adherence. A losing trade can follow a sound, prewritten process. Score the decision before using the outcome for context.",
+          "prompt": "Which classification is possible?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Strong process with a losing outcome",
+              "Profit always means strong process",
+              "Loss always means weak process",
+              "Outcome replaces all other scores"
+            ],
+            "correctOption": 0,
+            "success": "Process and outcome are independent dimensions.",
+            "correction": "Do not let P&L determine the process score."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Use observable 0–3 anchors",
+          "body": "Use the rubric in templates/process-review-rubric.md. Evidence: 0 no sources; 1 incomplete or late; 2 complete and timely; 3 resolves conflicts without hindsight. Account/readiness: 0 unchecked; 1 partial; 2 all required gates checked; 3 handles a changed constraint. Playbook/eligibility: 0 absent; 1 vague; 2 calibrated gates applied; 3 transfers without copying thresholds. Risk: 0 missing or exceeds a limit; 1 incomplete inputs; 2 correct and rounded down; 3 applies combined limits. Plan: 0 post-hoc; 1 missing fields; 2 complete before ticket; 3 cancels when a premise changes. Execution: 0 unsupported; 1 names an order only; 2 matches failure mode; 3 handles partial fill or gap. Behavior/review: 0 outcome-led or contaminated; 1 vague; 2 neutral and artifact-cited; 3 tests a correction later. Use not scorable when the required artifact does not exist."
+        },
+        {
+          "type": "worked_example",
+          "title": "Score a winner with missing evidence",
+          "body": "A trade profits, but no trigger or invalidation was saved. Evidence and plan quality are level 0 or not scorable. Outcome is positive. The correction is to lock those fields before the next case, not to praise the result as proof."
+        },
+        {
+          "type": "practice",
+          "title": "Write one neutral correction",
+          "body": "Use this form: “On the next case, before reveal, I will [observable action] so that [specific evidence gap] is closed.” Avoid labels such as careless, bad trader, or always."
+        },
+        {
+          "type": "transfer",
+          "title": "Do not overlearn from a short sample",
+          "body": "A pattern across three cases is a hypothesis. Record the count, contexts, and uncertainty. Test the correction on later cases before changing the full playbook.",
+          "prompt": "Which correction is testable?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Be more disciplined",
+              "Before the next reveal, save the spread limit and quote timestamp",
+              "Stop making mistakes",
+              "Trade only winners"
+            ],
+            "correctOption": 1,
+            "success": "The correction names an observable action and evidence gap.",
+            "correction": "A useful correction can be checked on the next case."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-REVIEW-A and V7-REVIEW-B",
+          "body": "Use the fixed learner packets V7-REVIEW-A and V7-REVIEW-B from the neutral key-free packet released by the facilitator. Lock the original response before opening any reveal packet. Use templates/case-response.md, save the case ID and artifact timestamp, and keep revisions as separate copies. For certification, a facilitator must use the separate scoring key; an app completion mark alone is practice evidence, not verified mastery.",
+          "assessment_phase": "independent_performance",
+          "prompt": "What must be preserved for V7-REVIEW-A and V7-REVIEW-B to count as assessment evidence?",
+          "answer": "The original timestamped response, stable case ID, required artifacts, fixed reveal window, separate revision history, and facilitator or rule-based scoring record."
+        },
+        {
+          "type": "transfer",
+          "title": "Compare weak and strong evidence statements",
+          "body": "Weak: “The entry was impulsive.” Strong: “No trigger was saved before the order, so trigger quality is not scorable; the next case requires a locked trigger.”",
+          "assessment_phase": "review",
+          "prompt": "Why is the second statement stronger?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "It is harsher",
+              "It predicts the next outcome",
+              "It cites the missing artifact and gives a testable correction",
+              "It uses more technical words"
+            ],
+            "correctOption": 2,
+            "success": "The statement is source-based and actionable.",
+            "correction": "Review should connect evidence to one bounded correction."
+          }
+        },
+        {
+          "type": "commitment",
+          "title": "Preserve the original and repair one thing",
+          "body": "I will cite evidence for every score, use not scorable honestly, and test one correction on a later case before changing the whole system."
+        },
+        {
+          "type": "practice",
+          "title": "Complete delayed retention form",
+          "assessment_phase": "retention",
+          "body": "On a later date, complete V7-REVIEW-T from the neutral key-free packet released by the facilitator without reopening V7-REVIEW-A, V7-REVIEW-B, or any reveal. Lock and score the new artifact separately.",
+          "prompt": "Why must the retention form be different from the initial forms?",
+          "answer": "A new form tests transfer and retention rather than memory for a revealed answer."
+        },
+        {
+          "type": "remediation",
+          "title": "Use a fresh remediation form",
+          "assessment_phase": "remediation",
+          "body": "When any pass-required dimension is below level 2 or NS, preserve the failed original, complete the bounded worksheet for that dimension, and use V7-REVIEW-R. Never reuse an opened initial case as a retest.",
+          "prompt": "What is preserved during remediation?",
+          "answer": "The failed original, its score, the reason code, and the separate corrected or retest artifact."
+        }
+      ],
+      "mastery_criteria": [
+        "Scores seven dimensions separately from outcome",
+        "Uses observable 0–3 anchors",
+        "Cites a saved artifact or marks the dimension not scorable",
+        "Writes one neutral and testable correction",
+        "Treats short samples as hypotheses"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 3,
+        "minimum_successful_cases": 3,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve every failed original and repair the lowest dimension. Use the supplied remediation form once. Any further attempt requires an unopened equivalent packet produced under the controlled parallel-form protocol; never reuse an opened form."
+      },
+      "curriculum_role": "core",
+      "session_blocks": [
+        {
+          "title": "Retrieval",
+          "minutes": 5,
+          "focus": "Retrieve the prior decision rule without notes."
+        },
+        {
+          "title": "Model and checks",
+          "minutes": 10,
+          "focus": "Model the target process and complete objective checks."
+        },
+        {
+          "title": "Initial case V7-REVIEW-A",
+          "minutes": 17,
+          "focus": "Complete, lock, and preserve the first independent artifact."
+        },
+        {
+          "title": "Initial case V7-REVIEW-B",
+          "minutes": 17,
+          "focus": "Complete a changed-context parallel artifact."
+        },
+        {
+          "title": "Initial scoring route",
+          "minutes": 3,
+          "focus": "Record dimension evidence and assign remediation only when needed."
+        },
+        {
+          "title": "Delayed retention V7-REVIEW-T",
+          "minutes": 16,
+          "focus": "Complete a new parallel form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record score, evidence citation, and item exposure."
+        }
+      ],
+      "sources": [
+        {
+          "title": "NIST/SEMATECH — Confidence Intervals and Small Samples",
+          "url": "https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "CAST — Universal Design for Learning Guidelines 3.0",
+          "url": "https://udlguidelines.cast.org/more/about-guidelines-3-0/",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-process-review",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 52,
+        "required_delayed_retention_minutes": 18,
+        "conditional_remediation_minutes_per_form": 20
+      },
+      "delivery_schedule": [
+        "Date 1: instruction plus V7-REVIEW-A and V7-REVIEW-B",
+        "Date 2: delayed transfer with V7-REVIEW-T",
+        "Conditional secure release: V7-REVIEW-R after a failed dimension"
+      ],
+      "mastery_evidence": [
+        "V7-REVIEW-A locked original",
+        "V7-REVIEW-B locked original",
+        "V7-REVIEW-T delayed original",
+        "V7-REVIEW-R only after a failed dimension"
+      ],
+      "assessment_administration": {
+        "minimum_case_minutes": 12,
+        "scoring_target": "learner artifact rather than fictional outcome",
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "not_scorable_policy": {
+          "NS-MISSING": "Required evidence does not exist.",
+          "NS-LATE": "The evidence was created after reveal or after the decision point.",
+          "NS-CONFLICT": "A material source conflict is unresolved.",
+          "NS-NA": "The dimension is not part of this case blueprint and must not be included in the case pass calculation."
+        },
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      },
+      "assessment_rule": "REVIEW cases score the learner review artifact only. Reference process scores describe the fictional artifact and are not copied into the learner’s mastery record."
+    },
+    {
+      "lesson_id": "v7-guided-replay",
+      "version": "7.1.0",
+      "title": "Run a guided two-case no-click replay",
+      "skill_ids": [
+        "TR-001",
+        "AC-001",
+        "RM-004",
+        "VC-001",
+        "TP-003",
+        "OE-006",
+        "PB-006",
+        "TF-009"
+      ],
+      "objective": "Complete one modeled and one coached fixed-reveal simulation case, including a valid wait or no-trade decision, while preserving every pre-reveal artifact.",
+      "estimated_minutes": 90,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Recall the full chain",
+          "body": "Evidence and data readiness; account and broker rules; playbook evidence; risk; eligibility; decision card; order failure; reset or session stop; process review.",
+          "prompt": "Which step occurs before position size?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Reveal outcome",
+              "Choose a target",
+              "Score P&L",
+              "Define maximum risk and invalidation"
+            ],
+            "correctOption": 3,
+            "success": "Risk inputs and invalidation come before quantity.",
+            "correction": "The workflow prevents size and outcome from leading the decision."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Use pause, plan, reveal, review",
+          "body": "Pause at a fixed timestamp. Lock the evidence and decision. Reveal a fixed interval. Compare the later record with the untouched plan. No clicks, live orders, or post-reveal edits are permitted.",
+          "assessment_phase": "instruction"
+        },
+        {
+          "type": "worked_example",
+          "title": "Watch one model case",
+          "body": "Open GUIDE-01 in the neutral key-free packet released by the facilitator and follow the facilitator walkthrough. The case fails because the quote is stale and the spread exceeds its calibrated gate. The completed decision is WAIT. Later price movement does not repair the pre-reveal data and execution failures.",
+          "prompt": "How should the model be scored?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Correct process if the saved gates supported wait",
+              "Wrong because price rose",
+              "Incomplete because no trade occurred",
+              "Profitable because the move was predicted"
+            ],
+            "correctOption": 0,
+            "success": "A supported wait is a complete decision.",
+            "correction": "Outcome does not override the pre-reveal evidence."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Walk through GUIDE-01",
+          "body": "Use the supplied learner packet, response template, reveal window, and facilitator key. The facilitator may model where to find evidence and how to cite it. GUIDE-01 is a demonstration and does not count as independent mastery."
+        },
+        {
+          "type": "transfer",
+          "title": "Complete coached case GUIDE-02",
+          "body": "Use the changed symbol, session, and partial-fill conditions in GUIDE-02. The coach may identify a missing field but may not provide a value or decision. Lock the response before reveal.",
+          "prompt": "What should remain unchanged?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Exact thresholds",
+              "The evidence-to-review workflow",
+              "The expected direction",
+              "The share quantity"
+            ],
+            "correctOption": 1,
+            "success": "The workflow transfers; market inputs are rebuilt.",
+            "correction": "Do not copy prices, thresholds, or outcomes between cases."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Lock both artifacts",
+          "body": "Each case must have a stable case ID, timestamp, original evidence record, original decision card, fixed reveal window, rubric scores with artifact citations, and one correction.",
+          "assessment_phase": "independent_performance"
+        },
+        {
+          "type": "transfer",
+          "title": "Route one weak dimension",
+          "body": "Choose the lowest rubric dimension and return to its specific lesson. Complete one bounded repair; do not repeat the whole curriculum.",
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Depth before speed",
+          "body": "I will complete two careful no-click cases, including a supported wait or no trade, before moving to independent assessment."
+        }
+      ],
+      "mastery_criteria": [
+        "Completes the full chain before reveal",
+        "Preserves the original evidence and decision artifacts",
+        "Includes at least one supported wait or no trade",
+        "Recalculates context-specific values in the second case",
+        "Routes one weak dimension to a specific lesson"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 2,
+        "minimum_successful_cases": 2,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Preserve the failed independent artifact, repair the lowest dimension, and use one unopened equivalent form. Additional attempts require a facilitator-created parallel form; no opened case may be reused."
+      },
+      "curriculum_role": "assessment",
+      "session_blocks": [
+        {
+          "title": "Calibration",
+          "minutes": 10,
+          "focus": "Recall the complete evidence-to-review chain."
+        },
+        {
+          "title": "Model form",
+          "minutes": 18,
+          "focus": "Observe a fixed-reveal decision without using the outcome to score process."
+        },
+        {
+          "title": "Coached form",
+          "minutes": 18,
+          "focus": "Receive location prompts but no values or decision labels."
+        },
+        {
+          "title": "Independent secure form",
+          "minutes": 20,
+          "focus": "Complete and lock a full artifact without coaching."
+        },
+        {
+          "title": "Score and route",
+          "minutes": 4,
+          "focus": "Cite evidence and assign a fresh remediation form only when needed."
+        },
+        {
+          "title": "Delayed secure form",
+          "minutes": 18,
+          "focus": "Complete a new changed-context form on a later date."
+        },
+        {
+          "title": "Retention record",
+          "minutes": 2,
+          "focus": "Record delayed score and evidence."
+        }
+      ],
+      "sources": [
+        {
+          "title": "Investor.gov — Types of Orders",
+          "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work/types-orders",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "CAST — Universal Design for Learning Guidelines 3.0",
+          "url": "https://udlguidelines.cast.org/more/about-guidelines-3-0/",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-guided-replay",
+      "time_model": {
+        "required_instruction_and_initial_minutes": 70,
+        "required_delayed_retention_minutes": 20,
+        "conditional_remediation_minutes_per_form": 22
+      },
+      "delivery_schedule": [
+        "Date 1: GUIDE-01 model, GUIDE-02 coached, V7-GUIDE-A independent",
+        "Date 2: V7-GUIDE-T retention",
+        "Conditional: V7-GUIDE-R"
+      ],
+      "mastery_evidence": [
+        "V7-GUIDE-A independent original",
+        "V7-GUIDE-T delayed original",
+        "V7-GUIDE-R only when routed"
+      ],
+      "assessment_administration": {
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    },
+    {
+      "lesson_id": "v7-independent-capstone",
+      "version": "7.1.0",
+      "title": "Complete the independent no-click capstone",
+      "skill_ids": [
+        "TR-001",
+        "TR-002",
+        "AC-002",
+        "RM-004",
+        "VC-001",
+        "TP-003",
+        "OE-006",
+        "PB-006"
+      ],
+      "objective": "Across three dates, complete a balanced fixed-reveal simulation blueprint: one valid proceed, one valid wait, one valid no-trade short decision, one operational stop, and one delayed transfer case. Preserve originals and earn facilitator-scored evidence only on dimensions the case actually supplies.",
+      "estimated_minutes": 200,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "State the assessment rules",
+          "body": "Cases must be selected without outcome knowledge. The timestamp and reveal window are fixed. The original response remains unchanged. Every rubric score cites an artifact. Profit and prediction accuracy do not determine mastery.",
+          "prompt": "Which action invalidates a capstone case?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Choosing wait",
+              "Marking a dimension not scorable",
+              "Editing the trigger after reveal",
+              "Using a changed symbol"
+            ],
+            "correctOption": 2,
+            "success": "Post-reveal editing destroys the independent evidence.",
+            "correction": "Preserve the original response and route the gap forward."
+          }
+        },
+        {
+          "type": "explanation",
+          "title": "Use four cases over at least two dates",
+          "body": "Session A uses V7-CAP-A and V7-CAP-B. Session B, on a later date, uses V7-CAP-C and V7-CAP-D. Each session includes setup, two cases, and scoring. The four packets vary direction, session, liquidity, account constraint, data quality, and operational risk. At least one correct decision is wait or no trade.",
+          "assessment_phase": "instruction"
+        },
+        {
+          "type": "worked_example",
+          "title": "Inspect the artifact checklist, not a solved case",
+          "body": "Use templates/case-response.md and templates/process-review-rubric.md. Required artifacts are listed, but no answer values appear in the learner packet. The facilitator key stays separate until every response in the session is locked."
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-CAP-A and V7-CAP-B",
+          "body": "Session A: complete V7-CAP-A and V7-CAP-B from the learner bank. Allow 16 minutes per case and 8 minutes for setup and artifact checks. Stop if data, platform, order, or position state becomes unreliable.",
+          "assessment_phase": "independent_performance"
+        },
+        {
+          "type": "transfer",
+          "title": "Change the operating context",
+          "body": "One case must use a different session or account constraint. One must contain a partial-fill, halt, stale-data, or borrow complication. Rebuild all affected fields.",
+          "prompt": "What is required when context changes?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Copy the old thresholds",
+              "Keep the same order type",
+              "Keep the same confidence",
+              "Rebuild market-specific and account-specific values while preserving the workflow"
+            ],
+            "correctOption": 3,
+            "success": "Transfer means stable process with rebuilt inputs.",
+            "correction": "Do not reuse stale thresholds or execution assumptions."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Complete cases V7-CAP-C and V7-CAP-D later",
+          "body": "Session B: on a later date, complete V7-CAP-C and V7-CAP-D without the model or coaching. Allow 16 minutes per case and 13 minutes for scoring and remediation routing. Keep all four originals and separate revisions.",
+          "assessment_phase": "independent_performance"
+        },
+        {
+          "type": "transfer",
+          "title": "Apply the mastery rubric",
+          "body": "A case passes when all required artifacts exist, no post-reveal editing occurred, risk and stop rules were followed, and the facilitator score reaches level 2 on every applicable dimension. Not scorable is honest but does not satisfy a required capstone dimension. Three of four cases must pass, including at least one supported wait or no-trade decision.",
+          "assessment_phase": "review",
+          "prompt": "What does not count toward mastery?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "A profitable case whose plan was edited after reveal",
+              "A supported no-trade case",
+              "A losing case with strong process",
+              "A case with an honest not-scorable dimension"
+            ],
+            "correctOption": 0,
+            "success": "Outcome cannot rescue contaminated assessment evidence.",
+            "correction": "Mastery depends on locked evidence and process, not profit."
+          }
+        },
+        {
+          "type": "commitment",
+          "title": "Preserve evidence, then decide what comes next",
+          "body": "I will use capstone results to choose targeted practice. I will not treat completion, simulated profit, or self-entered case counts as permission for live trading."
+        }
+      ],
+      "mastery_criteria": [
+        "Completes four outcome-hidden cases across at least two dates",
+        "Preserves stable case IDs and untouched pre-reveal artifacts",
+        "Includes at least one supported wait or no trade",
+        "Transfers the workflow across changed market, account, and execution conditions",
+        "Cites evidence for every rubric score and routes weak dimensions"
+      ],
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 5,
+        "minimum_successful_cases": 4,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 3,
+        "remediation": "Pass four secure integrated forms across at least two dates, including one facilitator-designated proceed-capable form and one fail-closed form. No specific case ID is mandatory. Replace any failed or exposed form with an unopened active v7 equivalent or a validated generated parallel form."
+      },
+      "curriculum_role": "assessment",
+      "session_blocks": [
+        {
+          "title": "Session A security check",
+          "minutes": 10,
+          "focus": "Verify packet hashes, accommodations, and contamination controls."
+        },
+        {
+          "title": "Secure integrated form A",
+          "minutes": 30,
+          "focus": "Complete the full applicable workflow without an outcome label."
+        },
+        {
+          "title": "Secure integrated form B",
+          "minutes": 30,
+          "focus": "Complete a second integrated workflow under changed conditions."
+        },
+        {
+          "title": "Session A scoring",
+          "minutes": 10,
+          "focus": "Score applicable dimensions and preserve originals."
+        },
+        {
+          "title": "Session B security check",
+          "minutes": 10,
+          "focus": "Confirm new packets and no prior key access."
+        },
+        {
+          "title": "Secure integrated form C",
+          "minutes": 30,
+          "focus": "Complete a third integrated workflow without coaching."
+        },
+        {
+          "title": "Secure integrated form D",
+          "minutes": 30,
+          "focus": "Complete a fourth integrated workflow without coaching."
+        },
+        {
+          "title": "Session B scoring",
+          "minutes": 10,
+          "focus": "Double-score and adjudicate any pass/fail difference."
+        },
+        {
+          "title": "Delayed secure transfer form",
+          "minutes": 30,
+          "focus": "Complete a fresh integrated form after at least seven days."
+        },
+        {
+          "title": "Retention scoring",
+          "minutes": 10,
+          "focus": "Confirm transfer, form exposure, and certification rule."
+        }
+      ],
+      "sources": [
+        {
+          "title": "FINRA Rule 2270 — Day-Trading Risk Disclosure Statement",
+          "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/2270",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "Investor.gov — Types of Orders",
+          "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work/types-orders",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "SEC — Key Points About Regulation SHO",
+          "url": "https://www.sec.gov/investor/pubs/regsho.htm",
+          "last_verified": "2026-07-23"
+        },
+        {
+          "title": "CAST — Universal Design for Learning Guidelines 3.0",
+          "url": "https://udlguidelines.cast.org/more/about-guidelines-3-0/",
+          "last_verified": "2026-07-23"
+        }
+      ],
+      "materials_index": "START-HERE.html#v7-independent-capstone",
+      "time_model": {
+        "required_two_session_capstone_minutes": 160,
+        "required_delayed_retention_minutes": 40,
+        "conditional_remediation_minutes_per_form": 30
+      },
+      "delivery_schedule": [
+        "Date 1: two neutral secure integrated forms",
+        "Date 2: two new neutral secure integrated forms",
+        "Date 3: one delayed neutral secure transfer form",
+        "Conditional: unopened equivalent forms selected from the facilitator-only equivalence map or created under protocol"
+      ],
+      "mastery_evidence": [
+        "Four locked active-v7 secure integrated-form originals across at least two dates",
+        "One delayed active-v7 secure transfer original",
+        "Facilitator-only equivalence-class confirmation",
+        "Dimension-level double scores and adjudication record when required"
+      ],
+      "assessment_administration": {
+        "key_separation": "Facilitator-only keys; release one neutral key-free packet at a time.",
+        "packet_release": "Do not distribute the full secure bank. Record learner ID, case ID, packet SHA-256, and release time in secure-form-register.csv.",
+        "replacement_policy": "An opened, failed, or publicly exposed form is never reused. Assign an unopened equivalent form or create one under the controlled parallel-form protocol.",
+        "active_case_bank": "Facilitator active v7 bank only; retired v6-derived forms may be used for practice but never mastery."
+      }
+    }
+  ],
+  "sources": [
+    {
+      "title": "FINRA Regulatory Notice 26-10 — New Intraday Margin Standards",
+      "url": "https://www.finra.org/rules-guidance/notices/26-10",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "FINRA Regulatory Notice 26-11 — Intraday Margin Implementation Guidance",
+      "url": "https://www.finra.org/rules-guidance/notices/26-11",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "FINRA — Frequent Intraday Trading: Understanding the Basics",
+      "url": "https://www.finra.org/investors/insights/frequent-intraday-trading",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "FINRA Rule 4210 — Margin Requirements",
+      "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/4210",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "FINRA — Understanding Settlement Cycles",
+      "url": "https://www.finra.org/investors/insights/understanding-settlement-cycles",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "Investor.gov — Trading in Cash Accounts",
+      "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/updated-9",
+      "last_verified": "2026-07-23",
+      "currency_note": "Use for cash-account payment concepts only. Example settlement weekdays may predate T+1. Use current FINRA settlement-cycle guidance for date arithmetic."
+    },
+    {
+      "title": "FINRA — Brokerage Accounts",
+      "url": "https://www.finra.org/investors/investing/investment-accounts/brokerage-accounts",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "FINRA — Investing in Fractional Shares",
+      "url": "https://www.finra.org/investors/insights/investing-fractional-shares",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "Investor.gov — Types of Orders",
+      "url": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work/types-orders",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "Investor.gov — Stop, Stop-Limit, and Trailing Stop Orders",
+      "url": "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-15",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "FINRA — Extended-Hours Trading: Know the Risks",
+      "url": "https://www.finra.org/investors/insights/extended-hours-trading",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "FINRA — Trading Halts, Delays and Suspensions",
+      "url": "https://www.finra.org/investors/investing/investment-products/stocks/trading-halts-delays-suspensions",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "Investor.gov — Stock Market Circuit Breakers",
+      "url": "https://www.investor.gov/introduction-investing/investing-basics/glossary/stock-market-circuit-breakers",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "SEC — Key Points About Regulation SHO",
+      "url": "https://www.sec.gov/investor/pubs/regsho.htm",
+      "last_verified": "2026-07-23",
+      "currency_note": "Use for Regulation SHO concepts and verify current rule text. Any settlement-cycle example that says T+2 is historical; use current T+1 guidance for settlement arithmetic."
+    },
+    {
+      "title": "SEC — Short Sale Price Test Restrictions (Rule 201)",
+      "url": "https://www.sec.gov/files/rules/final/2010/34-61595-secg.htm",
+      "last_verified": "2026-07-23",
+      "currency_note": "Use for Regulation SHO concepts and verify current rule text. Any settlement-cycle example that says T+2 is historical; use current T+1 guidance for settlement arithmetic."
+    },
+    {
+      "title": "FINRA Rule 2270 — Day-Trading Risk Disclosure Statement",
+      "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/2270",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "Bailey et al. — The Probability of Backtest Overfitting",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2326253",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "NIST/SEMATECH — Confidence Intervals and Small Samples",
+      "url": "https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm",
+      "last_verified": "2026-07-23"
+    },
+    {
+      "title": "CAST — Universal Design for Learning Guidelines 3.0",
+      "url": "https://udlguidelines.cast.org/more/about-guidelines-3-0/",
+      "last_verified": "2026-07-23"
+    }
+  ],
+  "created_at": "2026-07-24T03:30:00.000Z",
+  "scope_boundary": {
+    "included": [
+      "Simulation-only U.S. listed stocks and ETFs",
+      "U.S. brokerage-account workflows",
+      "Evidence, risk, eligibility, order, and review discipline"
+    ],
+    "excluded": [
+      "Options",
+      "Futures",
+      "Forex",
+      "Cryptoassets",
+      "Tax advice",
+      "Non-U.S. regulation",
+      "Live trade signals",
+      "Personalized investment recommendations"
+    ],
+    "certification_boundary": "The curriculum may support facilitator-scored simulation mastery. It does not certify live-trading readiness or profitability."
+  },
+  "required_program_minutes": 1245,
+  "conditional_remediation_minutes": "20–30 minutes per fresh form, plus any prerequisite repair; opened forms are never reused.",
+  "assessment_security": {
+    "learner_distribution": "The general learner bundle contains open practice only. Scored assessment, remediation, retention, and capstone packets are released individually by a facilitator.",
+    "outcome_hiding": "Learner packets omit outcome classes, blueprint tags, accepted decisions, reveal material, and answer-bearing titles.",
+    "replacement_forms": "Any failed or exposed form may be replaced by an unopened equivalent form selected from the secure bank or created under the controlled parallel-form protocol.",
+    "certification_boundary": "Certification requires facilitator-scored artifacts; app completion and learner-entered scores are not certification evidence.",
+    "public_exposure_rule": "All previously distributed v6-derived scored forms are retired and excluded from active mastery. Active secure forms use new IDs and fresh records."
+  }
+}

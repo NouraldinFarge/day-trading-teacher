@@ -1,0 +1,17 @@
+lesson_id,open_practice_cases,secure_initial_cases,secure_remediation_cases,secure_retention_cases,learner_template,facilitator_key
+v7-scope-entry-diagnostic,DIAG-01;DIAG-02,,V7-DIAG-R,V7-DIAG-T1;V7-DIAG-T2,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-evidence-timeline,DEMO-EVID-01,V7-EVID-A;V7-EVID-B,V7-EVID-R,V7-EVID-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-cash-settlement,DEMO-CASH-01,V7-CASH-A;V7-CASH-B,V7-CASH-R,V7-CASH-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-margin-suitability,DEMO-MARG-01,V7-MARG-A;V7-MARG-B,V7-MARG-R,V7-MARG-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-broker-ticket-rules,,V7-BRKR-A;V7-BRKR-B,V7-BRKR-R,V7-BRKR-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-market-data-readiness,DEMO-DATA-01,V7-DATA-A;V7-DATA-B,V7-DATA-R,V7-DATA-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-risk-boundary,DEMO-RISK-01,V7-RISK-A;V7-RISK-B,V7-RISK-R,V7-RISK-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-setup-eligibility,,V7-GATE-A;V7-GATE-B,V7-GATE-R,V7-GATE-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-strategy-evidence,DEMO-TEST-01,V7-TEST-A;V7-TEST-B,V7-TEST-R,V7-TEST-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-decision-card,,V7-PLAN-A;V7-PLAN-B,V7-PLAN-R,V7-PLAN-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-order-failure-modes,,V7-EXEC-A;V7-EXEC-B,V7-EXEC-R,V7-EXEC-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-short-sale-gate,,V7-SHORT-A;V7-SHORT-B,V7-SHORT-R,V7-SHORT-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-reset-session-stop,,V7-RESET-A;V7-RESET-B,V7-RESET-R,V7-RESET-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-process-review,,V7-REVIEW-A;V7-REVIEW-B,V7-REVIEW-R,V7-REVIEW-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-guided-replay,GUIDE-01;GUIDE-02;GUIDE-03,V7-GUIDE-A;V7-GUIDE-B,V7-GUIDE-R,V7-GUIDE-T,templates/case-response.md,facilitator/case-bank-v7-with-keys.md
+v7-independent-capstone,,V7-CAP-A;V7-CAP-B;V7-CAP-C;V7-CAP-D,V7-CAP-R1;V7-CAP-R2,V7-CAP-T1;V7-CAP-T2,templates/case-response.md,facilitator/case-bank-v7-with-keys.md

@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "sample-position-sizing-plan",
+  "version": "1.0.0",
+  "title": "Sample custom position-sizing plan",
+  "origin": {
+    "type": "external_generated",
+    "provider": "ChatGPT",
+    "model": "user-supplied"
+  },
+  "target_skill_ids": ["RM-004"],
+  "prerequisites": ["RM-001", "RM-002"],
+  "lessons": [
+    {
+      "lesson_id": "sample-rm-004-variation",
+      "version": "1.0.0",
+      "title": "Position sizing in a different price range",
+      "skill_ids": ["RM-004"],
+      "objective": "Calculate a whole-share position size while including estimated adverse slippage.",
+      "estimated_minutes": 8,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Attempt before reviewing",
+          "body": "A long plan uses entry 48.20, stop 47.95, maximum risk 40, and slippage 0.03 per share.",
+          "prompt": "Calculate the risk per share and maximum whole-share quantity.",
+          "answer": "Risk is 0.28 per share. The maximum whole-share quantity is 142."
+        },
+        {
+          "type": "transfer",
+          "title": "Explain the constraint",
+          "body": "Explain why rounding up to 143 would violate the stated maximum risk."
+        }
+      ],
+      "mastery_criteria": [
+        "Adds slippage to technical risk",
+        "Rounds quantity down",
+        "Explains why buying power is not the sizing rule"
+      ],
+      "calculation_examples": [
+        {
+          "entry": "48.20",
+          "stop": "47.95",
+          "maximum_risk": "40",
+          "slippage_per_unit": "0.03",
+          "side": "long",
+          "expected_quantity": 142
+        }
+      ]
+    }
+  ],
+  "sources": [],
+  "created_at": "2026-07-16T12:00:00.000Z"
+}

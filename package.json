@@ -1,0 +1,24 @@
+{
+  "name": "day-trading-teacher-workspace",
+  "version": "0.32.0",
+  "private": true,
+  "packageManager": "npm@11.6.0",
+  "workspaces": [
+    "apps/day-trading-teacher/desktop"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @day-trading-teacher/desktop",
+    "build": "npm run build --workspace @day-trading-teacher/desktop",
+    "format": "prettier --write \"apps/day-trading-teacher/desktop/src/**/*.{ts,tsx,css}\" \"apps/day-trading-teacher/desktop/*.{ts,json}\" package.json && cargo fmt --all",
+    "format:check": "prettier --check \"apps/day-trading-teacher/desktop/src/**/*.{ts,tsx,css}\" \"apps/day-trading-teacher/desktop/*.{ts,json}\" package.json && cargo fmt --all --check",
+    "test": "npm run test --workspace @day-trading-teacher/desktop",
+    "test:run": "npm run test:run --workspace @day-trading-teacher/desktop",
+    "verify": "npm run format:check && npm run typecheck --workspace @day-trading-teacher/desktop && npm run test:run --workspace @day-trading-teacher/desktop && npm run build --workspace @day-trading-teacher/desktop && cargo clippy --workspace --all-targets --locked -- -D warnings && cargo test --workspace --locked",
+    "tauri:dev": "npm run tauri:dev --workspace @day-trading-teacher/desktop",
+    "portable:binary": "npm run portable:binary --workspace @day-trading-teacher/desktop",
+    "portable:build": "powershell -NoProfile -ExecutionPolicy Bypass -File ./build/build-portable.ps1"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.5"
+  }
+}

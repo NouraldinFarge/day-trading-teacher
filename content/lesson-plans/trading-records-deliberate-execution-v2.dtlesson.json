@@ -1,0 +1,983 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "trading-records-deliberate-execution-20260717",
+  "version": "3.0.0",
+  "title": "Deliberate Execution: Advanced Trading Records Transfer Lab",
+  "origin": {
+    "type": "external_generated",
+    "provider": "OpenAI Codex",
+    "model": "GPT-5"
+  },
+  "target_skill_ids": [
+    "TR-001",
+    "TR-002",
+    "OE-001",
+    "OE-002",
+    "OE-004",
+    "TP-001",
+    "TP-002",
+    "TP-003",
+    "PB-005",
+    "PB-006",
+    "VC-001",
+    "RM-001",
+    "TF-009"
+  ],
+  "prerequisites": [
+    "OE-003",
+    "OE-005"
+  ],
+  "lessons": [
+    {
+      "lesson_id": "records-20260717-evidence-clock",
+      "version": "3.0.0",
+      "title": "Build the evidence clock",
+      "skill_ids": [
+        "TR-001",
+        "TR-002",
+        "TF-009"
+      ],
+      "objective": "Reconstruct a short trade as a factual timeline and separate known events from assumptions about intent or decision quality.",
+      "estimated_minutes": 30,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "What can two fills prove?",
+          "body": "An export shows a buy fill followed 53 seconds later by a sell fill. Both are market orders.",
+          "prompt": "List three facts this proves and three important facts it does not prove.",
+          "answer": "It proves the order sequence, recorded fill prices, and approximate holding interval. It does not prove the setup, the intended stop, or the reason for exit. Those require a pre-trade plan, chart annotation, or journal note."
+        },
+        {
+          "type": "explanation",
+          "title": "Use three evidence lanes",
+          "body": "Label every review statement as observed, calculated, or reported. Observed means directly present in the export or recording. Calculated means derived from those facts, such as elapsed time. Reported means the trader's contemporaneous explanation. If a claim fits none of the lanes, mark it unknown instead of inventing a story."
+        },
+        {
+          "type": "worked_example",
+          "title": "Reconstruct without hindsight",
+          "body": "Observed: a dollar-denominated market buy, a later fractional-share market sell, and a rapidly changing one-minute chart. Calculated: the position was open for less than two minutes. Unknown: whether the entry had an objective trigger or whether the exit followed a prewritten rule. A profitable result would not fill those evidence gaps."
+        },
+        {
+          "type": "practice",
+          "title": "Write a six-line timeline",
+          "body": "Use this order: context captured, trigger observed, order submitted, fill received, exit condition observed, exit filled. Write unknown beside every missing event.",
+          "prompt": "Why is an explicit unknown more useful than a confident reconstruction made after seeing the result?",
+          "answer": "An explicit unknown identifies the evidence that must be captured next time. A hindsight story can make an unplanned action look planned and prevents accurate process improvement."
+        },
+        {
+          "type": "transfer",
+          "title": "Reconcile the journal with the chart",
+          "body": "Open the Evidence Journal and Chart Replay at the same recorded trade. The execution record can establish submitted and filled events; the chart can add price context at those timestamps. Neither surface can retroactively prove a trigger, stop, or motive that was never recorded.",
+          "prompt": "The chart appears to show a clean breakout at the fill timestamp, but no trigger was recorded before the order. Which review is supported?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The fill and chart context are observed, while the original trigger remains unknown",
+              "The breakout proves the original trigger",
+              "The profitable outcome proves the setup was valid",
+              "The whole trade becomes unreviewable"
+            ],
+            "correctOption": 0,
+            "success": "The two surfaces can confirm timing and context without manufacturing contemporaneous intent.",
+            "correction": "Later chart structure cannot supply a pre-trade reason that the original record did not capture."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Resolve a timestamp conflict",
+          "body": "Suppose the journal says the exit occurred at 10:04:12 while the broker fill says 10:04:19. Preserve both entries, identify their sources, and use the broker execution as the fill time while keeping the seven-second discrepancy visible for follow-up.",
+          "prompt": "What is the strongest response to conflicting timestamps?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Choose the timestamp that makes the plan look most accurate",
+              "Preserve both sources, use the execution record for the fill, and document the discrepancy",
+              "Average the two timestamps and discard the originals",
+              "Use the broker timestamp as the tiebreaker without preserving the recording conflict"
+            ],
+            "correctOption": 1,
+            "success": "Source-aware reconciliation keeps the record auditable and makes the capture problem testable.",
+            "correction": "Do not hide disagreement. Preserve the original evidence and state which source supports each event."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Turn an unknown into a capture rule",
+          "body": "Choose the most consequential unknown in the timeline and specify the smallest pre-decision artifact that would resolve it next time: a locked Decision Card field, a chart timestamp, or a contemporaneous journal note.",
+          "prompt": "The intended stop is unknown after review. Which correction closes that evidence gap without hindsight?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Infer the stop from the lowest later candle",
+              "Use the eventual loss as the intended maximum risk",
+              "Require a locked invalidation field before the next paper decision",
+              "Skip all future reviews of losing trades"
+            ],
+            "correctOption": 2,
+            "success": "A pre-decision invalidation record creates the missing evidence at the point where it matters.",
+            "correction": "Correct the future capture process; do not reconstruct an unrecorded stop from later price action."
+          }
+        },
+        {
+          "type": "commitment",
+          "title": "Leave an audit trail",
+          "body": "For the next replay or paper-trading exercise, I will record the trigger, invalidation, intended exit, and timestamp before acting. Afterward I will compare that record with the fills without changing the original plan."
+        }
+      ],
+      "mastery_criteria": [
+        "Builds a chronological timeline from orders and fills",
+        "Labels observations, calculations, reported intent, and unknowns correctly",
+        "Judges process separately from the trade result"
+      ],
+      "curriculum_role": "extension",
+      "extension_of": "builtin-tr-002",
+      "extension_focus": "Resolve conflicting clocks, missing intent, partial evidence, and position states across six unfamiliar records.",
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 6,
+        "minimum_successful_cases": 5,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Reconcile the two least complete timelines in the Evidence Journal and retry new records without choosing the more convenient timestamp."
+      }
+    },
+    {
+      "lesson_id": "records-20260717-execution-friction",
+      "version": "3.0.0",
+      "title": "Price the market-order decision",
+      "skill_ids": [
+        "OE-001",
+        "OE-002",
+        "OE-004"
+      ],
+      "objective": "Estimate visible execution friction and choose deliberately among a market order, a limit order, waiting, or taking no trade.",
+      "estimated_minutes": 34,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Measure before choosing",
+          "body": "A quote snapshot shows a $20.34 bid and $20.67 ask.",
+          "prompt": "What is the visible spread, and approximately what percentage of the midpoint does it represent?",
+          "answer": "The spread is $0.33. The midpoint is $20.505, so the spread is about 1.61% of the midpoint. The snapshot is context, not proof of the quote at an earlier fill."
+        },
+        {
+          "type": "explanation",
+          "title": "Market means price uncertainty",
+          "body": "A market order prioritizes execution, not a specific price. On a fast one-minute chart, the displayed quote can change before the order reaches the market. A limit order adds a price boundary but may not fill. Waiting and taking no trade are also complete execution choices."
+        },
+        {
+          "type": "worked_example",
+          "title": "Compare friction with the plan",
+          "body": "If the visible spread is $0.33 per share and the planned invalidation is only $0.25 away, the displayed crossing cost is already larger than the chart-defined risk distance. That does not prescribe an order, but it requires the trader to reconsider eligibility, size, or price control before acting."
+        },
+        {
+          "type": "practice",
+          "title": "Use the four-door decision",
+          "body": "For a historical quote, write one condition that would support each door: market, limit, wait, and no trade. Include liquidity, urgency, maximum acceptable price, and the consequence of no fill.",
+          "prompt": "Which door is automatically correct whenever a symbol is moving quickly?",
+          "answer": "None. Speed alone does not determine the order. The choice depends on the plan, liquidity, spread, price tolerance, and whether remaining unfilled is acceptable."
+        },
+        {
+          "type": "practice",
+          "title": "Write the execution behavior before the ticket",
+          "body": "In the Decision Card, state the intended order type, maximum acceptable price or spread, what happens after a partial fill, what happens after no fill, and which change cancels the attempt. The order label alone is not an execution plan.",
+          "prompt": "Which execution note is complete enough to audit?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Use a limit and adjust if necessary",
+              "Buy quickly because the candle is moving",
+              "Choose the order after seeing whether price continues",
+              "Use a limit at or below the written boundary; do not chase after no fill; recalculate risk after any partial fill"
+            ],
+            "correctOption": 3,
+            "success": "The note defines price control, no-fill behavior, and partial-fill handling before outcome information arrives.",
+            "correction": "An auditable execution plan states boundaries and responses, not merely an order type."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Handle a partial fill without doubling risk",
+          "body": "A limit order fills only part of the planned quantity while price moves away. Treat the filled quantity as the current position, recalculate actual exposure, and follow the prewritten partial-fill rule. Do not replace the missing shares with a market order unless that behavior and its risk were already allowed.",
+          "prompt": "What should happen first after an unexpected partial fill?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Recalculate exposure and apply the prewritten partial-fill rule",
+              "Send a market order for the remainder before price escapes",
+              "Move the stop farther away to preserve the setup",
+              "Keep using the intended quantity for risk decisions until the remaining order completes"
+            ],
+            "correctOption": 0,
+            "success": "Risk is based on the position that actually exists, and the response stays inside the earlier plan.",
+            "correction": "A partial fill changes exposure. Recalculate before taking any additional execution action."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Review friction without inventing the quote",
+          "body": "In the Evidence Journal, compare the intended price boundary with the actual fill and any saved quote or chart timestamp. If the exact contemporaneous quote is unavailable, report fill-versus-plan difference and label spread or slippage attribution as uncertain.",
+          "prompt": "The fill was $0.18 worse than the planned reference, but no quote snapshot exists. Which conclusion is supported?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Exactly $0.18 was slippage",
+              "The fill differed by $0.18; the portions caused by spread, delay, or movement remain uncertain",
+              "The broker manipulated the order",
+              "Execution quality cannot be reviewed at all"
+            ],
+            "correctOption": 1,
+            "success": "The review measures the known difference while preserving uncertainty about its causes.",
+            "correction": "Do not label the entire difference as slippage unless the necessary quote evidence was captured."
+          }
+        },
+        {
+          "type": "commitment",
+          "title": "Quote before click",
+          "body": "Before every simulated order, I will record bid, ask, spread, intended order type, maximum acceptable price, and the reason that waiting or skipping is not better."
+        }
+      ],
+      "mastery_criteria": [
+        "Calculates spread in dollars and relative terms",
+        "Explains the failure mode of market and limit orders",
+        "Treats waiting and no trade as valid decisions"
+      ],
+      "curriculum_role": "extension",
+      "extension_of": "builtin-oe-006",
+      "extension_focus": "Compare changing spread, displayed liquidity, partial fills, dollar orders, and no-fill tradeoffs across six execution conditions.",
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 6,
+        "minimum_successful_cases": 5,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Replay the weakest execution case with a partial-fill branch and a changed-liquidity branch, then explain the accepted failure mode."
+      }
+    },
+    {
+      "lesson_id": "records-20260717-fast-mover-gate",
+      "version": "3.0.0",
+      "title": "Turn a fast mover into an eligibility test",
+      "skill_ids": [
+        "VC-001",
+        "PB-005",
+        "TP-001",
+        "TP-002"
+      ],
+      "objective": "Convert excitement on a sharply moving chart into a written eligibility test with a trigger, invalidation, and no-trade conditions.",
+      "estimated_minutes": 34,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Movement is not a setup",
+          "body": "A symbol is up more than 30%, candles are large, and volume is elevated.",
+          "prompt": "Which details describe market context, and what evidence is still missing before an entry can be planned?",
+          "answer": "The percentage move, candle range, and volume describe context. A planned entry still needs a named setup, objective trigger, structural invalidation, acceptable spread and liquidity, exit logic, and no-trade conditions."
+        },
+        {
+          "type": "explanation",
+          "title": "Replace urgency with a gate",
+          "body": "An eligibility gate is a short checklist evaluated before the ticket opens. It protects against converting visible movement into permission. A gate should include structure, extension, spread, liquidity, catalyst uncertainty, and the distance to invalidation."
+        },
+        {
+          "type": "worked_example",
+          "title": "Write observable conditions",
+          "body": "Weak: enter if it looks strong. Testable: on a historical replay, price must consolidate for a defined period, the trigger level must be written, spread must remain below the preset threshold, and a close through the invalidation level cancels the idea. This is practice structure, not a live recommendation."
+        },
+        {
+          "type": "practice",
+          "title": "Build a six-part gate",
+          "body": "For a paused historical chart, complete: setup name, trigger, invalidation, maximum spread, time-based failure, and no-trade condition.",
+          "prompt": "What should happen if one required field is still vague when price reaches the area of interest?",
+          "answer": "The trade remains ineligible. The trader can keep observing or skip it; price movement does not waive a missing requirement."
+        },
+        {
+          "type": "transfer",
+          "title": "Test the same gate after the chart changes",
+          "body": "Move the replay to a quieter symbol or a later session. Keep the decision logic but recalculate spread, volatility, trigger, and invalidation from the new evidence.",
+          "prompt": "Which part of an eligibility gate should transfer unchanged to a different symbol?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The exact trigger and stop prices",
+              "The expected percentage gain",
+              "The requirement for objective trigger, invalidation, and fail-closed evidence",
+              "The number of candles in every setup"
+            ],
+            "correctOption": 2,
+            "success": "The decision standard transfers; thresholds must be recalculated from the new evidence.",
+            "correction": "Carry the structure of the gate forward, not stale prices or volatility assumptions."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Make the gate fail closed",
+          "body": "Use the Decision Card to state what happens when spread widens, the trigger fires without liquidity, price is already extended, or the time window expires. Each missing or failed requirement should resolve to wait or no trade rather than discretionary permission.",
+          "prompt": "Price crosses the trigger, but spread is above the written maximum. What does a fail-closed gate require?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Enter with fewer shares because the trigger fired",
+              "Switch to a market order before the move continues",
+              "Keep the spread rule but evaluate it only after the trigger fires",
+              "Keep the idea ineligible until all required conditions are satisfied"
+            ],
+            "correctOption": 3,
+            "success": "A trigger is one requirement, not permission to ignore a failed liquidity boundary.",
+            "correction": "When any required gate field fails, the decision remains wait or no trade."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Audit the gate after the outcome",
+          "body": "In the Evidence Journal, compare the locked gate with the recorded execution and chart timestamp. Score eligibility using only pre-decision fields. A profitable outcome does not cure a missing trigger, excessive spread, or stale invalidation.",
+          "prompt": "An unplanned entry becomes profitable after the fact. How should eligibility be scored?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Ineligible if the required pre-decision gate was incomplete",
+              "Eligible because price confirmed the idea later",
+              "Partly eligible because the outcome was favorable",
+              "Unscorable because profitable trades do not need review"
+            ],
+            "correctOption": 0,
+            "success": "Eligibility is judged at the decision time, independently of the later outcome.",
+            "correction": "Later profit cannot retroactively complete a missing pre-trade requirement."
+          }
+        },
+        {
+          "type": "commitment",
+          "title": "Open the plan before the ticket",
+          "body": "I will not open an order ticket until the eligibility gate is complete. If urgency rises while a field is missing, I will pause the replay instead of filling the blank with a guess."
+        }
+      ],
+      "mastery_criteria": [
+        "Separates volatility context from setup evidence",
+        "Writes an objective trigger and structural invalidation",
+        "Uses missing evidence as a no-trade condition"
+      ],
+      "curriculum_role": "extension",
+      "extension_of": "builtin-vc-001",
+      "extension_focus": "Calibrate passing, borderline, and failing gates across quiet, opening, fast, and deteriorating liquidity conditions.",
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 6,
+        "minimum_successful_cases": 5,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Compare one passing and two borderline gates, identify the unsupported threshold, and retry under a different volatility regime."
+      }
+    },
+    {
+      "lesson_id": "records-20260717-reentry-reset",
+      "version": "3.0.0",
+      "title": "Make every re-entry earn independence",
+      "skill_ids": [
+        "PB-006",
+        "TP-001",
+        "TR-001"
+      ],
+      "objective": "Use a reset between rapid attempts so each re-entry has new evidence, a new plan, and an auditable reason to exist.",
+      "estimated_minutes": 30,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "New click or new decision?",
+          "body": "A position closes and another order in the same symbol is submitted less than a minute later.",
+          "prompt": "What evidence would show that the second attempt is independent rather than an emotional continuation?",
+          "answer": "The second attempt needs a newly stated setup, trigger, invalidation, exit plan, and reason the prior exit does not invalidate the new thesis. A new timestamp alone does not make it independent."
+        },
+        {
+          "type": "explanation",
+          "title": "Decision compression hides missing steps",
+          "body": "Repeated orders can compress observe, plan, execute, and review into one loop. The purpose of a reset is not delay for its own sake; it is to restore the evidence steps that speed can remove."
+        },
+        {
+          "type": "worked_example",
+          "title": "Use a 90-second evidence reset",
+          "body": "Step away from the ticket, record the prior result without judging it, mark the current structure, write what changed, and rebuild the full eligibility gate. If the only new fact is a desire to recover or repeat the outcome, the re-entry is not independent."
+        },
+        {
+          "type": "practice",
+          "title": "Score independence",
+          "body": "Give one point each for a new trigger, new invalidation, new exit plan, new context evidence, and a stated reason the previous attempt ended. Require all five points in replay practice.",
+          "prompt": "Why should a profitable previous trade still require the reset?",
+          "answer": "Profit can increase urgency and overconfidence just as a loss can increase frustration. The reset protects decision quality regardless of the previous outcome."
+        },
+        {
+          "type": "practice",
+          "title": "Separate changed evidence from changed emotion",
+          "body": "At the second chart timestamp, list only what changed in price structure, liquidity, trigger quality, and invalidation. Record frustration, excitement, or urgency separately in the journal; an emotion can explain internal state but cannot serve as setup evidence.",
+          "prompt": "Which item can support an independent re-entry?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The need to recover the prior loss",
+              "A newly formed structure with a fresh trigger and invalidation",
+              "Confidence after the previous win",
+              "Fear that the symbol will move without you"
+            ],
+            "correctOption": 1,
+            "success": "Independence comes from new observable evidence and a complete new decision, not a changed feeling.",
+            "correction": "Name the market evidence that changed; urgency, frustration, and confidence are not triggers."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Build the second Decision Card from zero",
+          "body": "Create a new card instead of editing the previous one. Re-enter the setup, trigger, invalidation, risk, execution behavior, exits, and cancellation conditions from current evidence. If nothing material changed, save a no-trade decision rather than forcing novelty.",
+          "prompt": "Why is duplicating the first plan and changing only the entry price insufficient?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The app does not allow duplicated plans",
+              "A new price automatically needs larger size",
+              "It can carry stale thesis, risk, exit, and context assumptions into a supposedly new decision",
+              "Every re-entry must use a different strategy"
+            ],
+            "correctOption": 2,
+            "success": "Rebuilding exposes whether the entire decision is supported by current evidence.",
+            "correction": "Independence requires every material plan field to be reconsidered, not just the entry."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Practice the reset after both outcomes",
+          "body": "Run the Learning Lab decision drill twice: once after a hypothetical win and once after a loss. Use the same reset order and require the same evidence quality. This prevents outcome-dependent discipline.",
+          "prompt": "When may the five-point reset be shortened?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "After a profitable trade",
+              "When the next candle is moving quickly",
+              "When the prior loss was small",
+              "Never because of outcome or urgency; only end the attempt or complete the full reset"
+            ],
+            "correctOption": 3,
+            "success": "The reset standard stays fixed across wins, losses, and fast price movement.",
+            "correction": "Outcome and urgency do not waive evidence steps. Complete the reset or make no new attempt."
+          }
+        },
+        {
+          "type": "commitment",
+          "title": "Reset before another attempt",
+          "body": "After every exit in replay or paper practice, I will close the ticket and complete the five-point independence check before considering another order in that symbol."
+        }
+      ],
+      "mastery_criteria": [
+        "Explains why a new order is not automatically a new decision",
+        "Completes the five-point re-entry independence check",
+        "Applies the reset after both wins and losses"
+      ],
+      "curriculum_role": "extension",
+      "extension_of": "builtin-pb-006",
+      "extension_focus": "Prove reset independence after a win, loss, missed move, partial fill, and immediate reappearance of the setup.",
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 6,
+        "minimum_successful_cases": 5,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Repeat the reset after three different prior outcomes and repair the first field still anchored to the previous attempt."
+      }
+    },
+    {
+      "lesson_id": "records-20260717-exit-sentence",
+      "version": "3.0.0",
+      "title": "Say the exit before the entry",
+      "skill_ids": [
+        "TP-002",
+        "TP-003",
+        "RM-001"
+      ],
+      "objective": "Write a concise exit sentence that defines invalidation, profit logic, time failure, and maximum loss before opening a position.",
+      "estimated_minutes": 34,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Name four exits",
+          "body": "A complete plan can include structural invalidation, planned profit-taking, time-based failure, and a hard maximum-loss boundary.",
+          "prompt": "Why are these four ideas not interchangeable?",
+          "answer": "They answer different questions: when the thesis is wrong, when reward is realized, when expected movement failed to occur, and how much loss is allowed. One price cannot always express all four."
+        },
+        {
+          "type": "explanation",
+          "title": "Exit because evidence changed",
+          "body": "A structural exit refers to observable evidence, not discomfort. A time exit prevents a very short thesis from becoming an indefinite hold. A maximum-loss boundary limits damage but does not replace the chart-based invalidation used to size the position."
+        },
+        {
+          "type": "worked_example",
+          "title": "Use one sentence",
+          "body": "In historical replay: I exit if price closes through the defined structure, if the planned objective is reached under the written rule, if the expected move does not begin within the stated window, or if the maximum loss boundary is reached first. Exact levels must come from the paused historical chart and risk policy."
+        },
+        {
+          "type": "practice",
+          "title": "Repair an incomplete exit",
+          "body": "Rewrite this plan: I will sell when it feels weak. Add observable structure, a time condition, and the maximum acceptable loss.",
+          "prompt": "What should happen if the exit sentence cannot be completed before the replay resumes?",
+          "answer": "The entry remains unavailable. A missing exit is a planning failure, not a reason to improvise after exposure begins."
+        },
+        {
+          "type": "practice",
+          "title": "Build the four-part exit architecture",
+          "body": "In the Decision Card, write separate clauses for thesis invalidation, planned reward realization, time failure, and the hard loss boundary. Then state which clause takes priority if more than one becomes true together.",
+          "prompt": "Which plan correctly separates exit functions?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Define structural invalidation, reward logic, a time window, and a hard loss boundary as distinct clauses",
+              "Exit whenever the position feels uncomfortable",
+              "Use one target price for invalidation, time failure, and maximum loss",
+              "Choose exits after observing whether the trade is profitable"
+            ],
+            "correctOption": 0,
+            "success": "Distinct clauses prevent one vague price or feeling from carrying four different responsibilities.",
+            "correction": "Name each exit function separately and tie it to observable evidence or a preset boundary."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Recalculate quantity from invalidation",
+          "body": "Use the Risk Lab after selecting structural invalidation on the paused chart. Include slippage per unit and round quantity down. If the resulting quantity is impractical or zero, the correct result can be no trade; buying power does not expand the risk boundary.",
+          "prompt": "The planned quantity exceeds maximum risk after slippage is included. Which input should be changed first?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Move the structural stop closer until the quantity fits",
+              "Reduce quantity or decline the attempt",
+              "Raise maximum risk because the setup looks strong",
+              "Size from technical distance alone and reserve slippage for the post-trade review"
+            ],
+            "correctOption": 1,
+            "success": "Quantity adapts to the evidence-based stop and preset risk, not the other way around.",
+            "correction": "Preserve structural invalidation and the fixed loss boundary; reduce size or make no trade."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Replay the exits before evaluating them",
+          "body": "Hide future bars and read the full exit sentence before resuming. At each new bar, identify whether any clause became true. Record the first valid clause without moving levels to match later price action, then compare that decision with the journaled execution.",
+          "prompt": "Price nearly reaches the objective, then reverses through structural invalidation before the time window ends. Which clause governs?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Keep waiting because the time window remains",
+              "Delay the structural exit until the candle closes because price was close to the objective",
+              "Apply the prewritten structural invalidation when it becomes true",
+              "Move invalidation below the reversal so the plan can recover"
+            ],
+            "correctOption": 2,
+            "success": "The earlier prewritten invalidation remains binding even when another favorable condition almost occurred.",
+            "correction": "An unmet objective does not cancel a triggered invalidation clause."
+          }
+        },
+        {
+          "type": "commitment",
+          "title": "No entry without the sentence",
+          "body": "Before every simulated entry, I will read the full exit sentence aloud. If any clause is vague, I will revise the plan or skip the attempt."
+        }
+      ],
+      "mastery_criteria": [
+        "Distinguishes structural, profit, time, and maximum-loss exits",
+        "Writes observable exit conditions before entry",
+        "Refuses an entry when exit logic is incomplete"
+      ],
+      "curriculum_role": "extension",
+      "extension_of": "builtin-tp-003",
+      "extension_focus": "Expand the exit sentence into invalidation, objective, time failure, gap or halt, partial-fill, and cancellation contingencies.",
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 6,
+        "minimum_successful_cases": 5,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Rewrite the weakest exit plan as separate structural, objective, time, and operational clauses, then test a gap or partial-fill case."
+      }
+    },
+    {
+      "lesson_id": "records-20260717-process-review",
+      "version": "3.0.0",
+      "title": "Review the decision, not the story",
+      "skill_ids": [
+        "TR-001",
+        "TR-002",
+        "TF-009"
+      ],
+      "objective": "Complete a post-trade review that scores evidence quality, rule adherence, and one actionable correction without letting profit or loss dominate the conclusion.",
+      "estimated_minutes": 30,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Separate the axes",
+          "body": "One trade followed every written rule and lost. Another ignored the plan and made money.",
+          "prompt": "How should each trade be classified on the process axis and the outcome axis?",
+          "answer": "The first can be strong process with a losing outcome. The second is weak process with a profitable outcome. Outcome does not repair or erase rule adherence."
+        },
+        {
+          "type": "explanation",
+          "title": "Score only what the record supports",
+          "body": "A review should state data quality first. If trigger, stop, or intent was not recorded before the trade, mark those fields missing and reduce confidence in the process score. Do not reconstruct a perfect plan from the chart after the outcome is known."
+        },
+        {
+          "type": "worked_example",
+          "title": "Use a compact review card",
+          "body": "Record: factual timeline, planned versus actual behavior, process classification, outcome, strongest decision, primary correction, and the evidence supporting each judgment. Choose one correction small enough to test in the next replay."
+        },
+        {
+          "type": "practice",
+          "title": "Write a neutral correction",
+          "body": "Replace a global judgment such as I am bad at exits with one observable next action.",
+          "prompt": "Give an example that can be verified during the next practice session.",
+          "answer": "Before the next replay entry, I will write one structural exit and one time-based exit, then compare the actual exit timestamp with that plan. This is specific and auditable."
+        },
+        {
+          "type": "transfer",
+          "title": "Review a win with equal rigor",
+          "body": "Use the same card for a profitable trade. Look specifically for unplanned size, absent stops, chase entries, or lucky exits that profit might otherwise hide.",
+          "prompt": "A trade ignored the locked stop, added unplanned size, and later closed profitably. How should it be classified?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Acceptable overall process because the directional thesis was right, despite incomplete plan evidence",
+              "Strong process because the trader tolerated volatility",
+              "Not reviewable because winners do not need corrections",
+              "Weak process with a profitable outcome"
+            ],
+            "correctOption": 3,
+            "success": "Process and outcome remain separate axes even when profit makes the violation feel harmless.",
+            "correction": "Classify rule adherence from the recorded behavior; label profitability separately."
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Compare the locked plan with behavior",
+          "body": "Open the original Decision Card beside the journal and chart timestamp. Mark each material field as followed, changed with contemporaneous evidence, violated, or unknown. Do not edit the locked card to improve the score.",
+          "prompt": "The journal claims an exit followed the plan, but the original card has no exit rule. Which label is supported?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Unknown or not scorable for exit adherence because no pre-trade rule exists",
+              "Followed, because the journal says so",
+              "Violated, because every undocumented action is a violation",
+              "Strong process if the exit price was favorable"
+            ],
+            "correctOption": 0,
+            "success": "Adherence requires a pre-existing rule. Missing plan evidence lowers review confidence instead of inviting a story.",
+            "correction": "Do not score adherence to a rule that was never recorded; mark the evidence gap explicitly."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Route one correction to the smallest useful tool",
+          "body": "Choose a single correction and match it to evidence-producing practice: Risk Lab for sizing, Decision Card for missing plan fields, Chart Replay for timing or structure, Evidence Journal for capture and review, or Recall for a forgotten rule.",
+          "prompt": "The primary gap is an unrecorded objective trigger. What is the smallest useful next practice?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Place more paper trades to gain confidence",
+              "Write and lock an objective trigger in a Decision Card before one outcome-hidden replay",
+              "Study the final chart until the ideal entry is obvious",
+              "Increase the number of journal goals"
+            ],
+            "correctOption": 1,
+            "success": "The correction directly creates the missing pre-decision evidence without rewarding activity volume.",
+            "correction": "Route the gap to the tool that produces the missing evidence, and keep the practice bounded."
+          }
+        },
+        {
+          "type": "commitment",
+          "title": "Close the learning loop",
+          "body": "I will not count a practice trade as complete until its timeline, process score, and one next-action correction are recorded."
+        }
+      ],
+      "mastery_criteria": [
+        "Classifies process and outcome independently",
+        "Adjusts review confidence when evidence is missing",
+        "Writes one specific and testable correction"
+      ],
+      "curriculum_role": "extension",
+      "extension_of": "builtin-tf-009",
+      "extension_focus": "Score ambiguous winners and losses with an analytic rubric, preserve not-scorable dimensions, and route one correction.",
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 6,
+        "minimum_successful_cases": 5,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Re-score one winner and one loser without outcome language, then test whether the chosen correction changes a later artifact."
+      }
+    },
+    {
+      "lesson_id": "records-20260717-session-guardrail",
+      "version": "3.0.0",
+      "title": "Build a session stopping rule",
+      "skill_ids": [
+        "RM-001",
+        "PB-006",
+        "TF-009"
+      ],
+      "objective": "Create process-based stopping rules that protect attention and risk without encouraging a target number of trades.",
+      "estimated_minutes": 28,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "What should stop a session?",
+          "body": "A learner has placed several rapid orders and notices that planning steps are becoming shorter.",
+          "prompt": "Name stopping signals based on risk, process quality, and attention rather than a desire to win back money.",
+          "answer": "Examples include reaching the preset daily loss limit, a defined number of rule violations, inability to complete the plan, repeated missing evidence, reduced focus, or failure to complete the reset. None requires a target number of trades."
+        },
+        {
+          "type": "explanation",
+          "title": "Use limits that cannot move intraday",
+          "body": "Risk and process limits should be chosen before the session and remain fixed during it. Raising a limit after losses converts a guardrail into permission. A profitable session can also end when attention or rule adherence deteriorates."
+        },
+        {
+          "type": "worked_example",
+          "title": "Combine three guardrails",
+          "body": "A responsible paper-practice policy might stop new attempts when the preset loss boundary is reached, after two serious rule violations, or when the learner cannot state the trigger and invalidation without looking them up. The first condition reached ends execution practice and begins review."
+        },
+        {
+          "type": "practice",
+          "title": "Write the shutdown routine",
+          "body": "Define a fixed risk boundary, one process-violation boundary, one attention signal, and the exact actions taken when any boundary is reached.",
+          "prompt": "Why should completing lessons or earning XP never require another trade?",
+          "answer": "That would reward volume and could pressure the learner to overtrade. Learning rewards should come from planning, review, retrieval, and rule adherence, including disciplined decisions not to trade."
+        },
+        {
+          "type": "practice",
+          "title": "Keep the guardrail fixed intraday",
+          "body": "Write the session limits before practice and make them read-only once the session begins. If a boundary turns out to be poorly calibrated, finish the session under the existing rule and review the policy later when outcome pressure is absent.",
+          "prompt": "A learner reaches the preset loss boundary early and believes the next setup is unusually strong. What should happen?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Raise the boundary once because the setup looks better",
+              "Take one smaller trade to recover confidence",
+              "End execution practice and begin the written shutdown routine",
+              "Continue until a profitable trade closes the session"
+            ],
+            "correctOption": 2,
+            "success": "A preset boundary remains meaningful only when it ends execution despite current hopes or urgency.",
+            "correction": "Do not renegotiate a stop-work rule under outcome pressure. End execution and review later."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Store the stop-work policy where decisions begin",
+          "body": "Use a Decision Card or session template to record the fixed risk limit, maximum serious rule violations, attention warning, and shutdown steps. Include no-trade conditions that block a new card after the policy fires.",
+          "prompt": "Which policy is process-based rather than volume-seeking?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Stop only after ten trades",
+              "Allow one final qualified setup because the daily loss boundary has not fired, even though the attention boundary has",
+              "Earn more XP by completing one final paper order",
+              "Stop when the fixed risk boundary, rule-violation limit, or attention threshold is reached"
+            ],
+            "correctOption": 3,
+            "success": "Risk, process, and attention boundaries protect decision quality without prescribing trade count or outcome.",
+            "correction": "A responsible stopping rule is triggered by preset safety and process conditions, not a quota or profit goal."
+          }
+        },
+        {
+          "type": "transfer",
+          "title": "Find the first stop-work timestamp",
+          "body": "Review a paper session on the chart and in the journal. Identify the earliest timestamp where any preset boundary became true. Treat later orders as evidence to review, not as additional practice to imitate, and record the exact shutdown action that should have followed.",
+          "prompt": "Two serious rule violations occur before a later profitable trade. If the policy stops after two violations, when did execution practice end?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "At the second serious violation",
+              "After the profitable trade restored the session",
+              "At the daily market close",
+              "Only after the loss boundary was also reached"
+            ],
+            "correctOption": 0,
+            "success": "The first satisfied stop condition ends execution; later outcome does not reopen the session.",
+            "correction": "Apply the earliest triggered boundary exactly as written, independent of what happened afterward."
+          }
+        },
+        {
+          "type": "commitment",
+          "title": "Stop, save, review",
+          "body": "When a stopping rule fires, I will close the ticket, save the evidence, complete one neutral review, and end execution practice for the session."
+        }
+      ],
+      "mastery_criteria": [
+        "Defines fixed risk, process, and attention stopping rules",
+        "Explains why guardrails must not move during a session",
+        "Ends practice without using another trade as a reward"
+      ],
+      "curriculum_role": "extension",
+      "extension_of": "builtin-pb-006",
+      "extension_focus": "Apply the earliest of risk, attention, and process boundaries across competing stop conditions without using a profit target as a quota.",
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 6,
+        "minimum_successful_cases": 5,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Rebuild the session rule with independent risk, attention, and process triggers and apply it to three reordered event sequences."
+      }
+    },
+    {
+      "lesson_id": "records-20260717-replay-lab",
+      "version": "3.0.0",
+      "title": "Run a no-click replay lab",
+      "skill_ids": [
+        "TP-001",
+        "TP-002",
+        "TP-003",
+        "OE-004",
+        "TR-001"
+      ],
+      "objective": "Practice complete trading decisions on historical recordings without placing orders, then score the plan against later evidence.",
+      "estimated_minutes": 50,
+      "sections": [
+        {
+          "type": "retrieval",
+          "title": "Predict before revealing",
+          "body": "Pause a historical recording before the next candle completes.",
+          "prompt": "Which items must be written before you resume playback?",
+          "answer": "Record the setup or no-setup decision, trigger, invalidation, exit logic, spread or liquidity concern, maximum risk, and no-trade conditions. Also record confidence without treating it as proof.",
+          "assessment_phase": "instruction"
+        },
+        {
+          "type": "explanation",
+          "title": "Remove money and preserve the decision",
+          "body": "A no-click replay isolates observation, planning, and review from the stimulation of execution. The goal is not to predict every candle. The goal is to make an auditable decision with the information available at that moment.",
+          "assessment_phase": "instruction"
+        },
+        {
+          "type": "worked_example",
+          "title": "Use pause, plan, reveal, review",
+          "body": "Pause at a decision point, write the complete plan, resume for a fixed interval, then compare later price action with the original plan. Score whether the plan was complete and followed in simulation; do not rewrite it to match what happened.",
+          "assessment_phase": "instruction"
+        },
+        {
+          "type": "practice",
+          "title": "Complete three decisions",
+          "body": "Use three different points from the supplied recordings. At least one decision must be no trade. For each, save the timestamp, plan, reveal window, and process review.",
+          "prompt": "What earns success in this lab?",
+          "answer": "Success is a complete pre-reveal plan, honest treatment of unknowns, consistent rules, and a thoughtful review. Profit, prediction accuracy, and number of simulated trades do not determine success.",
+          "assessment_phase": "independent_performance"
+        },
+        {
+          "type": "transfer",
+          "title": "Change the surface details",
+          "body": "Repeat the lab on a different symbol or session. Keep the workflow identical while recalculating context, spread, trigger, and invalidation from the new frame.",
+          "prompt": "What should remain stable when the replay symbol and session change?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "The exact entry, stop, and target prices",
+              "The evidence-to-plan-to-reveal-to-review workflow",
+              "The expected outcome and confidence rating",
+              "The number of simulated entries"
+            ],
+            "correctOption": 1,
+            "success": "The process transfers while every market-specific input is recalculated from the new frame.",
+            "correction": "Preserve the workflow, not stale thresholds, prices, or predictions."
+          },
+          "assessment_phase": "independent_performance"
+        },
+        {
+          "type": "practice",
+          "title": "Lock the decision before reveal",
+          "body": "At the paused timestamp, save the Decision Card with setup or no-setup, objective trigger, invalidation, maximum risk, quantity, execution behavior, exit architecture, confidence, and cancellation conditions. The card must remain unchanged after replay resumes.",
+          "prompt": "A missing spread limit becomes obvious only after the next bar is revealed. How should the original decision be handled?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Add the spread limit to the original card and score it as complete",
+              "Award partial plan credit and leave the missing field unresolved when the other decision axes pass",
+              "Leave the original incomplete, record the gap, and add the rule only to the next decision",
+              "Restart the replay until the plan looks complete"
+            ],
+            "correctOption": 2,
+            "success": "Preserving the original decision keeps the learning signal honest and routes the gap forward.",
+            "correction": "Never repair a pre-reveal record with post-reveal information; document the gap and improve the next attempt."
+          },
+          "assessment_phase": "independent_performance"
+        },
+        {
+          "type": "transfer",
+          "title": "Close all four workspace loops",
+          "body": "Use Chart Replay for the hidden outcome, the Decision Card for the pre-reveal decision, the Evidence Journal for plan-versus-result review, and the Learning Lab for the smallest weak skill. At least one case must end as a disciplined no-trade decision.",
+          "prompt": "Which result demonstrates successful integration?",
+          "check": {
+            "kind": "single_choice",
+            "options": [
+              "Three profitable paper trades",
+              "A high prediction accuracy score",
+              "Using every chart indicator in one replay",
+              "Complete pre-reveal evidence, consistent rules, honest review, and one valid no-trade case"
+            ],
+            "correctOption": 3,
+            "success": "Integration is demonstrated by an auditable process across the workspaces, not outcome or activity volume.",
+            "correction": "Success is complete evidence and responsible decisions, including no trade—not profit, prediction, or feature count."
+          },
+          "assessment_phase": "review"
+        },
+        {
+          "type": "commitment",
+          "title": "Train before adding speed",
+          "body": "I will complete three high-quality no-click replay decisions and their reviews before considering another execution-practice session.",
+          "assessment_phase": "review"
+        }
+      ],
+      "mastery_criteria": [
+        "Completes a full plan before revealing later price action",
+        "Includes at least one disciplined no-trade decision",
+        "Scores process without rewriting the original plan"
+      ],
+      "curriculum_role": "extension",
+      "extension_of": "builtin-capstone-001",
+      "extension_focus": "Complete a harder six-case assessment with incomplete evidence, changed regimes, fixed reveals, and two eligible wait or no-trade decisions.",
+      "mastery_standard": {
+        "minimum_first_try_correct": 2,
+        "unseen_cases_required": 6,
+        "minimum_successful_cases": 5,
+        "minimum_rubric_level": 2,
+        "retention_practice_dates": 2,
+        "remediation": "Route the lowest rubric dimension to its core lesson, repair one bounded case, and retry a later unseen timestamp without editing prior evidence."
+      },
+      "session_blocks": [
+        {
+          "title": "Calibration",
+          "minutes": 12,
+          "focus": "Retrieve the evidence chain and inspect one model that does not count toward the assessment."
+        },
+        {
+          "title": "Independent assessment",
+          "minutes": 26,
+          "focus": "Complete six fixed-reveal cases with incomplete evidence and at least two eligible wait or no-trade decisions."
+        },
+        {
+          "title": "Review and remediation",
+          "minutes": 12,
+          "focus": "Score the analytic rubric, preserve the original artifacts, and route the lowest dimension."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "Fidelity Trader+ Orders export — 2026-07-16",
+      "last_verified": "2026-07-17"
+    },
+    {
+      "title": "Fidelity Trader+ Orders export — 2026-07-17",
+      "last_verified": "2026-07-17"
+    },
+    {
+      "title": "Four local Fidelity Trader+ screen recordings from 2026-07-16 and 2026-07-17",
+      "last_verified": "2026-07-17"
+    },
+    {
+      "title": "Day-Trading Teacher lesson-plan schema, curriculum guideline 4.1, skill registry, and connected workspace capabilities",
+      "last_verified": "2026-07-21"
+    }
+  ],
+  "created_at": "2026-07-22T00:00:00.000Z"
+}

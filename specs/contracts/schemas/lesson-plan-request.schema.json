@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:day-trading-teacher:lesson-plan-request:1.0",
+  "title": "LessonPlanRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_id", "curriculum_version", "learner_level", "target_skill_ids", "learning_goals", "accessibility_preferences", "requested_lesson_count", "allowed_instruments", "prohibited_content"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "request_id": { "type": "string" },
+    "curriculum_version": { "type": "string" },
+    "learner_level": { "enum": ["beginner", "developing", "advanced"] },
+    "target_skill_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "learning_goals": { "type": "array", "items": { "type": "string" } },
+    "accessibility_preferences": { "type": "object" },
+    "requested_lesson_count": { "type": "integer", "minimum": 1, "maximum": 24 },
+    "allowed_instruments": { "type": "array", "items": { "enum": ["equity", "etf"] } },
+    "prohibited_content": { "type": "array", "items": { "type": "string" } }
+  }
+}

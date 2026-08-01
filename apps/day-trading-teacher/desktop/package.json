@@ -1,0 +1,36 @@
+{
+  "name": "@day-trading-teacher/desktop",
+  "version": "0.32.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 1420",
+    "build": "tsc --noEmit -p tsconfig.app.json && vite build --configLoader runner",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json --pretty false",
+    "test": "vitest --configLoader runner",
+    "test:run": "vitest run --configLoader runner",
+    "tauri:dev": "tauri dev",
+    "portable:binary": "cargo build --manifest-path src-tauri/Cargo.toml --release --features custom-protocol"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.130.2",
+    "@tauri-apps/api": "^2.7.0",
+    "@tauri-apps/plugin-dialog": "^2.7.2",
+    "lucide-react": "^0.525.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.7.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.4",
+    "vitest": "^3.2.4"
+  }
+}

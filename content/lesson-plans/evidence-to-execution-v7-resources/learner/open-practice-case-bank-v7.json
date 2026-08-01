@@ -1,0 +1,1111 @@
+{
+  "schema_version": "1.3",
+  "bank_id": "evidence-to-execution-open-practice-v7",
+  "version": "7.1.1",
+  "scope": "Fictional simulation-only U.S. listed equity and ETF cases.",
+  "instructions": "This public bank contains demonstrations, formative practice, and initial diagnostics only. All previously exposed scored forms are retired. Active assessment, remediation, retention, and capstone packets are released individually by a facilitator.",
+  "cases": [
+    {
+      "case_id": "DIAG-01",
+      "version": "3.0.0",
+      "status": "diagnostic",
+      "form_type": "diagnostic",
+      "lesson_id": "v7-scope-entry-diagnostic",
+      "title": "Read the ticket unit",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A fictional regular-hours ticket and quote are shown before any order action.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "09:42:10",
+            "source": "Quote panel",
+            "fact": "Bid 24.98 x 900; ask 25.02 x 700; quote age 1 second."
+          },
+          {
+            "timestamp": "09:42:12",
+            "source": "Order ticket",
+            "fact": "Symbol SIMA; side Buy; quantity 25; unit shares; order type Limit; limit 25.02; session regular; time in force Day."
+          }
+        ],
+        "decision_point": "09:42:12",
+        "tasks": [
+          "Record all eight ticket fields.",
+          "Calculate spread in dollars and as a percent of midpoint.",
+          "State whether the quantity is dollars or shares.",
+          "Complete and save every item in the Required artifacts checklist. A required artifact that is absent will be scored NS-MISSING."
+        ],
+        "accessible_summary": "A fictional regular-hours ticket and quote are shown before any order action.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "09:42:10",
+                "Quote panel",
+                "Bid 24.98 x 900; ask 25.02 x 700; quote age 1 second."
+              ],
+              [
+                "09:42:12",
+                "Order ticket",
+                "Symbol SIMA; side Buy; quantity 25; unit shares; order type Limit; limit 25.02; session regular; time in force Day."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "calculation work",
+          "source-labeled timeline or evidence table",
+          "unknown/conflict list"
+        ],
+        "submission_checklist": [
+          {
+            "artifact": "calculation work",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "source-labeled timeline or evidence table",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "unknown/conflict list",
+            "completed": false,
+            "evidence_location": ""
+          }
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "72c601e99c1c11eac394e8965d563a9e5e7fe72cb169e0eaeeb77f5b26e538d7"
+    },
+    {
+      "case_id": "DIAG-02",
+      "version": "3.0.0",
+      "status": "diagnostic",
+      "form_type": "diagnostic",
+      "lesson_id": "v7-scope-entry-diagnostic",
+      "title": "Risk per share and course scope",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A fictional long plan uses entry 20.00, stop 19.60, execution allowance 0.05, and maximum planned loss 18.00.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "10:00:00",
+            "source": "Decision worksheet",
+            "fact": "Entry 20.00; invalidation 19.60; allowance 0.05; maximum planned loss 18.00."
+          },
+          {
+            "timestamp": "10:00:05",
+            "source": "Course scope card",
+            "fact": "Simulation-only U.S. listed stocks and ETFs; excluded: options, futures, forex, cryptoassets, taxes, non-U.S. rules, live signals."
+          }
+        ],
+        "decision_point": "10:00:05",
+        "tasks": [
+          "Calculate technical and planned risk per share.",
+          "Calculate whole-share quantity.",
+          "Name two excluded subjects.",
+          "Complete and save every item in the Required artifacts checklist. A required artifact that is absent will be scored NS-MISSING."
+        ],
+        "accessible_summary": "A fictional long plan uses entry 20.00, stop 19.60, execution allowance 0.05, and maximum planned loss 18.00.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "10:00:00",
+                "Decision worksheet",
+                "Entry 20.00; invalidation 19.60; allowance 0.05; maximum planned loss 18.00."
+              ],
+              [
+                "10:00:05",
+                "Course scope card",
+                "Simulation-only U.S. listed stocks and ETFs; excluded: options, futures, forex, cryptoassets, taxes, non-U.S. rules, live signals."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "calculation work",
+          "maximum-loss record",
+          "risk-per-share arithmetic",
+          "source-labeled timeline or evidence table",
+          "unknown/conflict list",
+          "whole-share quantity and binding-limit statement"
+        ],
+        "submission_checklist": [
+          {
+            "artifact": "calculation work",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "maximum-loss record",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "risk-per-share arithmetic",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "source-labeled timeline or evidence table",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "unknown/conflict list",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "whole-share quantity and binding-limit statement",
+            "completed": false,
+            "evidence_location": ""
+          }
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "2a363c7be4acc03e63c75da805b93b1cf2ad939f2d3e43ebb4f02edf762e604d"
+    },
+    {
+      "case_id": "DEMO-EVID-01",
+      "version": "3.0.0",
+      "status": "demonstration",
+      "form_type": "demonstration",
+      "lesson_id": "v7-evidence-timeline",
+      "title": "Model a source-aware timeline",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A simple fictional record contains one order, two partial fills, and a canceled sell instruction.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "10:01:00",
+            "source": "Learner note",
+            "fact": "Trigger reported: break above 30.00."
+          },
+          {
+            "timestamp": "10:01:10",
+            "source": "Order log",
+            "fact": "Buy 3 shares market submitted."
+          },
+          {
+            "timestamp": "10:01:14",
+            "source": "Fill log",
+            "fact": "2 shares filled at 30.00."
+          },
+          {
+            "timestamp": "10:01:16",
+            "source": "Fill log",
+            "fact": "1 share filled at 31.00."
+          },
+          {
+            "timestamp": "10:02:00",
+            "source": "Order log",
+            "fact": "Sell 3 shares submitted."
+          },
+          {
+            "timestamp": "10:02:04",
+            "source": "Order log",
+            "fact": "Sell order canceled; no fill shown."
+          }
+        ],
+        "decision_point": "10:02:04",
+        "tasks": [
+          "Build the six-event clock.",
+          "Calculate average price.",
+          "State open quantity and unknowns."
+        ],
+        "accessible_summary": "A simple fictional record contains one order, two partial fills, and a canceled sell instruction.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "10:01:00",
+                "Learner note",
+                "Trigger reported: break above 30.00."
+              ],
+              [
+                "10:01:10",
+                "Order log",
+                "Buy 3 shares market submitted."
+              ],
+              [
+                "10:01:14",
+                "Fill log",
+                "2 shares filled at 30.00."
+              ],
+              [
+                "10:01:16",
+                "Fill log",
+                "1 share filled at 31.00."
+              ],
+              [
+                "10:02:00",
+                "Order log",
+                "Sell 3 shares submitted."
+              ],
+              [
+                "10:02:04",
+                "Order log",
+                "Sell order canceled; no fill shown."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "calculation work",
+          "source-labeled timeline or evidence table",
+          "unknown/conflict list"
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "02268d5f13a6a330b6a83c637d409f820976955fc22074d6637b5386290c8ef5"
+    },
+    {
+      "case_id": "DEMO-CASH-01",
+      "version": "3.0.0",
+      "status": "demonstration",
+      "form_type": "demonstration",
+      "lesson_id": "v7-cash-settlement",
+      "title": "Model a dated cash ledger",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A cash account starts with $800 settled cash and makes a $600 purchase.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "Monday 09:00",
+            "source": "Account ledger",
+            "fact": "Settled cash 800; deposit hold 0."
+          },
+          {
+            "timestamp": "Monday 10:00",
+            "source": "Trade record",
+            "fact": "Purchase 600 of SIMB; expected settlement Tuesday."
+          }
+        ],
+        "decision_point": "Monday 10:00",
+        "tasks": [
+          "Calculate remaining settled cash.",
+          "State whether a second $300 purchase is fully supported."
+        ],
+        "accessible_summary": "A cash account starts with $800 settled cash and makes a $600 purchase.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "Monday 09:00",
+                "Account ledger",
+                "Settled cash 800; deposit hold 0."
+              ],
+              [
+                "Monday 10:00",
+                "Trade record",
+                "Purchase 600 of SIMB; expected settlement Tuesday."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "blocking-gate decision",
+          "broker or market-status source",
+          "dated account/readiness checklist"
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "e827f45f5f9ed66bf03729682ee8c50ad5222092244007b26e7b86ce53e7d92c"
+    },
+    {
+      "case_id": "DEMO-MARG-01",
+      "version": "3.0.0",
+      "status": "demonstration",
+      "form_type": "demonstration",
+      "lesson_id": "v7-margin-suitability",
+      "title": "Model an intraday deficit",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A fictional broker method reports required intraday margin of $1,200 and available margin of $1,000.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "09:35",
+            "source": "Broker rule card",
+            "fact": "Method effective 2026-07-01; house rules may exceed FINRA minimums."
+          },
+          {
+            "timestamp": "09:36",
+            "source": "Margin panel",
+            "fact": "Required intraday margin 1,200; available 1,000."
+          }
+        ],
+        "decision_point": "09:36",
+        "tasks": [
+          "Calculate the deficit.",
+          "Separate broker permission from personal suitability."
+        ],
+        "accessible_summary": "A fictional broker method reports required intraday margin of $1,200 and available margin of $1,000.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "09:35",
+                "Broker rule card",
+                "Method effective 2026-07-01; house rules may exceed FINRA minimums."
+              ],
+              [
+                "09:36",
+                "Margin panel",
+                "Required intraday margin 1,200; available 1,000."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "blocking-gate decision",
+          "broker or market-status source",
+          "dated account/readiness checklist",
+          "maximum-loss record",
+          "risk-per-share arithmetic",
+          "whole-share quantity and binding-limit statement"
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "f08c7a909d8083a5d2ddf877c24a437d3a4ef67a966bea449c8fc239456cb00f"
+    },
+    {
+      "case_id": "DEMO-DATA-01",
+      "version": "3.0.0",
+      "status": "demonstration",
+      "form_type": "demonstration",
+      "lesson_id": "v7-market-data-readiness",
+      "title": "Model a stale-feed stop",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "Two quote sources disagree and one is stale.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "10:15:00",
+            "source": "Feed A",
+            "fact": "Bid 40.00 ask 40.04; age 1 second."
+          },
+          {
+            "timestamp": "10:15:00",
+            "source": "Feed B",
+            "fact": "Bid 39.70 ask 40.30; age 18 seconds."
+          },
+          {
+            "timestamp": "10:15:01",
+            "source": "Platform",
+            "fact": "Connection warning active."
+          }
+        ],
+        "decision_point": "10:15:01",
+        "tasks": [
+          "Choose READY, WAIT—VERIFY, or STOP—RECONCILE.",
+          "Name the blocking facts."
+        ],
+        "accessible_summary": "Two quote sources disagree and one is stale.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "10:15:00",
+                "Feed A",
+                "Bid 40.00 ask 40.04; age 1 second."
+              ],
+              [
+                "10:15:00",
+                "Feed B",
+                "Bid 39.70 ask 40.30; age 18 seconds."
+              ],
+              [
+                "10:15:01",
+                "Platform",
+                "Connection warning active."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "blocking-gate decision",
+          "broker or market-status source",
+          "dated account/readiness checklist"
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "29875b5516d24d0180be7a723890180ae90a794ce1fd575bc41d4be338cb742f"
+    },
+    {
+      "case_id": "DEMO-RISK-01",
+      "version": "3.0.0",
+      "status": "demonstration",
+      "form_type": "demonstration",
+      "lesson_id": "v7-risk-boundary",
+      "title": "Model size by the tightest boundary",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A fictional long plan has entry 52.40, stop 51.90, allowance 0.05, and maximum planned loss 50.00.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "11:00",
+            "source": "Risk worksheet",
+            "fact": "Entry 52.40; stop 51.90; allowance 0.05; max loss 50.00."
+          }
+        ],
+        "decision_point": "11:00",
+        "tasks": [
+          "Calculate planned risk per share.",
+          "Calculate whole-share quantity.",
+          "State planned loss at that quantity."
+        ],
+        "accessible_summary": "A fictional long plan has entry 52.40, stop 51.90, allowance 0.05, and maximum planned loss 50.00.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "11:00",
+                "Risk worksheet",
+                "Entry 52.40; stop 51.90; allowance 0.05; max loss 50.00."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "maximum-loss record",
+          "risk-per-share arithmetic",
+          "whole-share quantity and binding-limit statement"
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "2b8a83d15a753f8ef66f608d072e3e741d24786efb11b1e4eabbc7e3c0af1e94"
+    },
+    {
+      "case_id": "DEMO-TEST-01",
+      "version": "3.0.0",
+      "status": "demonstration",
+      "form_type": "demonstration",
+      "lesson_id": "v7-strategy-evidence",
+      "title": "Model a small cost-adjusted test",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A frozen fictional strategy has eight observations with gross R and total cost in R.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "Dataset",
+            "source": "Evaluation table",
+            "fact": "Gross R: 1.2,-1.0,0.8,-1.0,1.5,-1.0,0.4,1.1; costs: 0.10,0.08,0.12,0.09,0.11,0.10,0.13,0.10."
+          }
+        ],
+        "decision_point": "Dataset",
+        "tasks": [
+          "Calculate net R per observation and mean net R.",
+          "Report win count and sample limitation."
+        ],
+        "accessible_summary": "A frozen fictional strategy has eight observations with gross R and total cost in R.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "Dataset",
+                "Evaluation table",
+                "Gross R: 1.2,-1.0,0.8,-1.0,1.5,-1.0,0.4,1.1; costs: 0.10,0.08,0.12,0.09,0.11,0.10,0.13,0.10."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "artifact-cited score or review",
+          "frozen setup definition",
+          "neutral bounded correction and stop-rule evidence",
+          "preserved original",
+          "simultaneous gate decision",
+          "threshold worksheet with units and baselines"
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "8e7151c8a9e97dbbd671609243f354fee4b9058c4ff234f992bcbb6b4781dca2"
+    },
+    {
+      "case_id": "GUIDE-01",
+      "version": "3.0.0",
+      "status": "demonstration",
+      "form_type": "demonstration",
+      "lesson_id": "v7-guided-replay",
+      "title": "Guided wait on stale data",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A fictional regular-hours momentum setup appears visually strong, but the data and spread gates fail.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "10:20:00",
+            "source": "Playbook card",
+            "fact": "Quote age <=2 seconds; spread <=0.15% of midpoint; no unresolved feed conflict."
+          },
+          {
+            "timestamp": "10:20:03",
+            "source": "Feed A",
+            "fact": "Bid 19.90 ask 20.10; age 7 seconds."
+          },
+          {
+            "timestamp": "10:20:03",
+            "source": "Feed B",
+            "fact": "Last 20.04; bid/ask unavailable."
+          },
+          {
+            "timestamp": "10:20:04",
+            "source": "Chart text alternative",
+            "fact": "Price has risen for three bars and is near the session high."
+          }
+        ],
+        "decision_point": "10:20:04",
+        "tasks": [
+          "Apply readiness and eligibility gates.",
+          "Write a complete WAIT decision card.",
+          "Lock before reveal."
+        ],
+        "accessible_summary": "A fictional regular-hours momentum setup appears visually strong, but the data and spread gates fail.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "10:20:00",
+                "Playbook card",
+                "Quote age <=2 seconds; spread <=0.15% of midpoint; no unresolved feed conflict."
+              ],
+              [
+                "10:20:03",
+                "Feed A",
+                "Bid 19.90 ask 20.10; age 7 seconds."
+              ],
+              [
+                "10:20:03",
+                "Feed B",
+                "Last 20.04; bid/ask unavailable."
+              ],
+              [
+                "10:20:04",
+                "Chart text alternative",
+                "Price has risen for three bars and is near the session high."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "artifact-cited score or review",
+          "blocking-gate decision",
+          "broker or market-status source",
+          "calculation work",
+          "cancellation and contingency rules",
+          "dated account/readiness checklist",
+          "frozen setup definition",
+          "neutral bounded correction and stop-rule evidence",
+          "preserved original",
+          "simultaneous gate decision",
+          "source-labeled timeline or evidence table",
+          "threshold worksheet with units and baselines",
+          "timestamped decision card",
+          "trigger and invalidation",
+          "unknown/conflict list"
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "555eb070fb1aee6fcbe41d2700e58afdf81362d917a4bb08bb8d8c2187c9dd88"
+    },
+    {
+      "case_id": "GUIDE-02",
+      "version": "3.0.0",
+      "status": "formative_assessment",
+      "form_type": "formative_assessment",
+      "lesson_id": "v7-guided-replay",
+      "title": "Coached partial-fill response",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A fictional limit-entry plan receives a partial fill while the remainder stays open.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "13:14:00",
+            "source": "Decision card",
+            "fact": "Buy limit 32.10; maximum 60 shares; invalidation 31.80; cancel remainder if spread exceeds 0.20%."
+          },
+          {
+            "timestamp": "13:14:05",
+            "source": "Quote",
+            "fact": "Bid 32.06 ask 32.10; midpoint 32.08."
+          },
+          {
+            "timestamp": "13:14:08",
+            "source": "Fill log",
+            "fact": "25 shares fill at 32.10; 35 shares remain open."
+          },
+          {
+            "timestamp": "13:14:10",
+            "source": "Quote",
+            "fact": "Bid 32.00 ask 32.14."
+          }
+        ],
+        "decision_point": "13:14:10",
+        "tasks": [
+          "Calculate current position and open remainder.",
+          "Recalculate risk on filled quantity.",
+          "Apply the remainder cancellation rule.",
+          "Complete and save every item in the Required artifacts checklist. A required artifact that is absent will be scored NS-MISSING."
+        ],
+        "accessible_summary": "A fictional limit-entry plan receives a partial fill while the remainder stays open.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original.",
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "13:14:00",
+                "Decision card",
+                "Buy limit 32.10; maximum 60 shares; invalidation 31.80; cancel remainder if spread exceeds 0.20%."
+              ],
+              [
+                "13:14:05",
+                "Quote",
+                "Bid 32.06 ask 32.10; midpoint 32.08."
+              ],
+              [
+                "13:14:08",
+                "Fill log",
+                "25 shares fill at 32.10; 35 shares remain open."
+              ],
+              [
+                "13:14:10",
+                "Quote",
+                "Bid 32.00 ask 32.14."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "required_artifacts": [
+          "artifact-cited score or review",
+          "calculation work",
+          "cancellation and contingency rules",
+          "maximum-loss record",
+          "neutral bounded correction and stop-rule evidence",
+          "order-failure comparison",
+          "partial-fill/reconnect response when applicable",
+          "preserved original",
+          "risk-per-share arithmetic",
+          "selected action and rationale",
+          "source-labeled timeline or evidence table",
+          "timestamped decision card",
+          "trigger and invalidation",
+          "unknown/conflict list",
+          "whole-share quantity and binding-limit statement"
+        ],
+        "submission_checklist": [
+          {
+            "artifact": "artifact-cited score or review",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "calculation work",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "cancellation and contingency rules",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "maximum-loss record",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "neutral bounded correction and stop-rule evidence",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "order-failure comparison",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "partial-fill/reconnect response when applicable",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "preserved original",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "risk-per-share arithmetic",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "selected action and rationale",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "source-labeled timeline or evidence table",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "timestamped decision card",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "trigger and invalidation",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "unknown/conflict list",
+            "completed": false,
+            "evidence_location": ""
+          },
+          {
+            "artifact": "whole-share quantity and binding-limit statement",
+            "completed": false,
+            "evidence_location": ""
+          }
+        ]
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "cb123c357da070ef6dcf8191b6ab1b2fb80182667983d621e50705905d53d502"
+    },
+    {
+      "case_id": "GUIDE-03",
+      "version": "3.0.0",
+      "status": "formative",
+      "form_type": "initial",
+      "lesson_id": "v7-guided-replay",
+      "title": "Independent guided-stage proceed case",
+      "scope": "Fictional simulation of a U.S. listed stock or ETF. Not a live recommendation.",
+      "scenario": "A clean regular-hours ETF setup supplies complete readiness, risk, and plan inputs.",
+      "learner_packet": {
+        "records": [
+          {
+            "timestamp": "10:05",
+            "source": "Readiness",
+            "fact": "Cash supported; two fresh matching sources; no halt; platform healthy."
+          },
+          {
+            "timestamp": "10:05",
+            "source": "Gate",
+            "fact": "Trigger 51.20; spread <=0.20%; ask size >=500; all pass."
+          },
+          {
+            "timestamp": "10:05",
+            "source": "Risk",
+            "fact": "Entry 51.22; invalidation 50.92; allowance 0.04; max loss $17."
+          },
+          {
+            "timestamp": "10:06",
+            "source": "Policy",
+            "fact": "Whole-share limit orders supported; Day."
+          }
+        ],
+        "decision_point": "10:06",
+        "tasks": [
+          "Complete the full no-click workflow without coaching.",
+          "Calculate size.",
+          "Choose proceed or wait and include cancellation rules."
+        ],
+        "required_artifacts": [
+          "artifact-cited score or review",
+          "blocking-gate decision",
+          "broker or market-status source",
+          "calculation work",
+          "cancellation and contingency rules",
+          "dated account/readiness checklist",
+          "frozen setup definition",
+          "maximum-loss record",
+          "neutral bounded correction and stop-rule evidence",
+          "order-failure comparison",
+          "partial-fill/reconnect response when applicable",
+          "preserved original",
+          "risk-per-share arithmetic",
+          "selected action and rationale",
+          "simultaneous gate decision",
+          "source-labeled timeline or evidence table",
+          "threshold worksheet with units and baselines",
+          "timestamped decision card",
+          "trigger and invalidation",
+          "unknown/conflict list",
+          "whole-share quantity and binding-limit statement"
+        ],
+        "exhibits": [
+          {
+            "title": "Timestamped record table",
+            "format": "table",
+            "columns": [
+              "Timestamp",
+              "Source",
+              "Record"
+            ],
+            "rows": [
+              [
+                "10:05",
+                "Readiness",
+                "Cash supported; two fresh matching sources; no halt; platform healthy."
+              ],
+              [
+                "10:05",
+                "Gate",
+                "Trigger 51.20; spread <=0.20%; ask size >=500; all pass."
+              ],
+              [
+                "10:05",
+                "Risk",
+                "Entry 51.22; invalidation 50.92; allowance 0.04; max loss $17."
+              ],
+              [
+                "10:06",
+                "Policy",
+                "Whole-share limit orders supported; Day."
+              ]
+            ],
+            "text_equivalent": "The table repeats every timestamped source record in reading order. No meaning depends on color or layout."
+          }
+        ],
+        "accessible_summary": "A clean regular-hours ETF setup supplies complete readiness, risk, and plan inputs.",
+        "lock_rule": "Save and timestamp the original response before opening the reveal packet. Never overwrite the original."
+      },
+      "accessibility": {
+        "chart_required": false,
+        "text_equivalent_included": true,
+        "color_required": false,
+        "keyboard_compatible_format": true,
+        "extended_time_allowed": true,
+        "alternative_response_allowed": [
+          "typed response",
+          "accessible spreadsheet",
+          "dictated response transcribed verbatim"
+        ]
+      },
+      "retire_after": "Review after 20 scored uses; retire after public answer disclosure, memorization evidence, or material score drift.",
+      "reveal_access": "Open practice only; facilitator may discuss after the response.",
+      "learner_packet_sha256": "49d19c3941bdef03804dd2530ba15a9e1f65c46420ed1e4463f9f0071d303a5c"
+    }
+  ]
+}

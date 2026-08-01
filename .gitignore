@@ -1,0 +1,28 @@
+# JavaScript and TypeScript
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Rust and Tauri
+target/
+apps/day-trading-teacher/desktop/src-tauri/target/
+apps/day-trading-teacher/desktop/src-tauri/gen/
+
+# Portable local state and generated outputs
+data/
+config/
+cache/
+logs/
+release/
+portable-builds/
+active-build/
+test-results/
+playwright-report/
+*.log
+
+# Local credentials; keep only the documented placeholder file
+.env
+.env.*
+!.env.example
+
