@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.32.2 — 2026-08-01
+
+- Publish the verified workflow and Rust maintenance build under a fresh immutable release tag.
+- Include the portable Windows ZIP, SHA-256 checksum, SPDX SBOM, and provenance attestation.
+
 ## 0.32.0 — 2026-07-27
 
 - Added GitHub CI, CodeQL, dependency updates, private security reporting guidance, an explicit portfolio-review license, and contributor workflows.

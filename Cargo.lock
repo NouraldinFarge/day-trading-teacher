@@ -600,7 +600,7 @@ dependencies = [
 
 [[package]]
 name = "day-trading-teacher-desktop"
-version = "0.32.0"
+version = "0.32.2"
 dependencies = [
  "chrono",
  "lesson-plan-import",
@@ -1737,7 +1737,7 @@ dependencies = [
 
 [[package]]
 name = "lesson-plan-import"
-version = "0.32.0"
+version = "0.32.2"
 dependencies = [
  "serde",
  "serde_json",
@@ -3729,7 +3729,7 @@ dependencies = [
 
 [[package]]
 name = "teacher-calculations"
-version = "0.32.0"
+version = "0.32.2"
 dependencies = [
  "rust_decimal",
  "serde",
