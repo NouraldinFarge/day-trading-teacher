@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.32.4 — 2026-08-01
+
+- Publish verified release assets from the workflow's explicit GitHub repository context.
+
 ## 0.32.3 — 2026-08-01
 
 - Track the portable launcher and end-user README required by clean GitHub release runners.

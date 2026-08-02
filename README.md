@@ -9,7 +9,7 @@
 
 **A local-first Windows learning environment for deliberate trading practice, chart replay, paper trading, and evidence-based post-trade review.**
 
-Active development · 2026 · Version 0.32.3
+Active development · 2026 · Version 0.32.4
 
 Day-Trading Teacher is built around a simple product decision: teach the process without generating live buy/sell signals. Lessons open contextual planning, replay, journaling, analytics, and practice tools; each activity records reasoning and learning evidence instead of rewarding trade count, profit, or time in market.
 
