@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.32.3 — 2026-08-01
+
+- Track the portable launcher and end-user README required by clean GitHub release runners.
+- Publish the verified workflow and Rust maintenance build with its Windows ZIP, checksum, SBOM, and provenance attestation.
+
 ## 0.32.2 — 2026-08-01
 
 - Publish the verified workflow and Rust maintenance build under a fresh immutable release tag.
