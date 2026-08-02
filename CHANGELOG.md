@@ -3,20 +3,9 @@
 ## 0.32.5 — 2026-08-01
 
 - Create the checksum output directory before recording portable release hashes on a clean runner.
-
-## 0.32.4 — 2026-08-01
-
 - Publish verified release assets from the workflow's explicit GitHub repository context.
-
-## 0.32.3 — 2026-08-01
-
 - Track the portable launcher and end-user README required by clean GitHub release runners.
 - Publish the verified workflow and Rust maintenance build with its Windows ZIP, checksum, SBOM, and provenance attestation.
-
-## 0.32.2 — 2026-08-01
-
-- Publish the verified workflow and Rust maintenance build under a fresh immutable release tag.
-- Include the portable Windows ZIP, SHA-256 checksum, SPDX SBOM, and provenance attestation.
 
 ## 0.32.0 — 2026-07-27
 
