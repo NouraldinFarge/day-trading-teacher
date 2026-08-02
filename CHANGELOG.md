@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.32.5 — 2026-08-01
+
+- Create the checksum output directory before recording portable release hashes on a clean runner.
+
 ## 0.32.4 — 2026-08-01
 
 - Publish verified release assets from the workflow's explicit GitHub repository context.

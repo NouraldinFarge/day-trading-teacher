@@ -41,8 +41,9 @@ if ($desktopPackage.scripts.'portable:binary' -notmatch '--release\s+--features\
 $releaseDirectory = Join-Path $projectRoot "portable-builds"
 $metadataDirectory = Join-Path $projectRoot "release-metadata"
 $checksumPath = Join-Path $projectRoot "checksums\portable-builds.sha256"
+$checksumDirectory = Split-Path -Parent $checksumPath
 $outputDirectory = Join-Path $workspaceRoot "output"
-New-Item -ItemType Directory -Force $releaseDirectory, $metadataDirectory, $outputDirectory | Out-Null
+New-Item -ItemType Directory -Force $releaseDirectory, $metadataDirectory, $checksumDirectory, $outputDirectory | Out-Null
 
 $archiveName = "day-trading-teacher-v$version-windows-x64-portable.zip"
 $archivePath = Join-Path $releaseDirectory $archiveName
