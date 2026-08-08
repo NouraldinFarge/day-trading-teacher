@@ -1,0 +1,46 @@
+name: Accessibility report
+description: Report a keyboard, focus, screen-reader, contrast, motion, scaling, or resized-window barrier.
+title: "[Accessibility]: "
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: barrier
+    attributes:
+      label: Barrier type
+      options:
+        - Keyboard navigation or focus
+        - Screen-reader name, role, state, or reading order
+        - Contrast, color, or non-color meaning
+        - Motion or animation
+        - Text scaling, zoom, or resized-window layout
+        - Chart, calendar, or data-table alternative
+        - Cognitive load or unclear language
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: route
+    attributes:
+      label: Route and reproducible sequence
+      description: Identify the page, control, input method, and exact point where the task becomes difficult or impossible.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Assistive technology and environment
+      description: Windows version, browser or portable app, screen reader or input device, scaling, window size, appearance, and reduced-motion setting when relevant.
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected accessible outcome
+      description: Describe the information or action that should remain perceivable and operable.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: Any evidence is synthetic or fully redacted and contains no account, credential, journal, or secure assessment data.
+          required: true

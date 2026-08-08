@@ -1,6 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Documentation and project tour
+    url: https://github.com/NouraldinFarge/day-trading-teacher/blob/main/docs/README.md
+    about: Review current architecture, product behavior, workflow, and repository policies before opening an issue.
+  - name: Latest verified Windows release
+    url: https://github.com/NouraldinFarge/day-trading-teacher/releases/latest
+    about: Download the current portable ZIP and its checksum, SBOM, and provenance evidence.
   - name: Private security report
     url: https://github.com/NouraldinFarge/day-trading-teacher/security/advisories/new
     about: Report credential, import, path, or local-data vulnerabilities privately.
-

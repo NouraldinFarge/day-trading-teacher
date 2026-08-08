@@ -1,0 +1,31 @@
+name: Documentation or screenshot issue
+description: Report stale, unclear, inaccessible, inconsistent, or misleading repository presentation.
+title: "[Docs]: "
+labels: [documentation]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Page, file, or image
+      placeholder: README.md#product-tour or docs/images/day-trading-teacher-chart.png
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is unclear or inaccurate?
+      description: Include the current wording or visible state and why it may mislead a learner, contributor, or portfolio reviewer.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Suggested correction or verification source
+      description: Link current code, a test, a release artifact, or another authoritative repository file when possible.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Attachment safety
+      options:
+        - label: Any attached image or example is synthetic or fully redacted and contains no account, credential, journal, or secure assessment data.
+          required: true

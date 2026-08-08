@@ -1,30 +1,74 @@
 name: Bug report
-description: Report a reproducible learning, replay, import, or calculation problem.
+description: Report a reproducible lesson, replay, import, calculation, journal, state, or release problem.
 title: "[Bug]: "
 labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: Remove account numbers, credentials, and personal financial information before attaching any sample.
+      value: |
+        Thanks for helping improve Day-Trading Teacher. Remove account numbers, credentials, personal financial information, journal text, and secure assessment material before attaching evidence. Report security boundaries privately through the link below the template chooser.
   - type: input
     id: version
     attributes:
-      label: Version
-      placeholder: 0.32.0
+      label: App version
+      description: Find this in VERSION beside the portable executable or in repository release notes.
+      placeholder: 0.32.6
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Area
+      options:
+        - Lessons or imported curriculum
+        - Decision Card or Learning Lab
+        - Chart Replay, backtest, or paper practice
+        - Evidence Journal or Fidelity import
+        - Progress, calendar, or achievements
+        - State, backup, restore, or settings
+        - Portable build, activation, or release
+        - Accessibility or visual presentation
+        - Other
     validations:
       required: true
   - type: textarea
-    id: behavior
+    id: steps
     attributes:
-      label: What happened?
-      description: Include expected behavior and the smallest reproducible sequence.
+      label: Smallest reproducible sequence
+      description: Start from a known state and list exact actions, inputs, and the first point behavior differs.
+      placeholder: |
+        1. Start with...
+        2. Open...
+        3. Select...
     validations:
       required: true
   - type: textarea
-    id: data
+    id: expected
     attributes:
-      label: Data and privacy context
-      description: Describe the input format using redacted or synthetic values only.
+      label: Expected and actual behavior
+      description: Explain what should happen, what happened instead, and any visible error or recovery path.
     validations:
       required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Windows version, portable or development build, workspace mode, appearance, window size, and input type when relevant.
+      placeholder: Windows 11 24H2; portable 0.32.6; lesson-guided; dark; keyboard and mouse
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Synthetic or redacted evidence
+      description: Describe or attach the smallest safe input. State how it was synthesized or redacted and whether the issue persists without personal data.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed credentials, account identifiers, personal financial information, private journal text, and secure assessment material.
+          required: true
+        - label: This report is not a vulnerability or a way to cross a security/product boundary.
+          required: true
 

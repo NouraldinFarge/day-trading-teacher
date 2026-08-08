@@ -1,5 +1,7 @@
 # Curriculum 4.0 assessment-integrity response
 
+> Historical implementation record for curriculum 4.0. Counts and remaining recommendations describe that milestone; use the [lesson-first architecture](lesson-first-product-architecture.md) and [documentation hub](../README.md) for current behavior.
+
 This document records the implementation response to the supplied 90/100
 curriculum audit. The audit found a strong process-first sequence and unusually
 good evidence discipline, but identified predictable answer placement,

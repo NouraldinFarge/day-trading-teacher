@@ -1,26 +1,48 @@
 name: Feature request
-description: Propose an educational, replay, paper-trading, or review improvement.
+description: Propose a measurable educational, replay, paper-practice, accessibility, or review improvement.
 title: "[Feature]: "
 labels: [enhancement]
 body:
   - type: textarea
     id: learning_problem
     attributes:
-      label: Learning problem to solve
+      label: Learner or reviewer problem
+      description: Describe the decision, evidence, accessibility, reliability, or review problem without prescribing a large solution.
+    validations:
+      required: true
+  - type: textarea
+    id: current_workflow
+    attributes:
+      label: Current workflow and gap
+      description: Where does the user encounter the problem, and what evidence is missing or hard to use?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Smallest useful outcome
+      description: Describe the smallest change that would improve the workflow and remain understandable without training.
     validations:
       required: true
   - type: textarea
     id: evidence
     attributes:
       label: Evidence of improvement
-      description: Explain how a learner or reviewer could tell the feature is working.
+      description: Explain how a learner or reviewer could tell the feature works, including failure and empty states.
     validations:
       required: true
+  - type: textarea
+    id: accessibility
+    attributes:
+      label: Accessibility and pressure check
+      description: Consider keyboard access, contrast, reduced motion, narrow Windows layouts, privacy, and whether the idea could pressure trading or screen time.
   - type: checkboxes
     id: boundary
     attributes:
       label: Product boundary
       options:
-        - label: This request does not add live signals, order placement, account scraping, or outcome promises.
+        - label: This request does not add live signals, personalized investment advice, brokerage authentication, account scraping, screen watching, order placement, hidden AI calls, or outcome promises.
+          required: true
+        - label: This request does not reward trade count, position size, continuous streaks, screen time, or profit.
           required: true
 

@@ -1,4 +1,6 @@
-# Trading Journal Product Design
+# Trading Journal product design
+
+Status: current for v0.32.6. This document distinguishes implemented behavior from advanced enhancements.
 
 ## Product principle
 
@@ -6,12 +8,14 @@ The Journal is a local-first performance laboratory. It rewards complete evidenc
 
 ## 1. Product structure and navigation
 
-Primary application navigation remains Today, Learn, Plan, Journal, Progress, and Settings. Journal has five task-oriented sections:
+In the default lesson-guided workspace, primary navigation is **Lessons**, **Progress**, and **Settings**. A lesson opens the Journal with its evidence mission and a direct return path. Learners who enable **Show tools separately** in Settings also receive standalone Plan, Journal, and Chart navigation without changing or duplicating data.
+
+Journal has five task-oriented sections:
 
 1. Overview — performance snapshot, interactive chart, records, recommendations, and activity feed.
-2. Trade log — Fidelity import, manual capture, searchable records, reflection, decision replay, notes, screenshots, and tags.
+2. Trades — Fidelity import, manual capture, searchable records, reflection, decision replay, notes, screenshots, and tags.
 3. Calendar — monthly/yearly P&L calendar, daily drill-down, filters, and process heatmap.
-4. Insights — weekly/monthly summaries and breakdowns by asset, strategy, setup, direction, session, weekday, and time.
+4. Patterns — weekly/monthly summaries and breakdowns by asset, strategy, setup, direction, session, weekday, and time.
 5. Goals — process-based goals for reflection, planning, risk adherence, focus, and daily-loss boundaries.
 
 Achievements are a dedicated vault reached from Progress. Each achievement has its own URL and detail page.
@@ -90,7 +94,7 @@ Choose a behavior → set weekly/monthly target → view current evidence → co
 
 ## 7. Desktop and mobile UX
 
-Desktop uses a wide chart stage, four-column KPIs, two-column insight areas, and a seven-column calendar. Mobile collapses KPIs and summaries, keeps Journal tabs icon-first, scrolls wide charts/calendars safely, stacks reflection fields, and preserves import/add actions near the top. All controls use native keyboard order, visible focus states, descriptive labels, and reduced-motion preferences.
+Desktop uses a wide chart stage, four-column KPIs, two-column insight areas, and a seven-column calendar. Narrow layouts collapse KPIs and summaries, keep Journal tabs compact, scroll wide charts/calendars safely, stack reflection fields, and preserve import/add actions near the top. The Windows desktop remains the supported production target; responsive behavior protects resized and touch-capable Windows layouts rather than claiming a separate mobile application. All controls use native keyboard order, visible focus states, descriptive labels, and reduced-motion preferences.
 
 ## 8. Microinteractions and feedback
 
@@ -132,7 +136,7 @@ Desktop uses a wide chart stage, four-column KPIs, two-column insight areas, and
 ### Advanced enhancements
 
 1. Persist screenshots as encrypted native attachments rather than compact in-state images.
-2. Import candle/chart data for full price-action replay.
+2. Link a reflection to a saved candle-visible decision snapshot with annotations and provenance.
 3. Add a no-trade and session-shutdown journal.
 4. Add dashboard widget ordering and per-widget visibility.
 5. Add PDF/HTML weekly review exports.

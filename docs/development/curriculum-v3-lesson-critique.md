@@ -1,5 +1,7 @@
 # Core curriculum v3: lesson-by-lesson critique and response
 
+> Historical implementation record for curriculum v3. Counts and remaining recommendations describe that milestone; use the [lesson-first architecture](lesson-first-product-architecture.md) and [documentation hub](../README.md) for current behavior.
+
 This review maps the supplied curriculum audit and evidence-based learning-system research to the eight built-in lessons. The course remains a decision-quality foundation, not a claim that completing lessons alone establishes a profitable trading edge.
 
 ## Course-level findings

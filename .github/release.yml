@@ -1,0 +1,33 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: Learning experience
+      labels:
+        - curriculum
+        - learning
+    - title: Chart Replay and paper practice
+      labels:
+        - charting
+        - paper-trading
+    - title: Journal, analytics, and progress
+      labels:
+        - journal
+        - analytics
+        - achievements
+    - title: Accessibility and experience
+      labels:
+        - accessibility
+        - ux
+    - title: Reliability, privacy, and security
+      labels:
+        - security
+        - reliability
+        - privacy
+    - title: Documentation
+      labels:
+        - documentation
+    - title: Other changes
+      labels:
+        - "*"
