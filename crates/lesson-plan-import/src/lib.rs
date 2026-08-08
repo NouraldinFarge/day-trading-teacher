@@ -17,9 +17,23 @@ fn find_unsafe_text(value: &Value, path: &str, errors: &mut Vec<String>) {
     match value {
         Value::String(text) => {
             let lower = text.to_lowercase();
-            if lower.contains("<script")
-                || lower.contains("javascript:")
-                || lower.contains("data:text/html")
+            let compact: String = lower
+                .chars()
+                .filter(|character| !character.is_whitespace())
+                .collect();
+            let trimmed = compact.trim_start();
+            if compact.contains("<script")
+                || compact.contains("<iframe")
+                || compact.contains("<object")
+                || compact.contains("<embed")
+                || compact.contains("onerror=")
+                || compact.contains("onload=")
+                || compact.contains("javascript:")
+                || compact.contains("vbscript:")
+                || compact.contains("data:text/html")
+                || compact.contains("data:application/xhtml+xml")
+                || compact.contains("data:image/svg+xml")
+                || trimmed.starts_with("file:")
             {
                 errors.push(format!("Unsafe executable content at {path}"));
             }
@@ -47,15 +61,20 @@ fn find_facilitator_only_keys(value: &Value, path: &str, errors: &mut Vec<String
         }
         Value::Object(map) => {
             for (key, item) in map {
+                let normalized_key: String = key
+                    .chars()
+                    .filter(|character| character.is_ascii_alphanumeric())
+                    .map(|character| character.to_ascii_lowercase())
+                    .collect();
                 if matches!(
-                    key.to_ascii_lowercase().as_str(),
-                    "capstone_blueprint"
-                        | "required_outcome"
-                        | "accepted_decision"
-                        | "outcome_class"
-                        | "scoring_key"
-                        | "answer_key"
-                        | "reveal_material"
+                    normalized_key.as_str(),
+                    "capstoneblueprint"
+                        | "requiredoutcome"
+                        | "accepteddecision"
+                        | "outcomeclass"
+                        | "scoringkey"
+                        | "answerkey"
+                        | "revealmaterial"
                 ) {
                     errors.push(format!(
                         "Facilitator-only outcome or scoring field at {path}.{key}"
@@ -73,7 +92,12 @@ pub fn validate_lesson_plan(raw: &str, allowed_skill_ids: &[String]) -> Validati
     let mut warnings = Vec::new();
 
     if raw.len() > MAX_FILE_CHARACTERS {
-        errors.push("Lesson plan exceeds the 500,000 character limit".to_string());
+        return ValidationReport {
+            valid: false,
+            errors: vec!["Lesson plan exceeds the 500,000 character limit".to_string()],
+            warnings,
+            lesson_count: 0,
+        };
     }
 
     let value: Value = match serde_json::from_str(raw) {
@@ -205,6 +229,69 @@ mod tests {
                 .errors
                 .iter()
                 .any(|error| error.contains("Facilitator-only"))
+        );
+    }
+
+    #[test]
+    fn rejects_oversized_input_before_json_parsing() {
+        let raw = "{".repeat(MAX_FILE_CHARACTERS + 1);
+        let report = validate_lesson_plan(&raw, &[]);
+        assert_eq!(report.lesson_count, 0);
+        assert_eq!(
+            report.errors,
+            ["Lesson plan exceeds the 500,000 character limit"]
+        );
+    }
+
+    #[test]
+    fn rejects_obfuscated_executable_content() {
+        let raw = r#"{
+          "schema_version":"1.0","plan_id":"x","version":"1.0.0","title":"X",
+          "lessons":[{"lesson_id":"L1","title":"X","skill_ids":["RM-004"],
+          "objective":"java script:alert(1)","sections":[],"mastery_criteria":[]}]
+        }"#;
+        let report = validate_lesson_plan(raw, &["RM-004".to_string()]);
+        assert!(report.errors.iter().any(|error| error.contains("Unsafe")));
+    }
+
+    #[test]
+    fn rejects_camel_case_facilitator_keys() {
+        let raw = r#"{
+          "schema_version":"1.0","plan_id":"x","version":"1.0.0","title":"X",
+          "lessons":[{"lesson_id":"L1","title":"X","skill_ids":["RM-004"],
+          "objective":"Practice risk.","sections":[],"mastery_criteria":[],
+          "answerKey":"Do not distribute"}]
+        }"#;
+        let report = validate_lesson_plan(raw, &["RM-004".to_string()]);
+        assert!(
+            report
+                .errors
+                .iter()
+                .any(|error| error.contains("Facilitator-only"))
+        );
+    }
+
+    #[test]
+    fn rejects_duplicate_lessons_and_unknown_skills() {
+        let raw = r#"{
+          "schema_version":"1.0","plan_id":"x","version":"1.0.0","title":"X",
+          "lessons":[
+            {"lesson_id":"L1","title":"X","skill_ids":["UNKNOWN"],"objective":"A","sections":[],"mastery_criteria":[]},
+            {"lesson_id":"L1","title":"Y","skill_ids":["RM-004"],"objective":"B","sections":[],"mastery_criteria":[]}
+          ]
+        }"#;
+        let report = validate_lesson_plan(raw, &["RM-004".to_string()]);
+        assert!(
+            report
+                .errors
+                .iter()
+                .any(|error| error.contains("Duplicate lesson_id"))
+        );
+        assert!(
+            report
+                .errors
+                .iter()
+                .any(|error| error.contains("Unknown skill ID"))
         );
     }
 }

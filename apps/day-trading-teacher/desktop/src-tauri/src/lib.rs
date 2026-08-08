@@ -7,7 +7,8 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use teacher_calculations::{
-    PositionSizeRequest, PositionSizeResult, TradeResult, TradeResultRequest,
+    ExpectancyRequest, ExpectancyResult, PositionSizeRequest, PositionSizeResult, TradeResult,
+    TradeResultRequest,
 };
 
 #[tauri::command]
@@ -18,6 +19,11 @@ fn calculate_position_size(request: PositionSizeRequest) -> Result<PositionSizeR
 #[tauri::command]
 fn calculate_trade_result(request: TradeResultRequest) -> Result<TradeResult, String> {
     teacher_calculations::trade_result(&request).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+fn calculate_expectancy(request: ExpectancyRequest) -> Result<ExpectancyResult, String> {
+    teacher_calculations::expectancy(&request).map_err(|error| error.to_string())
 }
 
 #[tauri::command]
@@ -1039,6 +1045,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             calculate_position_size,
             calculate_trade_result,
+            calculate_expectancy,
             validate_lesson_plan,
             load_app_state,
             save_app_state,

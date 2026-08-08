@@ -32,23 +32,11 @@ import {
   MAX_STATE_IMPORT_BYTES,
   validateAppState,
 } from "../../state/app-state-validation";
+import { serializeStateExport } from "../../state/state-data-security";
 
 function downloadState(state: AppState) {
   const url = URL.createObjectURL(
-    new Blob(
-      [
-        JSON.stringify(
-          {
-            exportedAt: new Date().toISOString(),
-            app: "day-trading-teacher",
-            state,
-          },
-          null,
-          2,
-        ),
-      ],
-      { type: "application/json" },
-    ),
+    new Blob([serializeStateExport(state)], { type: "application/json" }),
   );
   const anchor = document.createElement("a");
   anchor.href = url;

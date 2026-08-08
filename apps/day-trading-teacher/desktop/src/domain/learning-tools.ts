@@ -6,6 +6,30 @@ export type ExpectancyResult = {
   expectedRPer100Observations: number;
 };
 
+const EXPECTANCY_SCALE = 1_000_000n;
+
+function expectancyInput(value: number) {
+  const serialized = String(value);
+  const match = /^(\d+)(?:\.(\d+))?$/.exec(serialized);
+  if (!match)
+    throw new Error("Expectancy inputs must use ordinary decimal notation.");
+  const [, whole, fraction = ""] = match;
+  if (fraction.length > 6)
+    throw new Error(
+      "Expectancy inputs may contain at most six decimal places.",
+    );
+  return (
+    BigInt(whole) * EXPECTANCY_SCALE + BigInt(`${fraction}000000`.slice(0, 6))
+  );
+}
+
+function roundedRatio(numerator: bigint, denominator: bigint) {
+  const negative = numerator < 0n;
+  const absolute = negative ? -numerator : numerator;
+  const result = (absolute + denominator / 2n) / denominator;
+  return negative ? -result : result;
+}
+
 export function calculateExpectancy(input: {
   winRatePercent: number;
   averageWinR: number;
@@ -25,19 +49,30 @@ export function calculateExpectancy(input: {
   if (!Number.isFinite(averageLossR) || averageLossR <= 0) {
     throw new Error("Average loss must be greater than zero.");
   }
+  if (averageWinR > 1_000_000 || averageLossR > 1_000_000) {
+    throw new Error("Average R inputs may not exceed 1,000,000.");
+  }
 
-  const winProbability = winRatePercent / 100;
-  const expectancyR =
-    winProbability * averageWinR - (1 - winProbability) * averageLossR;
-  const breakEvenWinRate =
-    averageWinR + averageLossR === 0
-      ? 0
-      : (averageLossR / (averageWinR + averageLossR)) * 100;
+  const winRate = expectancyInput(winRatePercent);
+  const averageWin = expectancyInput(averageWinR);
+  const averageLoss = expectancyInput(averageLossR);
+  const hundred = 100n * EXPECTANCY_SCALE;
+  const expectancy = roundedRatio(
+    winRate * averageWin - (hundred - winRate) * averageLoss,
+    hundred,
+  );
+  const breakEven = roundedRatio(
+    averageLoss * hundred,
+    averageWin + averageLoss,
+  );
+  const expectancyR = Number(expectancy) / Number(EXPECTANCY_SCALE);
+  const breakEvenWinRate = Number(breakEven) / Number(EXPECTANCY_SCALE);
 
   return {
     expectancyR,
     breakEvenWinRate,
-    expectedRPer100Observations: expectancyR * 100,
+    expectedRPer100Observations:
+      Number(expectancy * 100n) / Number(EXPECTANCY_SCALE),
   };
 }
 

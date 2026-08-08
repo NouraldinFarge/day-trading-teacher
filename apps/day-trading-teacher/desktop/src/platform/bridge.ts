@@ -4,6 +4,10 @@ import {
   calculatePositionSize,
   calculateTradeResult,
 } from "../domain/calculations";
+import {
+  calculateExpectancy,
+  type ExpectancyResult,
+} from "../domain/learning-tools";
 import { validateImportedLessonPlan } from "../domain/lesson-plan-schema";
 import { allowedSkillIds } from "../domain/skills";
 import type {
@@ -184,6 +188,30 @@ export async function calculateResult(input: {
         outcome: "profitable" | "losing" | "flat";
       }>("calculate_trade_result", { request: input })
     : calculateTradeResult(input);
+}
+
+export async function calculateExpectancyEstimate(input: {
+  winRatePercent: number;
+  averageWinR: number;
+  averageLossR: number;
+}): Promise<ExpectancyResult> {
+  if (!isTauri()) return calculateExpectancy(input);
+  const result = await invoke<{
+    expectancy_r: string;
+    break_even_win_rate: string;
+    expected_r_per_100_observations: string;
+  }>("calculate_expectancy", {
+    request: {
+      win_rate_percent: String(input.winRatePercent),
+      average_win_r: String(input.averageWinR),
+      average_loss_r: String(input.averageLossR),
+    },
+  });
+  return {
+    expectancyR: Number(result.expectancy_r),
+    breakEvenWinRate: Number(result.break_even_win_rate),
+    expectedRPer100Observations: Number(result.expected_r_per_100_observations),
+  };
 }
 
 export async function validateLessonPlanAtBoundary(raw: string) {

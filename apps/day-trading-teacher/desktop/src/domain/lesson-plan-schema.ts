@@ -94,7 +94,14 @@ const sessionBlockSchema = z
 const lessonSourceSchema = z
   .object({
     title: z.string().min(1).max(240),
-    url: z.string().url().optional(),
+    url: z
+      .string()
+      .url()
+      .refine(
+        (value) => /^https?:\/\//i.test(value),
+        "Source URLs must use HTTPS or HTTP.",
+      )
+      .optional(),
     last_verified: z.string().max(40).optional(),
     currency_note: z.string().min(10).max(1_000).optional(),
   })
@@ -255,19 +262,7 @@ export const importedLessonPlanSchema = z
     target_skill_ids: z.array(z.string()).min(1).max(20),
     prerequisites: z.array(z.string()).max(20),
     lessons: z.array(lessonSchema).min(1).max(24),
-    sources: z
-      .array(
-        z
-          .object({
-            title: z.string().min(1).max(240),
-            url: z.string().url().optional(),
-            last_verified: z.string().optional(),
-            currency_note: z.string().min(10).max(1_000).optional(),
-          })
-          .strict(),
-      )
-      .max(40)
-      .default([]),
+    sources: z.array(lessonSourceSchema).max(40).default([]),
     created_at: z.string().datetime(),
     scope_boundary: z
       .object({
@@ -324,9 +319,10 @@ function collectFacilitatorOnlyKeys(
     );
   } else if (value && typeof value === "object") {
     for (const [key, item] of Object.entries(value)) {
+      const normalizedKey = key.replace(/[^a-z0-9]/gi, "").toLowerCase();
       if (
-        /^(capstone_blueprint|required_outcome|accepted_decision|outcome_class|scoring_key|answer_key|reveal_material)$/i.test(
-          key,
+        /^(capstoneblueprint|requiredoutcome|accepteddecision|outcomeclass|scoringkey|answerkey|revealmaterial)$/.test(
+          normalizedKey,
         )
       )
         findings.push(`${path}.${key}`);
@@ -409,8 +405,14 @@ export function validateImportedLessonPlan(raw: string): ImportValidation {
     }
   }
 
-  const unsafe = /<script|javascript:|data:text\/html|onerror\s*=|onload\s*=/i;
-  if (collectStrings(result.data).some((text) => unsafe.test(text))) {
+  const unsafe =
+    /<script|<iframe|<object|<embed|javascript:|vbscript:|data:text\/html|data:application\/xhtml\+xml|data:image\/svg\+xml|onerror=|onload=/i;
+  if (
+    collectStrings(result.data).some((text) => {
+      const compact = text.replace(/\s/g, "");
+      return unsafe.test(compact) || /^file:/i.test(compact);
+    })
+  ) {
     errors.push("The lesson contains executable HTML or an unsafe URL scheme.");
   }
   warnings.push(...importedLessonPlanQualityWarnings(result.data));

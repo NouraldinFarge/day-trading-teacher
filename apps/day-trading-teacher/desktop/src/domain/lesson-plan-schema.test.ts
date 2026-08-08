@@ -68,6 +68,28 @@ describe("lesson plan import", () => {
     expect(validateImportedLessonPlan(JSON.stringify(plan)).valid).toBe(false);
   });
 
+  it("rejects obfuscated schemes and active embedded content", () => {
+    for (const unsafe of [
+      "java script:alert(1)",
+      "<iframe src='https://example.com'></iframe>",
+      "data:image/svg+xml,<svg onload='alert(1)'>",
+    ]) {
+      const plan = structuredClone(validPlan);
+      plan.lessons[0].sections[0].body = unsafe;
+      expect(validateImportedLessonPlan(JSON.stringify(plan)).valid).toBe(
+        false,
+      );
+    }
+  });
+
+  it("rejects non-web source URLs", () => {
+    const plan = structuredClone(validPlan) as Record<string, any>;
+    plan.sources = [{ title: "Local file", url: "file:///C:/secret.txt" }];
+    const result = validateImportedLessonPlan(JSON.stringify(plan));
+    expect(result.valid).toBe(false);
+    expect(result.errors.join(" ")).toMatch(/HTTPS or HTTP/i);
+  });
+
   it("accepts bounded multi-session retention and remediation metadata", () => {
     const plan = structuredClone(validPlan) as Record<string, any>;
     plan.scope_boundary = {
@@ -143,5 +165,13 @@ describe("lesson plan import", () => {
     expect(result.valid).toBe(false);
     expect(result.errors.join(" ")).toMatch(/facilitator-only/i);
     expect(result.errors.join(" ")).toMatch(/capstone_blueprint/i);
+  });
+
+  it("rejects facilitator-only keys regardless of naming style", () => {
+    const plan = structuredClone(validPlan) as Record<string, any>;
+    plan.lessons[0].answerKey = "Do not distribute";
+    const result = validateImportedLessonPlan(JSON.stringify(plan));
+    expect(result.valid).toBe(false);
+    expect(result.errors.join(" ")).toMatch(/answerKey/);
   });
 });

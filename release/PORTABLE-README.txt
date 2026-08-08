@@ -1,5 +1,7 @@
 Day-Trading Teacher Portable
 
+Educational software only. This application does not provide investment advice, live buy/sell signals, order placement, or promises of trading outcomes.
+
 1. Extract this entire folder to any writable location.
 2. Run launch-portable.bat or Day-Trading Teacher.exe.
 3. Your application data stays in the adjacent data folder. Logs, cache, and configuration folders are also kept beside the executable.

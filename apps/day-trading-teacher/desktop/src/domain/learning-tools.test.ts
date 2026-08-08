@@ -31,6 +31,16 @@ describe("learning tools", () => {
     ).toBeCloseTo(-0.2);
   });
 
+  it("rounds repeating expectancy values deterministically to six decimals", () => {
+    expect(
+      calculateExpectancy({
+        winRatePercent: 33.333333,
+        averageWinR: 2,
+        averageLossR: 1,
+      }).expectancyR,
+    ).toBe(0);
+  });
+
   it("rejects impossible expectancy inputs", () => {
     expect(() =>
       calculateExpectancy({
@@ -39,6 +49,13 @@ describe("learning tools", () => {
         averageLossR: 1,
       }),
     ).toThrow("between 0% and 100%");
+    expect(() =>
+      calculateExpectancy({
+        winRatePercent: 33.3333333,
+        averageWinR: 2,
+        averageLossR: 1,
+      }),
+    ).toThrow("at most six decimal places");
   });
 
   it("calculates long and short reward-to-risk examples", () => {

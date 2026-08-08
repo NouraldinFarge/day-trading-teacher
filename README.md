@@ -9,7 +9,7 @@
 
 **A local-first Windows learning environment for deliberate trading practice, chart replay, paper trading, and evidence-based post-trade review.**
 
-Active development · 2026 · Version 0.32.5
+Active development · 2026 · Version 0.32.6
 
 Day-Trading Teacher is built around a simple product decision: teach the process without generating live buy/sell signals. Lessons open contextual planning, replay, journaling, analytics, and practice tools; each activity records reasoning and learning evidence instead of rewarding trade count, profit, or time in market.
 
@@ -115,7 +115,7 @@ The portable desktop keeps application-controlled state in `data/state.json` bes
 
 ## Development approach
 
-AI agents assisted with research, implementation, and iteration. I retained ownership of product direction, architecture, technical review, testing, educational and financial-safety boundaries, source selection, and release approval. Generated suggestions were treated as untrusted until reviewed against deterministic calculations, schema checks, and automated verification.
+AI agents assisted with research, implementation, and iteration. Nouraldin Farge retained ownership of product direction, architecture, technical review, testing, curriculum and financial-safety boundaries, source selection, release approval, and published claims. Generated suggestions were treated as untrusted until reviewed against deterministic calculations, schema validation, safety checks, and automated verification.
 
 See [`ROADMAP.md`](ROADMAP.md), [`CONTRIBUTING.md`](CONTRIBUTING.md), and [`SECURITY.md`](SECURITY.md) for current priorities and project policies.
 

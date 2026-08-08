@@ -3,7 +3,8 @@ param(
   [Parameter(Mandatory = $true)][string]$ArchivePath,
   [Parameter(Mandatory = $true)][string]$ProjectRoot,
   [Parameter(Mandatory = $true)][string]$WorkDirectory,
-  [Parameter(Mandatory = $true)][string]$ReleaseDirectory
+  [Parameter(Mandatory = $true)][string]$ReleaseDirectory,
+  [Parameter(DontShow = $true)][switch]$_TestFailAfterActivation
 )
 
 $ErrorActionPreference = "Stop"
@@ -18,6 +19,10 @@ $deploymentRoot = Join-Path $workRoot "active-build-deployment"
 $backupRoot = Join-Path $workRoot "active-build-previous"
 $legacyPattern = '^Day-Trading-Teacher-v(?<version>\d+\.\d+\.\d+)-windows-x64-portable$'
 $verifyScript = Join-Path $PSScriptRoot "verify-portable-build.ps1"
+
+if ($_TestFailAfterActivation -and $env:DAY_TRADING_TEACHER_RELEASE_TEST -ne "1") {
+  throw "The internal rollback test hook is unavailable outside the release regression test."
+}
 
 if ((Split-Path -Parent $activeBuild) -ne $project) { throw "Active build path escaped the project root." }
 if (Test-Path -LiteralPath $deploymentRoot) { throw "Deployment staging already exists: $deploymentRoot" }
@@ -75,6 +80,7 @@ try {
   }
 
   Move-Item -LiteralPath $nextBuild -Destination $activeBuild
+  if ($_TestFailAfterActivation) { throw "Intentional post-activation failure for rollback regression coverage." }
   & $verifyScript -PortableFolder $activeBuild
 
   foreach ($legacy in $legacyFolders) {

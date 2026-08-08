@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.32.6 — 2026-08-08
+
+- Hardened the shared Rust and browser risk calculations against invalid sides, nonpositive prices, negative costs, excess precision, unsafe whole-unit conversion, numeric overflow, and silently ignored planned-risk errors.
+- Aligned browser-preview and desktop-authority rounding at six decimal places, retained six-decimal R-multiple evidence, and moved the Expectancy Lab onto a Rust-decimal desktop command with a matching deterministic browser fallback.
+- Expanded calculation regression coverage for long and short sizing, cost validation, range boundaries, planned-risk validation, precision, and expectancy.
+- Hardened imported lessons against oversized input before parsing, obfuscated executable schemes, active embedded content, local-file URLs, naming-style variations of facilitator-only keys, duplicate lessons, and unknown skills.
+- Added defense-in-depth credential separation: restored state rejects secret-shaped extension fields and exported state removes any such fields before serialization while preserving harmless forward-compatible fields.
+- Refreshed compatible JavaScript dependencies and removed the reported Nano ID and PostCSS audit findings without taking semantic-major upgrades.
+- Added portable-package privacy, warning, and GUI-subsystem verification plus release-focused deployment regression checks for paths with spaces, state/config migration, rollback, and explicit downgrade behavior.
+
 ## 0.32.5 — 2026-08-01
 
 - Create the checksum output directory before recording portable release hashes on a clean runner.

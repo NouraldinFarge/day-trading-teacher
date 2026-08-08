@@ -10,7 +10,7 @@ $projectRoot = (Resolve-Path (Join-Path $workspaceRoot "..")).Path
 $version = (Get-Content -LiteralPath (Join-Path $workspaceRoot "VERSION") -Raw).Trim()
 if ($version -notmatch '^\d+\.\d+\.\d+$') { throw "VERSION must contain a semantic version." }
 
-foreach ($tool in "npm", "cargo") {
+foreach ($tool in "node", "npm", "cargo") {
   if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) { throw "Required build tool '$tool' was not found on PATH." }
 }
 
@@ -18,10 +18,31 @@ $versionFiles = @(
   (Join-Path $workspaceRoot "package.json"),
   (Join-Path $workspaceRoot "apps\day-trading-teacher\desktop\package.json"),
   (Join-Path $workspaceRoot "Cargo.toml"),
-  (Join-Path $workspaceRoot "apps\day-trading-teacher\desktop\src-tauri\tauri.conf.json")
+  (Join-Path $workspaceRoot "apps\day-trading-teacher\desktop\src-tauri\tauri.conf.json"),
+  (Join-Path $workspaceRoot "VERSION_MANIFEST.json")
 )
 foreach ($file in $versionFiles) {
   if ((Get-Content -LiteralPath $file -Raw) -notmatch [regex]::Escape($version)) { throw "Version mismatch: $file does not contain $version." }
+}
+
+$versionManifest = Get-Content -LiteralPath (Join-Path $workspaceRoot "VERSION_MANIFEST.json") -Raw | ConvertFrom-Json
+if ($versionManifest.version -ne $version) { throw "VERSION_MANIFEST.json version does not match VERSION." }
+if ($versionManifest.status -ne "portable-only-windows-release") { throw "VERSION_MANIFEST.json does not declare the portable-only Windows release status." }
+
+$packageLockPath = Join-Path $workspaceRoot "package-lock.json"
+$packageLockCheck = @'
+const fs = require("node:fs");
+const lock = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+const version = process.argv[3];
+if (lock.version !== version || lock.packages?.[""]?.version !== version || lock.packages?.["apps/day-trading-teacher/desktop"]?.version !== version) process.exit(1);
+'@
+$packageLockCheck | & node - $packageLockPath $version
+if ($LASTEXITCODE -ne 0) { throw "package-lock.json workspace versions do not match VERSION." }
+
+$cargoLock = Get-Content -LiteralPath (Join-Path $workspaceRoot "Cargo.lock") -Raw
+foreach ($packageName in "day-trading-teacher-desktop", "lesson-plan-import", "teacher-calculations") {
+  $lockedVersionPattern = '(?ms)^name = "' + [regex]::Escape($packageName) + '"\r?\nversion = "' + [regex]::Escape($version) + '"'
+  if ($cargoLock -notmatch $lockedVersionPattern) { throw "Cargo.lock version mismatch for $packageName." }
 }
 
 $tauriConfig = Get-Content -LiteralPath (Join-Path $workspaceRoot "apps\day-trading-teacher\desktop\src-tauri\tauri.conf.json") -Raw

@@ -52,4 +52,15 @@ describe("app state validation", () => {
     };
     expect(validateAppState(damaged)).toMatchObject({ valid: false });
   });
+
+  it("rejects credential-shaped fields even inside future state extensions", () => {
+    const unsafe = structuredClone(defaultState) as unknown as Record<
+      string,
+      unknown
+    >;
+    unsafe.futureProvider = { accessToken: "must-stay-local" };
+    const result = validateAppState(unsafe);
+    expect(result.valid).toBe(false);
+    if (!result.valid) expect(result.errors.join(" ")).toMatch(/credentials/i);
+  });
 });

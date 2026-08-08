@@ -16,6 +16,10 @@ cache/
 logs/
 portable-builds/
 active-build/
+output/
+temp/
+var/
+runtime/
 test-results/
 playwright-report/
 *.log

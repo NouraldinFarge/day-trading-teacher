@@ -1,8 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Activity, CheckCircle2, Scale, Sigma } from "lucide-react";
-import { calculateExpectancy } from "../../../domain/learning-tools";
-
-type ExpectancyResult = ReturnType<typeof calculateExpectancy>;
+import type { ExpectancyResult } from "../../../domain/learning-tools";
+import { calculateExpectancyEstimate } from "../../../platform/bridge";
 
 export function ExpectancyLab({ onPractice }: { onPractice(): void }) {
   const [winRate, setWinRate] = useState("45");
@@ -11,6 +10,7 @@ export function ExpectancyLab({ onPractice }: { onPractice(): void }) {
   const [result, setResult] = useState<ExpectancyResult | null>(null);
   const [error, setError] = useState("");
   const [recorded, setRecorded] = useState(false);
+  const [calculating, setCalculating] = useState(false);
 
   const invalidate = () => {
     setResult(null);
@@ -18,12 +18,13 @@ export function ExpectancyLab({ onPractice }: { onPractice(): void }) {
     setRecorded(false);
   };
 
-  const calculate = (event: FormEvent) => {
+  const calculate = async (event: FormEvent) => {
     event.preventDefault();
     setError("");
+    setCalculating(true);
     try {
       setResult(
-        calculateExpectancy({
+        await calculateExpectancyEstimate({
           winRatePercent: Number(winRate),
           averageWinR: Number(averageWin),
           averageLossR: Number(averageLoss),
@@ -36,6 +37,8 @@ export function ExpectancyLab({ onPractice }: { onPractice(): void }) {
           ? reason.message
           : "The expectancy example could not be calculated.",
       );
+    } finally {
+      setCalculating(false);
     }
   };
 
@@ -115,9 +118,13 @@ export function ExpectancyLab({ onPractice }: { onPractice(): void }) {
               {error}
             </div>
           ) : null}
-          <button className="button primary" type="submit">
+          <button
+            className="button primary"
+            type="submit"
+            disabled={calculating}
+          >
             <Activity size={16} />
-            Explain the relationship
+            {calculating ? "Calculating…" : "Explain the relationship"}
           </button>
         </form>
 

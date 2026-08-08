@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { storedLessonPlanSchema } from "../domain/lesson-plan-schema";
 import type { AppState } from "../domain/types";
+import { findSensitiveStateFields } from "./state-data-security";
 
 export const MAX_STATE_IMPORT_BYTES = 64_000_000;
 
@@ -522,6 +523,14 @@ export type AppStateValidation =
   | { valid: false; errors: string[] };
 
 export function validateAppState(value: unknown): AppStateValidation {
+  const sensitiveFields = findSensitiveStateFields(value);
+  if (sensitiveFields.length)
+    return {
+      valid: false,
+      errors: [
+        `State exports cannot contain credentials or secrets: ${sensitiveFields.slice(0, 4).join(", ")}`,
+      ],
+    };
   const result = appStateSchema.safeParse(value);
   if (result.success)
     return { valid: true, state: result.data as AppState, errors: [] };
