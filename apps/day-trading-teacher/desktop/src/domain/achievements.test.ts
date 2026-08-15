@@ -75,6 +75,12 @@ describe("achievement system", () => {
           item.actionPath,
       ),
     ).toBe(true);
+    expect(achievementDefinitions.filter((item) => item.lessonId)).toHaveLength(
+      13,
+    );
+    expect(
+      achievementDefinitions.find((item) => item.id === "learn-core-atlas"),
+    ).toMatchObject({ target: 13, rewardXp: 0 });
   });
 
   it("recognizes separated lesson evidence without rewarding same-day repetition", () => {

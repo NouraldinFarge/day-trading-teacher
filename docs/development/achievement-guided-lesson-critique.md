@@ -1,6 +1,6 @@
 # Achievement-guided lesson critique
 
-> Historical implementation record for the eight-lesson milestone. The current release has nine core lessons; use the [lesson-first architecture](lesson-first-product-architecture.md) and [documentation hub](../README.md) for current behavior.
+> Historical implementation record for the eight-lesson milestone. The current development path has 13 core lessons; use the [lesson-first architecture](lesson-first-product-architecture.md) and [documentation hub](../README.md) for current behavior.
 
 This audit applies the supplied achievement-system research to the eight built-in lessons. It complements `curriculum-v3-lesson-critique.md`, which critiques lesson content and pedagogy. This document focuses on meaning, legibility, challenge, fairness, reliability, and the learner experience across repeated practice.
 

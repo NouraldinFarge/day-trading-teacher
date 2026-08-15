@@ -99,6 +99,7 @@ function unrealizedPnl(position: PaperTradingPosition, price: number) {
 }
 
 export function createPaperTradingSession({
+  dailySessionId,
   dataSetId,
   symbol,
   timeframe,
@@ -106,6 +107,7 @@ export function createPaperTradingSession({
   defaults,
   at = new Date().toISOString(),
 }: {
+  dailySessionId?: string;
   dataSetId: string;
   symbol: string;
   timeframe: string;
@@ -119,6 +121,7 @@ export function createPaperTradingSession({
   );
   const session: PaperTradingSession = {
     id: id("paper-session"),
+    ...(dailySessionId ? { dailySessionId } : {}),
     dataSetId,
     symbol,
     timeframe,

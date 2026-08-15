@@ -31,9 +31,23 @@ export type FidelityStatus = {
 
 export type FidelityExportFile = {
   name: string;
-  path: string;
+  relativePath: string;
   modifiedAt: number;
+  sizeBytes: number;
+  kind: "orders" | "chart";
+  folderDate: string | null;
   content: string;
+};
+
+export type FidelityExportScan = {
+  files: FidelityExportFile[];
+  discoveredCsvCount: number;
+  unsupportedCsvCount: number;
+  oversizedCsvCount: number;
+  unreadableCsvCount: number;
+  truncatedCsvCount: number;
+  totalBytes: number;
+  warnings: string[];
 };
 
 export type MarketDataProviderStatus = {
@@ -123,11 +137,26 @@ export async function chooseFidelityExportFolder(): Promise<string | null> {
 
 export async function scanFidelityExports(
   folderPath: string,
-): Promise<FidelityExportFile[]> {
-  if (!isTauri()) return [];
-  return invoke<FidelityExportFile[]>("scan_fidelity_exports", {
+): Promise<FidelityExportScan> {
+  if (!isTauri())
+    return {
+      files: [],
+      discoveredCsvCount: 0,
+      unsupportedCsvCount: 0,
+      oversizedCsvCount: 0,
+      unreadableCsvCount: 0,
+      truncatedCsvCount: 0,
+      totalBytes: 0,
+      warnings: ["Folder scanning is available in the portable desktop app."],
+    };
+  return invoke<FidelityExportScan>("scan_fidelity_exports", {
     folderPath,
   });
+}
+
+export async function detectTradingRecordsFolder(): Promise<string | null> {
+  if (!isTauri()) return null;
+  return invoke<string | null>("detect_trading_records_folder");
 }
 
 export async function detectFidelityTraderPlus(): Promise<FidelityStatus> {

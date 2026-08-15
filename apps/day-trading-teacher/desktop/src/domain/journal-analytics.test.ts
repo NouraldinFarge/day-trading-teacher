@@ -6,6 +6,7 @@ import {
   performanceBreakdown,
   performanceMetrics,
   performanceSeries,
+  tailRiskAudit,
 } from "./journal-analytics";
 
 function trade(id: string, pnl: number, day: number, symbol = "SPY"): Trade {
@@ -91,5 +92,33 @@ describe("journal analytics", () => {
         .map((insight) => insight.body)
         .join(" "),
     ).not.toMatch(/will|guarantee|signal/i);
+  });
+
+  it("labels small tail samples as insufficient", () => {
+    expect(tailRiskAudit(trades)).toMatchObject({
+      sampleSize: 3,
+      status: "insufficient",
+      largestWin: 100,
+      largestLoss: -40,
+      medianPnl: 20,
+    });
+  });
+
+  it("detects dependence on one outlier without calling it a forecast", () => {
+    const sample = [500, 25, 20, 18, 15, 12, -10, -12, -14, -16].map(
+      (pnl, index) => trade(`tail-${index}`, pnl, index + 1),
+    );
+    const audit = tailRiskAudit(sample);
+    expect(audit.status).toBe("fragile");
+    expect(audit.largestWinShareOfGrossProfit).toBeGreaterThan(80);
+    expect(audit.coreNetPnl).toBe(54);
+    expect(audit.reasons.join(" ")).not.toMatch(/will|guarantee|signal/i);
+  });
+
+  it("recognizes a distributed sample when no tail dominates", () => {
+    const sample = [30, 28, 26, 24, 22, -18, -20, -22, -24, -26].map(
+      (pnl, index) => trade(`balanced-${index}`, pnl, index + 1),
+    );
+    expect(tailRiskAudit(sample)).toMatchObject({ status: "balanced" });
   });
 });

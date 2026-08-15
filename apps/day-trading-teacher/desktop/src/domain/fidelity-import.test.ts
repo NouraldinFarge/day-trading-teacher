@@ -25,7 +25,28 @@ describe("Fidelity Orders CSV import", () => {
       orderType: "Market → Market",
     });
     expect(Number(preview.trades[0].quantity)).toBeCloseTo(0.282, 3);
+    expect(preview.orders[0]).toMatchObject({
+      action: "buy",
+      amount: 10,
+      amountMeaning: "dollars_invested",
+      filledMeaning: "dollars_invested",
+    });
     expect(JSON.stringify(preview)).not.toContain("Individual *0000");
+  });
+
+  it("always interprets Buy 10 as ten dollars invested, not ten shares", () => {
+    const preview = parseFidelityOrdersCsv(
+      `Symbol,Action,Amount,Order Type,Status,Filled,Order Time
+TEST,Buy,10,Market,Filled at $5.1768,10 / 10,9:30:00 AM ET Aug-14-2026
+TEST,Sell,1.932,Market,Filled at $5.20,1.932 / 1.932,9:31:00 AM ET Aug-14-2026
+Disclosure`,
+    );
+
+    expect(preview.trades).toHaveLength(1);
+    expect(Number(preview.trades[0].quantity)).toBeCloseTo(1.932, 3);
+    expect(preview.trades[0].quantityBasis).toBe("dollar_filled");
+    expect(preview.trades[0].investedDollars).toBeCloseTo(10, 2);
+    expect(preview.observedBuyDollars).toBe(10);
   });
 
   it("rejects unrelated CSV files", () => {

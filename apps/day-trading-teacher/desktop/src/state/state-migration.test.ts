@@ -69,6 +69,8 @@ describe("state migration", () => {
     const migrated = normalizeAppState(legacy, fallback);
     const acquisition = migrated.chartAcquisition!;
     expect(migrated.marketDataSets).toEqual([]);
+    expect(migrated.dailySessions).toEqual([]);
+    expect(migrated.setupPlaybooks).toEqual([]);
     expect(acquisition.subscriptions).toEqual([
       { provider: "alpha_vantage", symbol: "SPY", interval: "daily" },
     ]);

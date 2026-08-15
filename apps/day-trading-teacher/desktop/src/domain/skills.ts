@@ -109,6 +109,21 @@ export const skillRegistry = [
     title: "Assess volatility and liquidity context",
     module: "Market context",
   },
+  {
+    id: "CL-001",
+    title: "Read candle evidence inside market context",
+    module: "Chart literacy",
+  },
+  {
+    id: "SP-001",
+    title: "Build and test a practice-only setup playbook",
+    module: "Strategy practice",
+  },
+  {
+    id: "PR-001",
+    title: "Audit outcome tails and ordinary results",
+    module: "Journaling and review",
+  },
 ] as const;
 
 export const allowedSkillIds = skillRegistry.map((skill) => skill.id);

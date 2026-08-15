@@ -1,6 +1,8 @@
 import type { Lesson } from "./types";
 
 const lessonRationales: Record<string, string> = {
+  "builtin-rm-005":
+    "The latest record review shows that the most useful correction is not another entry pattern; it is preventing one small dollar-funded idea from becoming an open-ended recovery project. Correct units, one shared risk boundary, invalidation practice, and a rescue-exit lockout make the next decision safer without pretending the record proves an emotion or predicts a rebound.",
   "builtin-tr-002":
     "Orders and fills show what the account recorded, but they do not explain intent. Reconstructing the clock before judging the trade prevents hindsight from turning missing evidence into a confident story.",
   "builtin-ac-001":
@@ -9,6 +11,10 @@ const lessonRationales: Record<string, string> = {
     "Position size is a consequence of the loss boundary—not buying power, conviction, or hoped-for reward. Practicing the arithmetic until every input is visible makes risk repeatable when the chart feels urgent.",
   "builtin-vc-001":
     "Fast movement captures attention, but movement alone does not earn exposure. A fail-closed eligibility gate makes waiting and no trade complete, successful decisions when required evidence is weak or missing.",
+  "builtin-cl-001":
+    "A familiar candle shape can attract a conclusion before the surrounding evidence is checked. Reading source quality, structure, location, participation, and execution context together turns chart recognition into an outcome-hidden decision process rather than a prediction game.",
+  "builtin-sp-001":
+    "A setup description becomes easiest to reinterpret after the outcome is visible. A versioned, practice-only playbook makes context, trigger, invalidation, disqualifiers, management, and review rules auditable while keeping completeness separate from validation.",
   "builtin-tp-003":
     "Memory quietly rewrites a decision after the result is known. A timestamped decision card preserves the trigger, invalidation, risk, execution, exits, and cancellation logic needed for a fair review.",
   "builtin-oe-006":
@@ -17,6 +23,8 @@ const lessonRationales: Record<string, string> = {
     "Recent profit, loss, urgency, and frustration can leak into the next decision without appearing in the chart. A complete reset forces the next attempt to earn its own evidence—or end with a disciplined stop.",
   "builtin-tf-009":
     "Profit and loss are noisy outcomes, not grades for decision quality. Separating evidence, process, and outcome produces a correction that can actually be tested instead of a story that changes with the result.",
+  "builtin-pr-001":
+    "A positive average can conceal dependence on one unusual win, while one oversized loss can dominate the recovery burden. Comparing the median, both tails, ordinary outcomes, and process evidence keeps journal conclusions proportional to the sample.",
   "builtin-capstone-001":
     "A no-click replay exposes the weakest link in the full workflow without financial pressure. It tests whether evidence, risk, eligibility, planning, execution, reset, and review still work together before speed matters.",
   "records-20260717-evidence-clock":

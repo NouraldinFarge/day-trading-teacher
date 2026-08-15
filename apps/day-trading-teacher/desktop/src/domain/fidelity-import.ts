@@ -15,6 +15,24 @@ export type FidelityRoundTrip = {
   exitFillCount: number;
   reconciliationConfidence: "high" | "review";
   quantityBasis: "dollar_filled" | "share_filled" | "mixed";
+  tradingDate: string;
+  orderEvidenceRefs: string[];
+  investedDollars: number;
+  grossExitProceeds: number;
+  unmatchedShareEstimate: number;
+};
+
+export type FidelityOrderEvidence = {
+  evidenceRef: string;
+  symbol: string;
+  action: "buy" | "sell";
+  amount: number;
+  amountMeaning: "dollars_invested" | "shares_sold";
+  filled: number;
+  filledMeaning: "dollars_invested" | "shares_sold";
+  price: number;
+  orderType: string;
+  occurredAt: string;
 };
 
 export type FidelityImportPreview = {
@@ -23,9 +41,15 @@ export type FidelityImportPreview = {
   skippedOrderCount: number;
   unmatchedOrderCount: number;
   warnings: string[];
+  orders: FidelityOrderEvidence[];
+  symbols: string[];
+  tradingDates: string[];
+  observedBuyDollars: number;
+  calculatedSellProceeds: number;
 };
 
 type FidelityOrder = {
+  evidenceRef: string;
   symbol: string;
   action: string;
   amount: number;
@@ -33,6 +57,7 @@ type FidelityOrder = {
   price: number;
   orderType: string;
   orderTime: string;
+  occurredAt: string;
   timestamp: number;
 };
 
@@ -121,23 +146,6 @@ function stableSourceId(
   ].join(":");
 }
 
-function quantityCandidates(order: FidelityOrder): QuantityCandidate[] {
-  const candidates: QuantityCandidate[] = [
-    { shares: order.filled / order.price, basis: "dollar_filled" },
-    { shares: order.filled, basis: "share_filled" },
-  ];
-  return candidates.filter(
-    (candidate, index) =>
-      Number.isFinite(candidate.shares) &&
-      candidate.shares > 0 &&
-      candidates.findIndex(
-        (other) =>
-          Math.abs(other.shares - candidate.shares) <=
-          Math.max(other.shares, candidate.shares) * 0.000_001,
-      ) === index,
-  );
-}
-
 function reconcileBuyQuantities(
   buys: FidelityOrder[],
   targetShares: number,
@@ -145,54 +153,48 @@ function reconcileBuyQuantities(
   candidates: QuantityCandidate[];
   relativeMismatch: number;
 } {
-  let best: QuantityCandidate[] = [];
-  let bestMismatch = Number.POSITIVE_INFINITY;
-  const candidateSets = buys.map(quantityCandidates);
-
-  // Fidelity omits an explicit unit column for some fractional-dollar orders.
-  // Search the small set of possible unit interpretations for the combination
-  // that best reconciles with the recorded share exits.
-  const search = (
-    index: number,
-    selected: QuantityCandidate[],
-    total: number,
-  ) => {
-    if (index === candidateSets.length) {
-      const mismatch =
-        Math.abs(total - targetShares) /
-        Math.max(total, targetShares, 0.000_001);
-      if (mismatch < bestMismatch) {
-        bestMismatch = mismatch;
-        best = [...selected];
-      }
-      return;
-    }
-    for (const candidate of candidateSets[index]) {
-      selected.push(candidate);
-      search(index + 1, selected, total + candidate.shares);
-      selected.pop();
-    }
+  // Fidelity's fractional-dollar Orders export uses Amount and Filled as
+  // dollars for buys. The share quantity is therefore filled dollars divided
+  // by the execution price. Do not reinterpret "Buy 10" as ten shares.
+  const candidates = buys.map((order) => ({
+    shares: order.filled / order.price,
+    basis: "dollar_filled" as const,
+  }));
+  const total = candidates.reduce(
+    (sum, candidate) => sum + candidate.shares,
+    0,
+  );
+  return {
+    candidates,
+    relativeMismatch:
+      Math.abs(total - targetShares) / Math.max(total, targetShares, 0.000_001),
   };
+}
 
-  // A run this large is abnormal for an exported retail order sequence. Avoid
-  // exponential work and prefer the candidate closest to the remaining exits.
-  if (buys.length > 14) {
-    best = candidateSets.map((candidates) =>
-      candidates.reduce((closest, candidate) =>
-        Math.abs(candidate.shares - targetShares / buys.length) <
-        Math.abs(closest.shares - targetShares / buys.length)
-          ? candidate
-          : closest,
-      ),
-    );
-    const total = best.reduce((sum, candidate) => sum + candidate.shares, 0);
-    bestMismatch =
-      Math.abs(total - targetShares) / Math.max(total, targetShares, 0.000_001);
-  } else {
-    search(0, [], 0);
-  }
+function evidenceRef(order: Omit<FidelityOrder, "evidenceRef">) {
+  return [
+    "order",
+    order.symbol,
+    order.action,
+    order.occurredAt,
+    order.price.toFixed(6),
+    order.filled.toFixed(6),
+  ].join(":");
+}
 
-  return { candidates: best, relativeMismatch: bestMismatch };
+function easternDate(timestamp: number) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .formatToParts(new Date(timestamp))
+    .reduce<Record<string, string>>((result, part) => {
+      if (part.type !== "literal") result[part.type] = part.value;
+      return result;
+    }, {});
+  return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
 function weightedPrice(
@@ -274,12 +276,13 @@ export function parseFidelityOrdersCsv(raw: string): FidelityImportPreview {
       !Number.isFinite(filled) ||
       !Number.isFinite(price) ||
       amount <= 0 ||
+      filled <= 0 ||
       price <= 0
     ) {
       skippedOrderCount += 1;
       continue;
     }
-    orders.push({
+    const order = {
       symbol,
       action,
       amount,
@@ -287,8 +290,10 @@ export function parseFidelityOrdersCsv(raw: string): FidelityImportPreview {
       price,
       orderType: row[column("order type")]?.trim() || "Unknown",
       orderTime: row[column("order time")],
+      occurredAt: time.iso,
       timestamp: time.timestamp,
-    });
+    } satisfies Omit<FidelityOrder, "evidenceRef">;
+    orders.push({ ...order, evidenceRef: evidenceRef(order) });
   }
 
   orders.sort((left, right) => left.timestamp - right.timestamp);
@@ -366,8 +371,7 @@ export function parseFidelityOrdersCsv(raw: string): FidelityImportPreview {
         warnings.push(
           `${symbol}: the entry and exit quantities differed by more than 5%. The matched portion was imported for review and the remaining quantity was left unresolved.`,
         );
-      if (Math.abs(totalBuyShares - totalExitShares) > 0.000_001)
-        unmatchedOrderCount += 1;
+      if (reconciliation.relativeMismatch > 0.01) unmatchedOrderCount += 1;
 
       const entryTypes = [...new Set(usedBuys.map((order) => order.orderType))];
       const exitTypes = [...new Set(usedExits.map((order) => order.orderType))];
@@ -395,6 +399,15 @@ export function parseFidelityOrdersCsv(raw: string): FidelityImportPreview {
           bases.size > 1
             ? "mixed"
             : (bases.values().next().value ?? "share_filled"),
+        tradingDate: easternDate(entryTime.getTime()),
+        orderEvidenceRefs: [...usedBuys, ...usedExits].map(
+          (order) => order.evidenceRef,
+        ),
+        investedDollars: Number((reconciledQuantity * entry.price).toFixed(6)),
+        grossExitProceeds: Number((reconciledQuantity * exit.price).toFixed(6)),
+        unmatchedShareEstimate: Number(
+          Math.abs(totalBuyShares - totalExitShares).toFixed(6),
+        ),
       });
     }
   }
@@ -406,5 +419,35 @@ export function parseFidelityOrdersCsv(raw: string): FidelityImportPreview {
     skippedOrderCount,
     unmatchedOrderCount,
     warnings: [...new Set(warnings)],
+    orders: orders.map((order) => ({
+      evidenceRef: order.evidenceRef,
+      symbol: order.symbol,
+      action: order.action as "buy" | "sell",
+      amount: order.amount,
+      amountMeaning:
+        order.action === "buy" ? "dollars_invested" : "shares_sold",
+      filled: order.filled,
+      filledMeaning:
+        order.action === "buy" ? "dollars_invested" : "shares_sold",
+      price: order.price,
+      orderType: order.orderType,
+      occurredAt: order.occurredAt,
+    })),
+    symbols: [...bySymbol.keys()].sort(),
+    tradingDates: [
+      ...new Set(orders.map((order) => easternDate(order.timestamp))),
+    ].sort(),
+    observedBuyDollars: Number(
+      orders
+        .filter((order) => order.action === "buy")
+        .reduce((sum, order) => sum + order.filled, 0)
+        .toFixed(6),
+    ),
+    calculatedSellProceeds: Number(
+      orders
+        .filter((order) => order.action === "sell")
+        .reduce((sum, order) => sum + order.filled * order.price, 0)
+        .toFixed(6),
+    ),
   };
 }

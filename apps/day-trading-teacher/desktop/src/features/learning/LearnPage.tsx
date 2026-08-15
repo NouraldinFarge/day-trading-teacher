@@ -1,9 +1,10 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Award,
   BrainCircuit,
   Calculator,
+  ChartCandlestick,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -13,8 +14,10 @@ import {
   ExternalLink,
   FileCheck2,
   FileUp,
+  HeartPulse,
   Lightbulb,
   LockKeyhole,
+  LibraryBig,
   Rocket,
   Route,
   Sparkles,
@@ -24,6 +27,7 @@ import {
   Zap,
 } from "lucide-react";
 import { PageHeader } from "../../components/PageHeader";
+import { DailySessionGuard } from "../../components/DailySessionGuard";
 import { Modal } from "../../components/Modal";
 import {
   LessonActivityWorkspacePrompt,
@@ -74,6 +78,7 @@ import {
   lessonAchievementIdFor,
 } from "../../domain/achievements";
 import { CoreLearningPath } from "./CoreLearningPath";
+import { CurrentRecordFocus } from "./CurrentRecordFocus";
 
 const ImportedLessonLibrary = lazy(() =>
   import("./ImportedLessonLibrary").then((module) => ({
@@ -155,6 +160,7 @@ function requestFor(skillIds: string[], level: string): ExternalLessonRequest {
 }
 
 export function LearnPage() {
+  const navigate = useNavigate();
   const { state, completeLesson, installLessonPlan, removeLessonPlan } =
     useAppState();
   const [selected, setSelected] = useState<Lesson | null>(null);
@@ -230,6 +236,11 @@ export function LearnPage() {
     () => recommendLessonPractice(state.progress, builtInLessons),
     [state.progress],
   );
+  const currentRecordLesson = builtInLessons.find(
+    (lesson) => lesson.lesson_id === "builtin-rm-005",
+  )!;
+  const currentRecordLessonComplete =
+    state.progress.completedLessonIds.includes(currentRecordLesson.lesson_id);
 
   useEffect(() => {
     if (resumeAttemptedRef.current) return;
@@ -549,44 +560,56 @@ export function LearnPage() {
         }
       />
 
-      <section
-        className="learning-prescription"
-        aria-labelledby="learning-prescription-title"
-      >
-        <span>
-          {recommendedPractice.kind === "review" ? (
-            <Clock3 size={20} />
+      <DailySessionGuard />
+
+      <CurrentRecordFocus
+        lesson={currentRecordLesson}
+        complete={currentRecordLessonComplete}
+        onOpen={openLesson}
+        learningSystem={state.tradeLearningSystem}
+        onOpenTradeLessons={() => void navigate({ to: "/learn/trade-lessons" })}
+      />
+
+      {currentRecordLessonComplete ? (
+        <section
+          className="learning-prescription"
+          aria-labelledby="learning-prescription-title"
+        >
+          <span>
+            {recommendedPractice.kind === "review" ? (
+              <Clock3 size={20} />
+            ) : (
+              <Route size={20} />
+            )}
+          </span>
+          <div>
+            <small>Your next learning move</small>
+            <h2 id="learning-prescription-title">
+              {recommendedPractice.lesson
+                ? `${recommendedPractice.kind === "review" ? "Retrieve again: " : "Continue the path: "}${recommendedPractice.lesson.title}`
+                : "Let the lesson spacing work"}
+            </h2>
+            <p>{recommendedPractice.reason}</p>
+          </div>
+          {recommendedPractice.lesson ? (
+            <button
+              className="button secondary"
+              type="button"
+              onClick={() => openLesson(recommendedPractice.lesson!)}
+            >
+              {recommendedPractice.kind === "review"
+                ? "Begin retrieval"
+                : "Open lesson"}
+              <ChevronRight size={16} />
+            </button>
           ) : (
-            <Route size={20} />
+            <Link to="/learn/tools" className="button secondary">
+              Use a short lab
+              <ChevronRight size={16} />
+            </Link>
           )}
-        </span>
-        <div>
-          <small>Your next learning move</small>
-          <h2 id="learning-prescription-title">
-            {recommendedPractice.lesson
-              ? `${recommendedPractice.kind === "review" ? "Retrieve again: " : "Continue the path: "}${recommendedPractice.lesson.title}`
-              : "Let the lesson spacing work"}
-          </h2>
-          <p>{recommendedPractice.reason}</p>
-        </div>
-        {recommendedPractice.lesson ? (
-          <button
-            className="button secondary"
-            type="button"
-            onClick={() => openLesson(recommendedPractice.lesson!)}
-          >
-            {recommendedPractice.kind === "review"
-              ? "Begin retrieval"
-              : "Open lesson"}
-            <ChevronRight size={16} />
-          </button>
-        ) : (
-          <Link to="/learn/tools" className="button secondary">
-            Use a short lab
-            <ChevronRight size={16} />
-          </Link>
-        )}
-      </section>
+        </section>
+      ) : null}
 
       <LessonPracticeHub />
 
@@ -609,13 +632,22 @@ export function LearnPage() {
           <span className="eyebrow accent">Short practice between lessons</span>
           <h2 id="learning-lab-invite-title">Open the Learning Lab</h2>
           <p>
-            Reinforce one weak link with risk sizing, expectancy, decision
-            order, plan quality, or spaced recall—without needing to place a
-            trade.
+            Reinforce one weak link with context reading, practice-only
+            playbooks, risk sizing, resets, expectancy, decision order, plan
+            quality, or spaced recall—without needing to place a trade.
           </p>
           <div className="learning-lab-topics" aria-label="Learning Lab topics">
             <span>
               <Calculator size={14} /> Risk
+            </span>
+            <span>
+              <ChartCandlestick size={14} /> Context
+            </span>
+            <span>
+              <LibraryBig size={14} /> Playbooks
+            </span>
+            <span>
+              <HeartPulse size={14} /> Reset
             </span>
             <span>
               <BrainCircuit size={14} /> Decisions

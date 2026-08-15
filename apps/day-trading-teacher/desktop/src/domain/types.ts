@@ -78,6 +78,14 @@ export type JournalReflection = {
   preTradeChecklist?: Record<string, boolean>;
   postTradeChecklist?: Record<string, boolean>;
   screenshotRefs?: string[];
+  aiDraft?: {
+    source: "external_ai";
+    sourcePackageId: string;
+    importedAt: string;
+    reviewStatus: "awaiting_user_review" | "reviewed_by_user";
+    evidenceRefs: string[];
+    inferenceNotice: string;
+  };
 };
 
 export type Trade = {
@@ -104,6 +112,177 @@ export type Trade = {
   holdingSeconds?: number;
   orderType?: string;
   journal?: JournalReflection;
+};
+
+export type TradeLessonPriority =
+  | "Critical immediate correction"
+  | "High-priority improvement"
+  | "Important reinforcement"
+  | "Minor refinement"
+  | "Informational only";
+
+export type TradeLessonConfidence =
+  "Confirmed" | "Strongly supported" | "Possible" | "Insufficient evidence";
+
+export type TradeLessonConnection = {
+  tradeSourceId: string;
+  displayId: string;
+  tradingDate: string;
+  symbol: string;
+  relationship: "reinforces" | "contradicts" | "refines" | "adds context";
+  explanation: string;
+};
+
+export type TradeLessonAudit = {
+  id: string;
+  sequence: number;
+  tradeSourceId: string;
+  appTradeId: string | null;
+  displayId: string;
+  tradingDate: string;
+  symbol: string;
+  entryAt: string;
+  exitAt: string;
+  reviewedAt: string | null;
+  priority: TradeLessonPriority;
+  patternIds: string[];
+  facts: {
+    investedDollars: number;
+    calculatedQuantityShares: number;
+    entryPrice: number;
+    exitPrice: number;
+    calculatedGrossPnl: number;
+    calculatedGrossReturnPercent: number;
+    holdingSeconds: number;
+    entryFillCount: number;
+    exitFillCount: number;
+    reconciliationConfidence: "high" | "review";
+    entryLocationPercent: number | null;
+    entryVwap: number | null;
+    maximumFavorableExcursionPercent: number | null;
+    maximumAdverseExcursionPercent: number | null;
+  };
+  temporalEvidence: {
+    knownBeforeEntry: string[];
+    observedAtEntry: string[];
+    occurredDuringTrade: string[];
+    knownOnlyAfterward: string[];
+    missing: string[];
+  };
+  tradeSummary: string;
+  originalThesis: string;
+  whatWasDoneWell: string[];
+  whatWasDonePoorly: string[];
+  originalLesson: string;
+  lessonAudit: string;
+  revisedLesson: {
+    observation: string;
+    decisionErrorOrStrength: string;
+    underlyingCause: string;
+    correctPrinciple: string;
+    futureRule: string;
+    trigger: string;
+    verification: string;
+    practice: string;
+  };
+  actionableTradingRule: string;
+  preTradeChecklistQuestion: string;
+  inTradeCheckpoint: string;
+  postTradeReviewQuestion: string;
+  evidenceAndConfidence: {
+    confidence: TradeLessonConfidence;
+    rationale: string;
+    evidenceRefs: string[];
+  };
+  connections: TradeLessonConnection[];
+};
+
+export type TradeLearningPattern = {
+  id: string;
+  title: string;
+  category:
+    | "planning"
+    | "entry"
+    | "risk"
+    | "management"
+    | "behavior"
+    | "data-quality"
+    | "strength";
+  occurrences: number;
+  tradeSourceIds: string[];
+  earliestOccurrence: string;
+  mostRecentOccurrence: string;
+  frequencyDirection: "increasing" | "decreasing" | "stable" | "insufficient";
+  sharedMechanism: string;
+  typicalTrigger: string;
+  typicalConsequence: string;
+  existingLessonOrRule: string;
+  implementationEvidence: string;
+  bestCorrectiveAction: string;
+  confidence: TradeLessonConfidence;
+};
+
+export type TradeLearningKnowledgeItem = {
+  id: string;
+  title: string;
+  rule: string;
+  appliesWhen: string;
+  exception: string;
+  evidence: string;
+};
+
+export type ConsolidatedTradingRule = {
+  id: string;
+  rule: string;
+  whyItExists: string;
+  appliesWhen: string;
+  doesNotApplyWhen: string;
+  supportingTradeSourceIds: string[];
+  complianceMeasure: string;
+};
+
+export type TradeLearningFocusPlan = {
+  firstBehaviorToCorrect: string;
+  firstConceptToStudy: string;
+  firstRuleToPractice: string;
+  measurableReviewMethod: string;
+  olderTradeSourceIdsToRevisit: string[];
+  evidenceRequiredToAdvance: string;
+  nextFocusArea: string;
+};
+
+export type TradeLearningSystem = {
+  schema: "day-trading-teacher.trade-learning-system";
+  schemaVersion: 1;
+  sourcePackageId: string;
+  generatedAt: string;
+  processingOrder: "newest_to_oldest";
+  tradeAudits: TradeLessonAudit[];
+  patterns: TradeLearningPattern[];
+  knowledgeHierarchy: {
+    foundationalPrinciples: TradeLearningKnowledgeItem[];
+    strategySpecificRules: TradeLearningKnowledgeItem[];
+    situationalAdjustments: TradeLearningKnowledgeItem[];
+    personalBehavioralSafeguards: TradeLearningKnowledgeItem[];
+  };
+  consolidated: {
+    mostUrgentLessons: string[];
+    recurringStrengths: string[];
+    recurringMistakes: string[];
+    lessonsRecognizedButNotImplemented: string[];
+    improvementsOverTime: string[];
+    regressionsOverTime: string[];
+    missingKnowledge: string[];
+  };
+  consolidatedRules: ConsolidatedTradingRule[];
+  checklist: {
+    beforeEntry: string[];
+    atEntry: string[];
+    duringTrade: string[];
+    beforeExit: string[];
+    afterTrade: string[];
+  };
+  focusPlan: TradeLearningFocusPlan;
 };
 
 export type MarketBar = {
@@ -233,6 +412,45 @@ export type PaperTradingTrade = {
     "stop" | "target" | "manual" | "session_end" | "ambiguous_stop_first";
 };
 
+export type DailySessionStatus =
+  "planned" | "active" | "review_only" | "no_trade" | "closed";
+
+export type DailySessionReadiness = {
+  rested: boolean | null;
+  emotionallySteady: boolean | null;
+  focused: boolean | null;
+  platformReady: boolean | null;
+  willingToTakeNoTrade: boolean | null;
+};
+
+export type DailySessionStopReason =
+  | "daily_loss_limit"
+  | "max_paper_trades"
+  | "consecutive_losses"
+  | "readiness_concern"
+  | "no_eligible_setup"
+  | "manual_stop"
+  | "session_complete";
+
+export type DailySession = {
+  id: string;
+  sessionDate: string;
+  status: DailySessionStatus;
+  readiness: DailySessionReadiness;
+  marketContext: "not_assessed" | "favorable" | "mixed" | "unclear";
+  setupQuality: "unclear" | "a_quality" | "not_present";
+  contextNote: string;
+  maxPaperTrades: number;
+  maxConsecutiveLosses: number;
+  dailyLossLimit: number;
+  stopReason: DailySessionStopReason | null;
+  stopNote: string;
+  startedAt: string | null;
+  endedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type PaperTradingEvent = {
   id: string;
   kind: "session" | "order" | "fill" | "risk" | "exit";
@@ -243,6 +461,7 @@ export type PaperTradingEvent = {
 
 export type PaperTradingSession = {
   id: string;
+  dailySessionId?: string;
   dataSetId: string;
   symbol: string;
   timeframe: string;
@@ -270,8 +489,21 @@ export type PaperTradingSession = {
 export type FidelityImportSettings = {
   folderPath: string;
   autoScan: boolean;
+  autoDetect?: boolean;
   lastScanAt: string | null;
   lastFileKey: string | null;
+  lastScanSummary?: {
+    tradingDayCount: number;
+    filesRead: number;
+    orderFileCount: number;
+    chartFileCount: number;
+    reconstructedTradeCount: number;
+    chartMatchedTradeCount: number;
+    unresolvedOrderCount: number;
+    unsupportedCsvCount: number;
+    skippedCsvCount: number;
+    warningCount: number;
+  };
 };
 
 export type JournalGoalMetric =
@@ -297,6 +529,27 @@ export type JournalDashboardPreferences = {
   calendarMetric: "pnl" | "activity" | "reflection" | "discipline";
   compactCards: boolean;
   visibleWidgets: Array<"performance" | "insights" | "records" | "activity">;
+};
+
+export type SetupPlaybookStatus = "draft" | "practice_only" | "retired";
+
+export type SetupPlaybook = {
+  id: string;
+  title: string;
+  market: string;
+  timeframe: string;
+  contextRequirements: string[];
+  confirmationRequirements: string[];
+  trigger: string;
+  invalidation: string;
+  liquidityRule: string;
+  disqualifiers: string[];
+  managementRule: string;
+  reviewQuestions: string[];
+  reviewedExamples: number;
+  status: SetupPlaybookStatus;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type LessonSection = {
@@ -506,5 +759,8 @@ export type AppState = {
   marketDataSets?: MarketDataSet[];
   chartAcquisition?: ChartAcquisitionSettings;
   chartWorkspace?: ChartWorkspacePreferences;
+  dailySessions?: DailySession[];
   paperTradingSessions?: PaperTradingSession[];
+  setupPlaybooks?: SetupPlaybook[];
+  tradeLearningSystem?: TradeLearningSystem;
 };

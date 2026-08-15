@@ -38,7 +38,7 @@ const content = {
     icon: BrainCircuit,
     eyebrow: "Lesson workspace · Deliberate practice",
     title: "Strengthen the weakest link",
-    note: "Use focused risk, expectancy, decision, plan-quality, and recall drills without requiring another trade.",
+    note: "Use focused context, playbook, risk, reset, planning, expectancy, decision, and recall drills without requiring another trade.",
   },
 } as const;
 

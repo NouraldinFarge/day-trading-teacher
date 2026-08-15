@@ -5,7 +5,7 @@ import { allowedSkillIds } from "./skills";
 
 describe("built-in curriculum", () => {
   it("follows the deep-lesson briefing and practice contract", () => {
-    expect(builtInLessons).toHaveLength(9);
+    expect(builtInLessons).toHaveLength(13);
     for (const lesson of builtInLessons) {
       const sectionTypes = new Set(
         lesson.sections.map((section) => section.type),
@@ -55,7 +55,7 @@ describe("built-in curriculum", () => {
     const counts = [0, 1, 2, 3].map(
       (position) => positions.filter((value) => value === position).length,
     );
-    expect(positions).toHaveLength(27);
+    expect(positions).toHaveLength(39);
     expect(Math.max(...counts) - Math.min(...counts)).toBeLessThanOrEqual(1);
   });
 
@@ -75,14 +75,17 @@ describe("built-in curriculum", () => {
     }
   });
 
-  it("maps every lesson exactly once in the intended six-phase sequence", () => {
+  it("maps every lesson exactly once with the current record correction first", () => {
     const pathLessonIds = corePathStages.flatMap((stage) => stage.lessonIds);
-    expect(corePathStages).toHaveLength(6);
+    expect(corePathStages).toHaveLength(8);
     expect(pathLessonIds).toEqual(
       builtInLessons.map((lesson) => lesson.lesson_id),
     );
     expect(new Set(pathLessonIds).size).toBe(pathLessonIds.length);
-    expect(corePathStages[0].title).toBe("Evidence literacy");
+    expect(corePathStages[0].title).toBe(
+      "Current priority: bound the rescue cycle",
+    );
+    expect(pathLessonIds[0]).toBe("builtin-rm-005");
     expect(corePathStages.at(-1)?.title).toBe("Review and transfer");
   });
 
@@ -96,6 +99,8 @@ describe("built-in curriculum", () => {
     expect(curriculum).toContain("chart replay");
     expect(curriculum).toContain("decision card");
     expect(curriculum).toContain("learning lab");
+    expect(curriculum).toContain("dollars invested");
+    expect(curriculum).toContain("rescue-exit lockout");
     expect(curriculum).toContain("t+1");
     expect(curriculum).toContain("intraday margin");
     expect(curriculum).toContain("fractional-share");

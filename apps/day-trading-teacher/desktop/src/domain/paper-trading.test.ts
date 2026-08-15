@@ -63,6 +63,25 @@ function session() {
 }
 
 describe("paper trading", () => {
+  it("links a paper session to the daily guard when one is supplied", () => {
+    const linked = createPaperTradingSession({
+      dailySessionId: "daily-1",
+      dataSetId: "spy-1m",
+      symbol: "SPY",
+      timeframe: "1m",
+      replayIndex: 0,
+      defaults: {
+        startingBalance: 10_000,
+        maxRiskPerTrade: 100,
+        dailyLossLimit: 300,
+        slippagePerShare: 0.01,
+        commissionPerOrder: 0,
+      },
+      at: bars[0].timestamp,
+    });
+    expect(linked.dailySessionId).toBe("daily-1");
+  });
+
   it("fills a market entry only when the next bar is revealed", () => {
     const queued = submitPaperEntry(
       session(),

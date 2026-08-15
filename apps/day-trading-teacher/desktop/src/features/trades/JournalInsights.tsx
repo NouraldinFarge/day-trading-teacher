@@ -12,6 +12,7 @@ import {
   generatedInsights,
   performanceBreakdown,
   periodSummary,
+  tailRiskAudit,
   tradesInRange,
   type BreakdownDimension,
 } from "../../domain/journal-analytics";
@@ -63,6 +64,7 @@ export function JournalInsights({
     startingBalance,
   );
   const insights = generatedInsights(trades, startingBalance);
+  const tails = tailRiskAudit(trades);
 
   return (
     <div className="journal-insights-page">
@@ -181,6 +183,67 @@ export function JournalInsights({
               </p>
             </div>
           )}
+        </div>
+      </section>
+      <section className="card section-gap tail-audit-card">
+        <div className="card-header">
+          <div>
+            <h2>Tail and outlier audit</h2>
+            <p>Test whether the average depends on one unusual result</p>
+          </div>
+          <ShieldAlert size={19} />
+        </div>
+        <div className="card-body">
+          <div className={`tail-audit-status ${tails.status}`}>
+            <span>
+              {tails.status === "insufficient"
+                ? "Early sample"
+                : tails.status === "fragile"
+                  ? "Concentrated outcomes"
+                  : "No dominant tail detected"}
+            </span>
+            <strong>{tails.sampleSize} recorded trades</strong>
+          </div>
+          <div className="tail-audit-metrics">
+            <div>
+              <span>Largest win / gross profit</span>
+              <strong>{dollars(tails.largestWin)}</strong>
+              <small>{tails.largestWinShareOfGrossProfit.toFixed(0)}%</small>
+            </div>
+            <div>
+              <span>Largest loss / gross loss</span>
+              <strong>{dollars(tails.largestLoss)}</strong>
+              <small>{tails.largestLossShareOfGrossLoss.toFixed(0)}%</small>
+            </div>
+            <div>
+              <span>Wins to recover largest loss</span>
+              <strong>
+                {tails.recoveryWinsNeeded === null
+                  ? "Not scorable"
+                  : tails.recoveryWinsNeeded.toFixed(1)}
+              </strong>
+              <small>Using the recorded average win</small>
+            </div>
+            <div>
+              <span>Median result</span>
+              <strong>{dollars(tails.medianPnl)}</strong>
+              <small>Less sensitive to one extreme result</small>
+            </div>
+            <div>
+              <span>Core net P&amp;L</span>
+              <strong>{dollars(tails.coreNetPnl)}</strong>
+              <small>After one largest win and loss are removed</small>
+            </div>
+          </div>
+          <ul className="tail-audit-reasons">
+            {tails.reasons.map((reason) => (
+              <li key={reason}>{reason}</li>
+            ))}
+          </ul>
+          <p className="analysis-boundary">
+            This is a descriptive stress test of recorded outcomes, not proof of
+            a strategy, a forecast, or advice to place more trades.
+          </p>
         </div>
       </section>
       <section className="journal-overview-grid section-gap">

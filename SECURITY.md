@@ -15,9 +15,11 @@ Include the affected version, Windows version, smallest reproducible sequence, e
 | Boundary | Expected behavior |
 | --- | --- |
 | Brokerage | No brokerage authentication, credential storage, account scraping, screen watching, or order placement |
-| AI | No embedded model, automatic ChatGPT call, remote tutor, or hidden prompt/data transmission |
+| AI | No embedded model, automatic ChatGPT call, remote tutor, or hidden prompt/data transmission; lesson and journal handoffs are explicit user-controlled files |
 | Lesson import | Bounded inert JSON; schema, source, skill, URL, active-content, and facilitator-material validation before approval |
-| CSV import | Local parsing of supported fields; account identifiers and raw rows are not stored as journal evidence |
+| CSV import | Local parsing of supported Orders and chart fields; account identifiers and raw rows are not stored as journal evidence |
+| AI journal handoff | Redacted local package, no automatic upload, strict response validation, evidence citations, non-diagnostic hypotheses, and explicit learner review before completion |
+| Trade-derived lessons | Local deterministic synthesis of validated drafts; original records remain intact, hindsight is labeled, psychological cause stays unconfirmed, and review is not mastery |
 | Historical providers | Explicit provider configuration, local separated credentials, allowlisted requests, visible provider/freshness context |
 | State and exports | Desktop-owned persistence, migration and validation, secret-shaped-field rejection, and export sanitization |
 | Calculations | Validated decimal inputs and deterministic Rust authority with a tested development fallback |
@@ -29,5 +31,6 @@ Include the affected version, Windows version, smallest reproducible sequence, e
 - Browser development mode uses browser local storage and fallback calculations. It is visibly labeled and is not the production security boundary.
 - Historical bars, backtests, paper trades, and descriptive analytics are learning evidence, not live quotes, forecasts, or execution guidance.
 - The current completed-position model does not claim complete brokerage-ledger fidelity for unsupported instruments or corporate events.
+- A Trade Lesson cannot reconstruct a missing contemporaneous plan, private mental state, sub-minute path, or executable candle-extreme price. Learners must confirm or reject hypotheses against their own memory and prospective records.
 
 Architecture details and code locations are in [`docs/architecture/overview.md`](docs/architecture/overview.md). Dependency-specific findings and narrowly justified exceptions are in [`docs/dependency-audit.md`](docs/dependency-audit.md).

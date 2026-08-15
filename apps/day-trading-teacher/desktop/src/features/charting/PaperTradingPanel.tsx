@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   BadgeDollarSign,
   Ban,
@@ -19,6 +20,7 @@ import {
   updatePaperProtection,
   type PaperSessionDefaults,
 } from "../../domain/paper-trading";
+import type { PaperEntryAccess } from "../../domain/daily-session";
 import type {
   MarketBar,
   PaperOrderType,
@@ -60,6 +62,7 @@ export function PaperTradingPanel({
   currentBar,
   currentBarIndex,
   defaults,
+  entryAccess = { allowed: true, reason: "" },
   onStart,
   onChange,
 }: {
@@ -68,6 +71,7 @@ export function PaperTradingPanel({
   currentBar: MarketBar;
   currentBarIndex: number;
   defaults: PaperSessionDefaults;
+  entryAccess?: PaperEntryAccess;
   onStart(): void;
   onChange(session: PaperTradingSession): void;
 }) {
@@ -121,9 +125,10 @@ export function PaperTradingPanel({
   const preview = session
     ? previewPaperEntry(session, request, currentBar)
     : null;
-  const locked = Boolean(
+  const sessionLossLocked = Boolean(
     session && session.realizedPnl <= -session.dailyLossLimit,
   );
+  const locked = sessionLossLocked || !entryAccess.allowed;
   const recentHistory = useMemo(
     () => history.filter((item) => item.status === "completed").slice(0, 3),
     [history],
@@ -175,14 +180,25 @@ export function PaperTradingPanel({
           </span>
         </div>
         <div className="paper-start-actions">
-          <button className="button primary" type="button" onClick={onStart}>
+          <button
+            className="button primary"
+            type="button"
+            disabled={!entryAccess.allowed}
+            onClick={onStart}
+          >
             <ShieldCheck size={16} />
             Start paper session
           </button>
           <small>
-            Local simulation only. No brokerage credentials, live orders, or
-            Fidelity account changes.
+            {entryAccess.allowed
+              ? "Local simulation only. No brokerage credentials, live orders, or Fidelity account changes."
+              : entryAccess.reason}
           </small>
+          {!entryAccess.allowed ? (
+            <Link to="/learn" className="text-button">
+              Open Lessons to review the guard
+            </Link>
+          ) : null}
         </div>
         {recentHistory.length ? (
           <div className="paper-history-preview">
@@ -283,8 +299,14 @@ export function PaperTradingPanel({
         <div className="paper-risk-lock" role="alert">
           <Ban size={16} />
           <span>
-            <strong>Session loss lock reached</strong>
-            No new entries are allowed. End the session and review the process.
+            <strong>
+              {sessionLossLocked
+                ? "Session loss lock reached"
+                : "Session Guard is review-only"}
+            </strong>
+            {sessionLossLocked
+              ? "No new entries are allowed. End the session and review the process."
+              : entryAccess.reason}
           </span>
         </div>
       ) : null}

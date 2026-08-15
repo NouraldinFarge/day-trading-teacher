@@ -38,7 +38,7 @@ describe("lesson rationales", () => {
       ...builtInLessons.map((lesson) => lesson.lesson_id),
       ...bundledImportedLessonIds,
     ];
-    expect(lessonIds).toHaveLength(33);
+    expect(lessonIds).toHaveLength(37);
     for (const lessonId of lessonIds) {
       expect(hasAuthoredLessonRationale(lessonId)).toBe(true);
     }

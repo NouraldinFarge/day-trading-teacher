@@ -37,16 +37,29 @@ mission must declare its phase, the specific task, the evidence artifact to
 produce, and a sensible activity checkpoint. Features are not forced into a
 lesson when they do not strengthen its objective.
 
+The first phase is a privacy-safe **current record focus**. The August 2026
+review exposed one higher-priority learning need: correctly interpret
+dollar-funded fractional buys, bound every planned entry as one thesis, exit
+at invalidation without an unplanned add, and lock the symbol after a rescue
+exit. The raw symbol, account identifier, and order history are not copied into
+the curriculum. Completion returns the learner to the broader
+evidence-to-transfer sequence; it does not claim the behavioral pattern is permanently
+mastered.
+
 | Lesson | Prepare | Apply | Reflect |
 | --- | --- | --- | --- |
+| Bound the thesis before the first buy | Evidence Journal | Risk Sandbox and Chart Replay | Decision Card |
 | Reconstruct before you judge | Evidence Journal | Chart Replay | Recall deck |
 | Know the account before the setup | Decision Card | Expectancy Lab | Evidence Journal |
 | Set the loss boundary first | Risk Sandbox | Chart Replay | Decision Card |
 | Make the setup earn eligibility | Chart Replay | Decision Card | Decision drill |
+| Read the candle inside its context | Context Reading | Chart Replay and Decision Card | Evidence Journal |
+| Build a practice-only setup playbook | Setup Playbooks | Chart Replay and Decision Card | Evidence Journal |
 | Write the decision before the ticket | Plan Coach | Decision Card and Chart Replay | Evidence Journal |
 | Choose the order by its failure mode | Chart Replay | Decision drill and Decision Card | Evidence Journal |
 | Make the next decision independent | Journal Patterns | Decision drill and Chart Replay | Decision Card |
 | Score process and preserve uncertainty | Evidence Journal | Chart Replay and Decision Card | Expectancy Lab |
+| Audit the tails, not just the average | Journal Insights | Reset Drill and Chart Replay | Evidence Journal |
 | Run the complete no-click replay | Recall deck | Chart Replay and Decision Card | Evidence Journal |
 
 The mapping lives in `src/domain/lesson-workspaces.ts` and is covered by an

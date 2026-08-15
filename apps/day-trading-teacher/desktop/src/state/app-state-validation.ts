@@ -131,6 +131,17 @@ const journalSchema = z
     preTradeChecklist: checklistSchema.optional(),
     postTradeChecklist: checklistSchema.optional(),
     screenshotRefs: z.array(localImageDataUrl).max(3).optional(),
+    aiDraft: z
+      .object({
+        source: z.literal("external_ai"),
+        sourcePackageId: shortText,
+        importedAt: dateText,
+        reviewStatus: z.enum(["awaiting_user_review", "reviewed_by_user"]),
+        evidenceRefs: z.array(longText).max(500),
+        inferenceNotice: longText,
+      })
+      .strict()
+      .optional(),
   })
   .passthrough();
 
@@ -161,6 +172,220 @@ const tradeSchema = z
     journal: journalSchema.optional(),
   })
   .passthrough();
+
+const tradeLessonPrioritySchema = z.enum([
+  "Critical immediate correction",
+  "High-priority improvement",
+  "Important reinforcement",
+  "Minor refinement",
+  "Informational only",
+]);
+const tradeLessonConfidenceSchema = z.enum([
+  "Confirmed",
+  "Strongly supported",
+  "Possible",
+  "Insufficient evidence",
+]);
+const tradeLessonConnectionSchema = z
+  .object({
+    tradeSourceId: shortText,
+    displayId: shortText,
+    tradingDate: dateText,
+    symbol: shortText,
+    relationship: z.enum([
+      "reinforces",
+      "contradicts",
+      "refines",
+      "adds context",
+    ]),
+    explanation: longText,
+  })
+  .strict();
+const tradeLessonAuditSchema = z
+  .object({
+    id: longText,
+    sequence: z.number().int().positive(),
+    tradeSourceId: shortText,
+    appTradeId: shortText.nullable(),
+    displayId: shortText,
+    tradingDate: dateText,
+    symbol: shortText,
+    entryAt: dateText,
+    exitAt: dateText,
+    reviewedAt: optionalDate,
+    priority: tradeLessonPrioritySchema,
+    patternIds: z.array(shortText).max(30),
+    facts: z
+      .object({
+        investedDollars: z.number().finite().nonnegative(),
+        calculatedQuantityShares: z.number().finite().nonnegative(),
+        entryPrice: z.number().finite().positive(),
+        exitPrice: z.number().finite().positive(),
+        calculatedGrossPnl: z.number().finite(),
+        calculatedGrossReturnPercent: z.number().finite(),
+        holdingSeconds: z.number().finite().nonnegative(),
+        entryFillCount: z.number().int().nonnegative(),
+        exitFillCount: z.number().int().nonnegative(),
+        reconciliationConfidence: z.enum(["high", "review"]),
+        entryLocationPercent: z.number().finite().nullable(),
+        entryVwap: z.number().finite().positive().nullable(),
+        maximumFavorableExcursionPercent: z.number().finite().nullable(),
+        maximumAdverseExcursionPercent: z.number().finite().nullable(),
+      })
+      .strict(),
+    temporalEvidence: z
+      .object({
+        knownBeforeEntry: z.array(longText).max(30),
+        observedAtEntry: z.array(longText).max(30),
+        occurredDuringTrade: z.array(longText).max(60),
+        knownOnlyAfterward: z.array(longText).max(30),
+        missing: z.array(longText).max(30),
+      })
+      .strict(),
+    tradeSummary: longText,
+    originalThesis: longText,
+    whatWasDoneWell: z.array(longText).max(30),
+    whatWasDonePoorly: z.array(longText).max(30),
+    originalLesson: longText,
+    lessonAudit: longText,
+    revisedLesson: z
+      .object({
+        observation: longText,
+        decisionErrorOrStrength: longText,
+        underlyingCause: longText,
+        correctPrinciple: longText,
+        futureRule: longText,
+        trigger: longText,
+        verification: longText,
+        practice: longText,
+      })
+      .strict(),
+    actionableTradingRule: longText,
+    preTradeChecklistQuestion: longText,
+    inTradeCheckpoint: longText,
+    postTradeReviewQuestion: longText,
+    evidenceAndConfidence: z
+      .object({
+        confidence: tradeLessonConfidenceSchema,
+        rationale: longText,
+        evidenceRefs: z.array(longText).max(500),
+      })
+      .strict(),
+    connections: z.array(tradeLessonConnectionSchema).max(12),
+  })
+  .strict();
+const tradeLearningPatternSchema = z
+  .object({
+    id: shortText,
+    title: longText,
+    category: z.enum([
+      "planning",
+      "entry",
+      "risk",
+      "management",
+      "behavior",
+      "data-quality",
+      "strength",
+    ]),
+    occurrences: z.number().int().nonnegative(),
+    tradeSourceIds: z.array(shortText).max(50_000),
+    earliestOccurrence: dateText,
+    mostRecentOccurrence: dateText,
+    frequencyDirection: z.enum([
+      "increasing",
+      "decreasing",
+      "stable",
+      "insufficient",
+    ]),
+    sharedMechanism: longText,
+    typicalTrigger: longText,
+    typicalConsequence: longText,
+    existingLessonOrRule: longText,
+    implementationEvidence: longText,
+    bestCorrectiveAction: longText,
+    confidence: tradeLessonConfidenceSchema,
+  })
+  .strict();
+const tradeLearningKnowledgeItemSchema = z
+  .object({
+    id: shortText,
+    title: longText,
+    rule: longText,
+    appliesWhen: longText,
+    exception: longText,
+    evidence: longText,
+  })
+  .strict();
+const consolidatedTradingRuleSchema = z
+  .object({
+    id: shortText,
+    rule: longText,
+    whyItExists: longText,
+    appliesWhen: longText,
+    doesNotApplyWhen: longText,
+    supportingTradeSourceIds: z.array(shortText).max(50_000),
+    complianceMeasure: longText,
+  })
+  .strict();
+const tradeLearningSystemSchema = z
+  .object({
+    schema: z.literal("day-trading-teacher.trade-learning-system"),
+    schemaVersion: z.literal(1),
+    sourcePackageId: shortText,
+    generatedAt: dateText,
+    processingOrder: z.literal("newest_to_oldest"),
+    tradeAudits: z.array(tradeLessonAuditSchema).max(50_000),
+    patterns: z.array(tradeLearningPatternSchema).max(500),
+    knowledgeHierarchy: z
+      .object({
+        foundationalPrinciples: z
+          .array(tradeLearningKnowledgeItemSchema)
+          .max(100),
+        strategySpecificRules: z
+          .array(tradeLearningKnowledgeItemSchema)
+          .max(100),
+        situationalAdjustments: z
+          .array(tradeLearningKnowledgeItemSchema)
+          .max(100),
+        personalBehavioralSafeguards: z
+          .array(tradeLearningKnowledgeItemSchema)
+          .max(100),
+      })
+      .strict(),
+    consolidated: z
+      .object({
+        mostUrgentLessons: z.array(longText).max(100),
+        recurringStrengths: z.array(longText).max(100),
+        recurringMistakes: z.array(longText).max(100),
+        lessonsRecognizedButNotImplemented: z.array(longText).max(100),
+        improvementsOverTime: z.array(longText).max(100),
+        regressionsOverTime: z.array(longText).max(100),
+        missingKnowledge: z.array(longText).max(100),
+      })
+      .strict(),
+    consolidatedRules: z.array(consolidatedTradingRuleSchema).max(500),
+    checklist: z
+      .object({
+        beforeEntry: z.array(longText).max(100),
+        atEntry: z.array(longText).max(100),
+        duringTrade: z.array(longText).max(100),
+        beforeExit: z.array(longText).max(100),
+        afterTrade: z.array(longText).max(100),
+      })
+      .strict(),
+    focusPlan: z
+      .object({
+        firstBehaviorToCorrect: longText,
+        firstConceptToStudy: longText,
+        firstRuleToPractice: longText,
+        measurableReviewMethod: longText,
+        olderTradeSourceIdsToRevisit: z.array(shortText).max(500),
+        evidenceRequiredToAdvance: longText,
+        nextFocusArea: longText,
+      })
+      .strict(),
+  })
+  .strict();
 
 const marketBarSchema = z
   .object({
@@ -334,9 +559,49 @@ const paperTradingEventSchema = z
   })
   .strict();
 
+const dailySessionSchema = z
+  .object({
+    id: shortText,
+    sessionDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    status: z.enum(["planned", "active", "review_only", "no_trade", "closed"]),
+    readiness: z
+      .object({
+        rested: z.boolean().nullable(),
+        emotionallySteady: z.boolean().nullable(),
+        focused: z.boolean().nullable(),
+        platformReady: z.boolean().nullable(),
+        willingToTakeNoTrade: z.boolean().nullable(),
+      })
+      .strict(),
+    marketContext: z.enum(["not_assessed", "favorable", "mixed", "unclear"]),
+    setupQuality: z.enum(["unclear", "a_quality", "not_present"]),
+    contextNote: longText,
+    maxPaperTrades: z.number().int().min(1).max(20),
+    maxConsecutiveLosses: z.number().int().min(1).max(10),
+    dailyLossLimit: z.number().finite().positive(),
+    stopReason: z
+      .enum([
+        "daily_loss_limit",
+        "max_paper_trades",
+        "consecutive_losses",
+        "readiness_concern",
+        "no_eligible_setup",
+        "manual_stop",
+        "session_complete",
+      ])
+      .nullable(),
+    stopNote: longText,
+    startedAt: optionalDate,
+    endedAt: optionalDate,
+    createdAt: dateText,
+    updatedAt: dateText,
+  })
+  .strict();
+
 const paperTradingSessionSchema = z
   .object({
     id: shortText,
+    dailySessionId: shortText.optional(),
     dataSetId: shortText,
     symbol: shortText,
     timeframe: shortText,
@@ -361,6 +626,29 @@ const paperTradingSessionSchema = z
     events: z.array(paperTradingEventSchema).max(100),
   })
   .passthrough();
+
+const setupPlaybookLinesSchema = z.array(longText).max(20);
+
+const setupPlaybookSchema = z
+  .object({
+    id: shortText,
+    title: z.string().max(120),
+    market: z.string().max(200),
+    timeframe: z.string().max(200),
+    contextRequirements: setupPlaybookLinesSchema,
+    confirmationRequirements: setupPlaybookLinesSchema,
+    trigger: longText,
+    invalidation: longText,
+    liquidityRule: longText,
+    disqualifiers: setupPlaybookLinesSchema,
+    managementRule: longText,
+    reviewQuestions: setupPlaybookLinesSchema,
+    reviewedExamples: z.number().int().min(0).max(10_000),
+    status: z.enum(["draft", "practice_only", "retired"]),
+    createdAt: dateText,
+    updatedAt: dateText,
+  })
+  .strict();
 
 const appStateSchema = z
   .object({
@@ -464,8 +752,24 @@ const appStateSchema = z
       .object({
         folderPath: longText,
         autoScan: z.boolean(),
+        autoDetect: z.boolean().optional(),
         lastScanAt: optionalDate,
         lastFileKey: longText.nullable(),
+        lastScanSummary: z
+          .object({
+            tradingDayCount: z.number().int().nonnegative(),
+            filesRead: z.number().int().nonnegative(),
+            orderFileCount: z.number().int().nonnegative(),
+            chartFileCount: z.number().int().nonnegative(),
+            reconstructedTradeCount: z.number().int().nonnegative(),
+            chartMatchedTradeCount: z.number().int().nonnegative(),
+            unresolvedOrderCount: z.number().int().nonnegative(),
+            unsupportedCsvCount: z.number().int().nonnegative(),
+            skippedCsvCount: z.number().int().nonnegative(),
+            warningCount: z.number().int().nonnegative(),
+          })
+          .strict()
+          .optional(),
       })
       .passthrough()
       .optional(),
@@ -514,7 +818,10 @@ const appStateSchema = z
     marketDataSets: z.array(marketDataSetSchema).max(8).optional(),
     chartAcquisition: chartAcquisitionSchema.optional(),
     chartWorkspace: chartWorkspaceSchema.optional(),
+    dailySessions: z.array(dailySessionSchema).max(730).optional(),
     paperTradingSessions: z.array(paperTradingSessionSchema).max(50).optional(),
+    setupPlaybooks: z.array(setupPlaybookSchema).max(200).optional(),
+    tradeLearningSystem: tradeLearningSystemSchema.optional(),
   })
   .passthrough();
 

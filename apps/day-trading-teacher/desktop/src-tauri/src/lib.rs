@@ -774,16 +774,39 @@ struct FidelityStatus {
 #[serde(rename_all = "camelCase")]
 struct FidelityExportFile {
     name: String,
-    path: String,
+    relative_path: String,
     modified_at: u64,
+    size_bytes: u64,
+    kind: String,
+    folder_date: Option<String>,
     content: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct FidelityExportScan {
+    files: Vec<FidelityExportFile>,
+    discovered_csv_count: usize,
+    unsupported_csv_count: usize,
+    oversized_csv_count: usize,
+    unreadable_csv_count: usize,
+    truncated_csv_count: usize,
+    total_bytes: u64,
+    warnings: Vec<String>,
+}
+
+#[derive(Clone)]
+struct FidelityCsvCandidate {
+    modified_at: u64,
+    size_bytes: u64,
+    path: PathBuf,
 }
 
 fn collect_fidelity_csv_candidates(
     folder: &Path,
     root: &Path,
     depth: usize,
-    candidates: &mut Vec<(u64, PathBuf)>,
+    candidates: &mut Vec<FidelityCsvCandidate>,
 ) {
     if depth == 0 {
         return;
@@ -808,7 +831,7 @@ fn collect_fidelity_csv_candidates(
             .extension()
             .and_then(|value| value.to_str())
             .is_some_and(|value| value.eq_ignore_ascii_case("csv"));
-        if !metadata.is_file() || !is_csv || metadata.len() > 10_000_000 {
+        if !metadata.is_file() || !is_csv {
             continue;
         }
         let Ok(canonical) = path.canonicalize() else {
@@ -825,12 +848,48 @@ fn collect_fidelity_csv_candidates(
         else {
             continue;
         };
-        candidates.push((modified, canonical));
+        candidates.push(FidelityCsvCandidate {
+            modified_at: modified,
+            size_bytes: metadata.len(),
+            path: canonical,
+        });
     }
 }
 
+fn fidelity_csv_kind(content: &str) -> Option<&'static str> {
+    let sample: String = content.chars().take(65_536).collect();
+    let normalized = sample.replace(['"', '\r'], "").to_ascii_lowercase();
+    let is_orders = normalized.contains("symbol,action,amount,order type,status,filled")
+        && normalized.contains("order time");
+    if is_orders {
+        return Some("orders");
+    }
+    let is_chart = normalized.contains("date,open,high,low,close")
+        || normalized.contains("timestamp,open,high,low,close")
+        || normalized.contains("datetime,open,high,low,close");
+    is_chart.then_some("chart")
+}
+
+fn dated_parent(relative_path: &Path) -> Option<String> {
+    relative_path.parent()?.components().find_map(|component| {
+        let value = component.as_os_str().to_string_lossy();
+        let bytes = value.as_bytes();
+        let valid = bytes.len() == 10
+            && bytes[4] == b'-'
+            && bytes[7] == b'-'
+            && bytes
+                .iter()
+                .enumerate()
+                .all(|(index, byte)| index == 4 || index == 7 || byte.is_ascii_digit());
+        valid.then(|| value.to_string())
+    })
+}
+
 #[tauri::command]
-fn scan_fidelity_exports(folder_path: String) -> Result<Vec<FidelityExportFile>, String> {
+fn scan_fidelity_exports(folder_path: String) -> Result<FidelityExportScan, String> {
+    const MAX_FILE_BYTES: u64 = 12_000_000;
+    const MAX_TOTAL_BYTES: u64 = 64_000_000;
+    const MAX_FILES: usize = 500;
     let requested = PathBuf::from(folder_path);
     let folder = requested
         .canonicalize()
@@ -839,32 +898,107 @@ fn scan_fidelity_exports(folder_path: String) -> Result<Vec<FidelityExportFile>,
         return Err("The selected Fidelity export location is not a folder.".to_string());
     }
     let mut candidates = Vec::new();
-    collect_fidelity_csv_candidates(&folder, &folder, 4, &mut candidates);
-    candidates.sort_by_key(|candidate| candidate.0);
+    collect_fidelity_csv_candidates(&folder, &folder, 8, &mut candidates);
+    candidates.sort_by_key(|candidate| candidate.modified_at);
+    let discovered_csv_count = candidates.len();
+    let truncated_csv_count = discovered_csv_count.saturating_sub(MAX_FILES);
+    if truncated_csv_count > 0 {
+        candidates = candidates.split_off(truncated_csv_count);
+    }
     let mut exports = Vec::new();
-    for (modified_at, path) in candidates.into_iter().rev().take(100).rev() {
-        let content = fs::read_to_string(&path).map_err(|error| error.to_string())?;
-        if !content.contains("Symbol,Action,Amount,Order Type,Status,Filled")
-            || !content.contains("Order Time")
+    let mut unsupported_csv_count = 0;
+    let mut oversized_csv_count = 0;
+    let mut unreadable_csv_count = 0;
+    let mut total_bytes = 0_u64;
+    for candidate in candidates {
+        if candidate.size_bytes > MAX_FILE_BYTES
+            || total_bytes.saturating_add(candidate.size_bytes) > MAX_TOTAL_BYTES
         {
+            oversized_csv_count += 1;
             continue;
         }
-        let canonical = path.canonicalize().map_err(|error| error.to_string())?;
+        let Ok(content) = fs::read_to_string(&candidate.path) else {
+            unreadable_csv_count += 1;
+            continue;
+        };
+        let Some(kind) = fidelity_csv_kind(&content) else {
+            unsupported_csv_count += 1;
+            continue;
+        };
+        let canonical = candidate
+            .path
+            .canonicalize()
+            .map_err(|error| error.to_string())?;
         if !canonical.starts_with(&folder) {
             continue;
         }
+        let relative = canonical
+            .strip_prefix(&folder)
+            .map_err(|_| "A scanned export escaped the selected folder.".to_string())?;
+        total_bytes = total_bytes.saturating_add(candidate.size_bytes);
         exports.push(FidelityExportFile {
             name: canonical
                 .file_name()
                 .and_then(|value| value.to_str())
                 .unwrap_or("Fidelity export.csv")
                 .to_string(),
-            path: canonical.to_string_lossy().to_string(),
-            modified_at,
+            relative_path: relative.to_string_lossy().to_string(),
+            modified_at: candidate.modified_at,
+            size_bytes: candidate.size_bytes,
+            kind: kind.to_string(),
+            folder_date: dated_parent(relative),
             content,
         });
     }
-    Ok(exports)
+    let mut warnings = Vec::new();
+    if truncated_csv_count > 0 {
+        warnings.push(format!(
+            "Only the newest {MAX_FILES} CSV files were considered; {truncated_csv_count} older files were left untouched."
+        ));
+    }
+    if oversized_csv_count > 0 {
+        warnings.push(format!(
+            "{oversized_csv_count} CSV file(s) exceeded the per-file or combined 64 MB reading limit."
+        ));
+    }
+    if unreadable_csv_count > 0 {
+        warnings.push(format!(
+            "{unreadable_csv_count} CSV file(s) could not be read and were left untouched."
+        ));
+    }
+    Ok(FidelityExportScan {
+        files: exports,
+        discovered_csv_count,
+        unsupported_csv_count,
+        oversized_csv_count,
+        unreadable_csv_count,
+        truncated_csv_count,
+        total_bytes,
+        warnings,
+    })
+}
+
+fn find_trading_records_folder(start: &Path) -> Option<PathBuf> {
+    start.ancestors().take(10).find_map(|ancestor| {
+        let candidate = ancestor.join("Trading_Records");
+        candidate
+            .is_dir()
+            .then(|| candidate.canonicalize().ok())
+            .flatten()
+    })
+}
+
+#[tauri::command]
+fn detect_trading_records_folder() -> Option<String> {
+    let from_executable = std::env::current_exe()
+        .ok()
+        .and_then(|path| find_trading_records_folder(path.parent()?));
+    let detected = from_executable.or_else(|| {
+        std::env::current_dir()
+            .ok()
+            .and_then(|path| find_trading_records_folder(&path))
+    });
+    detected.map(|path| path.to_string_lossy().to_string())
 }
 
 #[cfg(target_os = "windows")]
@@ -1053,6 +1187,7 @@ pub fn run() {
             launch_fidelity_trader_plus,
             open_fidelity_setup_page,
             scan_fidelity_exports,
+            detect_trading_records_folder,
             market_data_provider_status,
             save_market_data_provider_credentials,
             clear_market_data_provider_credentials,
@@ -1066,8 +1201,9 @@ pub fn run() {
 #[cfg(test)]
 mod tests {
     use super::{
-        atomic_write, bars_to_csv, checked_market_data_csv, provider_spec, read_json_file,
-        scan_fidelity_exports, sibling_path, valid_market_symbol, valid_provider_credential,
+        atomic_write, bars_to_csv, checked_market_data_csv, find_trading_records_folder,
+        provider_spec, read_json_file, scan_fidelity_exports, sibling_path, valid_market_symbol,
+        valid_provider_credential,
     };
     use std::fs;
     use std::time::{SystemTime, UNIX_EPOCH};
@@ -1157,11 +1293,52 @@ mod tests {
         .unwrap();
 
         let exports = scan_fidelity_exports(directory.to_string_lossy().to_string()).unwrap();
-        assert_eq!(exports.len(), 2);
+        assert_eq!(exports.files.len(), 3);
+        assert_eq!(exports.discovered_csv_count, 3);
+        assert_eq!(
+            exports
+                .files
+                .iter()
+                .filter(|export| export.kind == "orders")
+                .count(),
+            2
+        );
+        assert_eq!(
+            exports
+                .files
+                .iter()
+                .filter(|export| export.kind == "chart")
+                .count(),
+            1
+        );
         assert!(
             exports
+                .files
                 .iter()
-                .all(|export| export.content.contains("Order Time"))
+                .any(|export| export.relative_path.contains("2026-07-27"))
+        );
+
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn detects_a_project_root_trading_records_folder_from_active_build() {
+        let unique = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let directory = std::env::temp_dir().join(format!(
+            "day-trading-teacher-record-detection-{}-{unique}",
+            std::process::id()
+        ));
+        let active_build = directory.join("active-build");
+        let records = directory.join("Trading_Records");
+        fs::create_dir_all(&active_build).unwrap();
+        fs::create_dir_all(&records).unwrap();
+
+        assert_eq!(
+            find_trading_records_folder(&active_build),
+            records.canonicalize().ok()
         );
 
         fs::remove_dir_all(directory).unwrap();

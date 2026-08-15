@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.36.0 — 2026-08-15
+
+- Added a complete trade-derived learning system that audits every matched Trading Records entry in strict newest-to-oldest order while preserving the original lesson, source facts, AI hypothesis, and learner journal separately from the rewrite.
+- Added an eight-part revised lesson for every trade—observation, decision error or strength, underlying cause, correct principle, future rule, trigger, verification, and practice—plus a pre-entry question, in-trade checkpoint, post-trade review question, evidence confidence, priority, and cross-trade connections.
+- Split each audit into evidence known before entry, observed at entry, occurring during the trade, known only afterward, and explicitly missing information. Full-session range, VWAP comparisons, MFE, and MAE remain labeled retrospective and never become assumed executable prices or proof of intent.
+- Added a running pattern map, older-versus-newer frequency direction, knowledge hierarchy, consolidated non-duplicative rules, evidence-backed checklist, and single-focus deliberate-practice plan. The current 76-record private state identifies missing timestamped decision records, lower-priced adds, rapid same-symbol re-entry, favorable-to-negative paths, short holding windows, and reconciliation review without diagnosing mental state or grading process from P&L.
+- Added a premium Trade Lessons workspace with latest-trade action, searchable/filterable audit timeline, original-versus-revised comparison, evidence lanes, pattern and knowledge views, rule/checklist view, outcome-hidden replay handoffs, Markdown export, dark mode, responsive layouts, and learner review status that is explicitly separate from mastery.
+- Reworked the Lessons home priority card to open the newest private trade audit directly while retaining the curriculum practice lesson as a separate action. Importing validated external-AI drafts now regenerates the local learning system and preserves prior review timestamps.
+- Added schema limits and deterministic regression coverage for ordering, source uniqueness, original-lesson preservation, hindsight boundaries, pattern detection, cross-trade linkage, complete report structure, and review-state preservation.
+
+## 0.35.0 — 2026-08-15
+
+- Rebuilt the Fidelity export inbox around the complete root-level `Trading_Records/` evidence set: up to eight directory levels, 500 CSV files, and 64 MB per scan, with automatic project-root detection for active portable builds.
+- Added supported Orders-versus-chart classification, dated-folder inventory, day-level coverage, deterministic fractional-dollar buy interpretation (`Buy 10` means $10 invested), multi-fill reconstruction, unresolved-evidence reporting, and same-day one-minute chart pairing by New York date and symbol.
+- Verified the real 16-day Trading Records folder end to end: 35 CSV files, 16 Orders exports, 19 chart exports, 201 supported filled orders, 76 reconstructed positions, and one-minute chart context for all 76 positions; materially unmatched relationships remain visible instead of receiving invented cost basis.
+- Added an optional external-AI journal workflow with local redacted evidence-package export, copied request text, strict response schema, package/trade/evidence-reference validation, and a review-before-apply preview. The app never uploads records or runs an AI model itself.
+- Added explicit observed/calculated/inferred/unknown boundaries, correct Fidelity unit rules, non-diagnostic mental-state constraints, evidence citations, confidence limits, prohibited live-trading directives, and draft-only merging that preserves learner-authored text and completed reflections.
+- Added on-demand historical chart handoff from each dated evidence card, persisted scan coverage in Settings, deep-review opening for AI drafts, responsive/dark-mode inbox styling, and deterministic frontend/native regression coverage.
+
+## 0.34.0 — 2026-08-15
+
+- Added a privacy-safe current-record learning phase that addresses the newest observed rescue-cycle pattern before the general curriculum: dollar-funded fractional-share reconstruction, whole-thesis risk, invalidation exits, and same-session symbol lockout after a rescue exit.
+- Expanded the core path to eight phases and 13 lessons, with a dedicated four-workspace Prepare → Apply → Reflect route and the non-P&L Thesis Boundary Keeper mastery artifact.
+- Reworked the Lessons landing hierarchy so the record-informed correction is clearly explained and practiced before generic path or spaced-review recommendations, while preserving raw account and symbol details outside the bundled curriculum.
+
+## 0.33.0 — 2026-08-13
+
+- Expanded the core learning path to seven phases and 12 lessons with original, outcome-hidden instruction for contextual candle reading, practice-only setup playbooks, and tail/outlier review.
+- Added a six-case Context Reading Lab that grades plan, wait, or no-trade decisions against visible evidence while keeping later synthetic bars hidden until commitment.
+- Added durable local Setup Playbooks with bounded validation, migration, completeness feedback, explicit draft/practice-only/retired states, and no strategy-validation or live-use claim.
+- Added a guided Reset Drill that separates observable facts from the learner's current story, applies preset stop boundaries first, and can move an active paper-practice session to review-only.
+- Added a Tail and outlier audit to Journal Insights with outcome concentration, median, trimmed core result, and recovery-burden measures plus deterministic, non-predictive recommendations.
+- Added lesson-specific Prepare → Apply → Reflect routes and three non-coercive mastery artifacts without introducing rewards for trade count, simulated profit, position size, or continuous streaks.
+- Documented the full PDF/video audit, source hashes, coverage map, deliberate exclusions, copyright boundary, completed verification gate, and removal of the fully covered user-provided `Stock Day Trading` folder.
+
 ## 0.32.6 — 2026-08-08
 
 - Hardened the shared Rust and browser risk calculations against invalid sides, nonpositive prices, negative costs, excess precision, unsafe whole-unit conversion, numeric overflow, and silently ignored planned-risk errors.

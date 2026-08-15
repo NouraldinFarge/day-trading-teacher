@@ -3,7 +3,14 @@ import type { Lesson } from "./types";
 export type LessonWorkspaceId = "plan" | "chart" | "journal" | "lab";
 export type LessonWorkspacePhase = "prepare" | "apply" | "reflect";
 export type LessonLabToolId =
-  "risk" | "expectancy" | "decisions" | "plan" | "recall";
+  | "risk"
+  | "expectancy"
+  | "decisions"
+  | "context"
+  | "playbook"
+  | "reset"
+  | "plan"
+  | "recall";
 export type LessonJournalTab = "overview" | "trades" | "insights";
 
 export type LessonWorkspace = {
@@ -69,6 +76,38 @@ const mission = (
 });
 
 const lessonWorkspaceUses: Record<string, LessonWorkspaceMission[]> = {
+  "builtin-rm-005": [
+    mission(
+      "journal",
+      "prepare",
+      "Reconstruct the newest dollar-funded entry sequence, preserve unmatched shares, and keep observed behavior separate from inferred motive.",
+      "A chronological position ledger with dollars, shares, visible cash flow, and unknown cost basis labeled separately",
+      1,
+      { journalTab: "trades" },
+    ),
+    mission(
+      "lab",
+      "apply",
+      "Calculate the whole-position boundary for an initial entry and one optional add before opening a replay ticket.",
+      "A checked two-entry risk calculation with total investment and planned loss kept distinct",
+      3,
+      { labTool: "risk" },
+    ),
+    mission(
+      "chart",
+      "apply",
+      "Pause a falling historical sequence, hide the outcome, and rehearse closing at invalidation without an unplanned add.",
+      "A replay decision that records exit, wait, or no trade before the next bar is revealed",
+      4,
+    ),
+    mission(
+      "plan",
+      "reflect",
+      "Save the complete rescue-cycle firewall before another simulated decision.",
+      "A locked card with correct units, maximum entries, total risk, invalidation, time failure, and rescue-exit symbol lockout",
+      6,
+    ),
+  ],
   "builtin-tr-002": [
     mission(
       "journal",
@@ -165,6 +204,70 @@ const lessonWorkspaceUses: Record<string, LessonWorkspaceMission[]> = {
       "A reviewed decision drill with reasoning revealed",
       5,
       { labTool: "decisions" },
+    ),
+  ],
+  "builtin-cl-001": [
+    mission(
+      "lab",
+      "prepare",
+      "Choose plan, wait, or no trade on synthetic bars while later bars remain hidden.",
+      "A graded Context Reading decision based on visible evidence",
+      2,
+      { labTool: "context" },
+    ),
+    mission(
+      "chart",
+      "apply",
+      "Transfer the five-layer context stack to a paused historical chart without revealing the next bar.",
+      "A source-labeled observation grid with every unknown preserved",
+      4,
+    ),
+    mission(
+      "plan",
+      "apply",
+      "Lock a Decision Card only when every required context field passes at the same timestamp.",
+      "A replay-only plan or a documented wait/no-trade decision",
+      6,
+    ),
+    mission(
+      "journal",
+      "reflect",
+      "Compare the pre-reveal decision with later evidence without changing the original interpretation.",
+      "A context, adherence, and outcome review in separate evidence lanes",
+      7,
+      { journalTab: "trades" },
+    ),
+  ],
+  "builtin-sp-001": [
+    mission(
+      "lab",
+      "prepare",
+      "Write and save a field-complete, practice-only setup hypothesis.",
+      "A versionable Setup Playbook with explicit disqualifiers",
+      3,
+      { labTool: "playbook" },
+    ),
+    mission(
+      "chart",
+      "apply",
+      "Apply the frozen playbook to an unseen historical timestamp.",
+      "A qualifying, waiting, or disqualified case captured before reveal",
+      5,
+    ),
+    mission(
+      "plan",
+      "apply",
+      "Translate one qualifying playbook case into an auditable Decision Card.",
+      "A locked trigger, invalidation, liquidity rule, and management plan",
+      6,
+    ),
+    mission(
+      "journal",
+      "reflect",
+      "Preserve ordinary and failed cases, costs, rule changes, and unsupported fields.",
+      "A playbook review that separates evidence from validation claims",
+      7,
+      { journalTab: "insights" },
     ),
   ],
   "builtin-tp-003": [
@@ -293,6 +396,31 @@ const lessonWorkspaceUses: Record<string, LessonWorkspaceMission[]> = {
       "A cost-aware expectancy scenario",
       6,
       { labTool: "expectancy" },
+    ),
+  ],
+  "builtin-pr-001": [
+    mission(
+      "journal",
+      "prepare",
+      "Read the Tail and outlier audit, then inspect the largest win, largest loss, and ordinary recorded cases.",
+      "A concentration review with unsupported claims marked unknown",
+      3,
+      { journalTab: "insights" },
+    ),
+    mission(
+      "lab",
+      "apply",
+      "Use the Reset Drill when a large outcome or recovery urge could influence the next decision.",
+      "A fact-versus-story reset and a bounded next mode",
+      5,
+      { labTool: "reset" },
+    ),
+    mission(
+      "chart",
+      "reflect",
+      "Revisit the extreme and median outcomes at their original historical timestamps.",
+      "A context comparison that preserves the original outcome-hidden evidence",
+      6,
     ),
   ],
   "builtin-capstone-001": [
@@ -586,7 +714,8 @@ function inferredUses(skillIds: string[]): LessonWorkspaceMission[] {
     prefixes.has("TF") ||
     prefixes.has("OE") ||
     prefixes.has("PB") ||
-    prefixes.has("TP")
+    prefixes.has("TP") ||
+    prefixes.has("PR")
   )
     uses.push(
       mission(
@@ -605,7 +734,10 @@ function inferredUses(skillIds: string[]): LessonWorkspaceMission[] {
     prefixes.has("TP") ||
     prefixes.has("PB") ||
     prefixes.has("TF") ||
-    prefixes.has("RM")
+    prefixes.has("RM") ||
+    prefixes.has("CL") ||
+    prefixes.has("SP") ||
+    prefixes.has("PR")
   )
     uses.push(
       mission(
@@ -621,7 +753,9 @@ function inferredUses(skillIds: string[]): LessonWorkspaceMission[] {
     prefixes.has("TP") ||
     prefixes.has("VC") ||
     prefixes.has("PB") ||
-    prefixes.has("OE")
+    prefixes.has("OE") ||
+    prefixes.has("CL") ||
+    prefixes.has("SP")
   )
     uses.push(
       mission(
@@ -642,11 +776,17 @@ function inferredUses(skillIds: string[]): LessonWorkspaceMission[] {
       {
         labTool: prefixes.has("RM")
           ? "risk"
-          : prefixes.has("TP")
-            ? "plan"
-            : prefixes.has("TF")
-              ? "expectancy"
-              : "decisions",
+          : prefixes.has("CL")
+            ? "context"
+            : prefixes.has("SP")
+              ? "playbook"
+              : prefixes.has("PR") || prefixes.has("PB")
+                ? "reset"
+                : prefixes.has("TP")
+                  ? "plan"
+                  : prefixes.has("TF")
+                    ? "expectancy"
+                    : "decisions",
       },
     ),
   );
@@ -681,6 +821,6 @@ export const lessonPracticeWorkspaces: LessonWorkspace[] = [
   {
     ...workspaces.lab,
     purpose:
-      "Practice risk, expectancy, decision order, plan quality, and spaced recall on demand.",
+      "Practice context reading, setup hypotheses, risk, reset, expectancy, decision order, plan quality, and spaced recall on demand.",
   },
 ];

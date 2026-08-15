@@ -10,6 +10,8 @@ This directory explains the current Day-Trading Teacher product, its safety boun
 | How do the desktop, web, Rust, state, curriculum, and release layers fit together? | [Architecture overview](architecture/overview.md) |
 | Why are Lessons the center of the interface? | [Lesson-first product architecture](development/lesson-first-product-architecture.md) |
 | How does the Journal define metrics, calendars, goals, and safe gamification? | [Trading Journal product design](trading-journal-product-design.md) |
+| How do Trading Records become externally generated, reviewable journal drafts without embedded AI? | [External-AI journal workflow](external-ai-journal-workflow.md) |
+| How are the original trade lessons audited newest-to-oldest and consolidated without inventing intent? | [Trade-derived learning system](trade-derived-learning-system.md) |
 | How are external lesson plans created and imported without embedded AI? | [External lesson-plan workflow](development/lesson-plan-import.md) |
 | What are the application and financial-safety boundaries? | [Security policy](../SECURITY.md) |
 | What is planned—and explicitly not planned? | [Roadmap](../ROADMAP.md) |
@@ -21,8 +23,11 @@ This directory explains the current Day-Trading Teacher product, its safety boun
 | [Architecture](architecture/overview.md) | Current runtime layers, trust boundaries, data flow, and repository map | Current |
 | [Lesson-first product model](development/lesson-first-product-architecture.md) | Navigation modes, workspace contracts, resumable handoffs, and UX invariants | Current |
 | [Trading Journal design](trading-journal-product-design.md) | Implemented information architecture, analytics, calendars, achievements, and future enhancements | Current |
+| [External-AI journal workflow](external-ai-journal-workflow.md) | Redacted evidence packaging, response validation, mental-state limits, and review-before-apply behavior | Current |
+| [Trade-derived learning system](trade-derived-learning-system.md) | Per-trade lesson audit, temporal evidence lanes, cross-trade patterns, rules, checklists, and deliberate-practice focus | Current |
 | [External lesson-plan workflow](development/lesson-plan-import.md) | JSON authoring, local validation, quality review, approval, and provenance | Current |
 | [Curriculum v7 integration](curriculum-v7-integration.md) | Learner-safe normalization and deliberate exclusion of facilitator material | Current audit record |
+| [Stock Day Trading source integration](audits/stock-day-trading-source-integration.md) | Full-media audit, feature mapping, exclusions, source identities, and removal gate | Current audit record |
 | [Dependency audit](dependency-audit.md) | Latest JavaScript and Rust advisory analysis for the published release | Current audit record |
 | [Product media](images/README.md) | Screenshot provenance, privacy rules, social preview source, and refresh checklist | Current |
 

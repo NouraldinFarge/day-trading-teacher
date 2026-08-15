@@ -27,6 +27,24 @@ describe("lesson practice workspaces", () => {
     ).toEqual(["lab", "chart", "plan", "journal"]);
   });
 
+  it("routes each new lesson through its dedicated learning tool", () => {
+    expect(
+      lessonWorkspacesFor("builtin-cl-001").find(
+        (mission) => mission.id === "lab",
+      )?.labTool,
+    ).toBe("context");
+    expect(
+      lessonWorkspacesFor("builtin-sp-001").find(
+        (mission) => mission.id === "lab",
+      )?.labTool,
+    ).toBe("playbook");
+    expect(
+      lessonWorkspacesFor("builtin-pr-001").find(
+        (mission) => mission.id === "lab",
+      )?.labTool,
+    ).toBe("reset");
+  });
+
   it("infers feasible workspaces for imported lessons from their skills", () => {
     const inferred = lessonWorkspacesFor({
       lesson_id: "custom-risk-review",
@@ -46,6 +64,13 @@ describe("lesson practice workspaces", () => {
         skill_ids: ["PB-006"],
       }).map((item) => item.id),
     ).toEqual(["journal", "chart", "plan", "lab"]);
+
+    expect(
+      lessonWorkspacesFor({
+        lesson_id: "custom-context",
+        skill_ids: ["CL-001"],
+      }).at(-1)?.labTool,
+    ).toBe("context");
   });
 
   it("gives every bundled imported lesson a tailored evidence route", () => {

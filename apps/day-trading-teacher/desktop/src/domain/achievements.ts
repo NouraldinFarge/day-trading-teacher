@@ -130,6 +130,15 @@ const make = (definition: AchievementInput): AchievementDefinition => ({
 
 const lessonArtifacts = [
   {
+    lessonId: "builtin-rm-005",
+    id: "learn-thesis-boundary-keeper",
+    title: "Thesis Boundary Keeper",
+    tier: "Silver" as const,
+    target: 2,
+    purpose:
+      "Recognizes correct dollar/share reconstruction, whole-thesis risk, invalidation exits, and rescue-exit lockouts without rewarding a trade outcome.",
+  },
+  {
     lessonId: "builtin-tr-002",
     id: "learn-evidence-cartographer",
     title: "Evidence Cartographer",
@@ -166,6 +175,24 @@ const lessonArtifacts = [
       "Recognizes using measurable gates and letting missing evidence produce a valid no-trade decision.",
   },
   {
+    lessonId: "builtin-cl-001",
+    id: "learn-context-reader",
+    title: "Context Reader",
+    tier: "Silver" as const,
+    target: 2,
+    purpose:
+      "Recognizes reading candle shape, structure, participation, source quality, and execution context before revealing the outcome.",
+  },
+  {
+    lessonId: "builtin-sp-001",
+    id: "learn-playbook-curator",
+    title: "Playbook Curator",
+    tier: "Gold" as const,
+    target: 2,
+    purpose:
+      "Recognizes maintaining an observable, versioned, practice-only setup hypothesis without converting completeness into a readiness claim.",
+  },
+  {
     lessonId: "builtin-tp-003",
     id: "learn-decision-card-builder",
     title: "Decision Card Builder",
@@ -200,6 +227,15 @@ const lessonArtifacts = [
     target: 2,
     purpose:
       "Recognizes preserving uncertainty while reviewing evidence, process, outcome, and samples separately.",
+  },
+  {
+    lessonId: "builtin-pr-001",
+    id: "learn-tail-risk-auditor",
+    title: "Tail-Risk Auditor",
+    tier: "Platinum" as const,
+    target: 2,
+    purpose:
+      "Recognizes comparing ordinary outcomes with both tails and separating recovery burden from pressure to trade again.",
   },
   {
     lessonId: "builtin-capstone-001",
@@ -252,14 +288,14 @@ const learningAchievements: AchievementDefinition[] = [
     title: "Decision-Chain Atlas",
     category: "Learning",
     tier: "Gold",
-    description: "Complete a deliberate pass through all nine core lessons.",
+    description: "Complete a deliberate pass through all 13 core lessons.",
     requirement:
       "Complete each current built-in lesson at least once; prior or imported lesson IDs do not count.",
     purpose:
       "Creates a coherent record of exploring the full evidence-to-review curriculum.",
     achievementType: "Collection",
     metric: "core_lessons",
-    target: 9,
+    target: 13,
     rewardXp: 0,
   }),
   make({
@@ -316,14 +352,14 @@ const learningAchievements: AchievementDefinition[] = [
     title: "Process Constellation",
     category: "Learning",
     tier: "Diamond",
-    description: "Earn all nine lesson-specific mastery artifacts.",
+    description: "Earn all 13 lesson-specific mastery artifacts.",
     requirement:
       "Meet each lesson's quantitative evidence standard on at least two dates and the capstone standard on at least four dates. Rest days never break progress.",
     purpose:
       "Creates a long-horizon record of the complete decision process without requiring a live trade.",
     achievementType: "Capstone",
     metric: "lesson_artifacts",
-    target: 9,
+    target: 13,
     rewardXp: 0,
   }),
 ];

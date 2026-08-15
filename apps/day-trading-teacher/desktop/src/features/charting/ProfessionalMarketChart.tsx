@@ -33,15 +33,18 @@ import type {
   ChartOverlayPreferences,
   ChartStylePreference,
   ChartWorkspacePreferences,
+  DailySession,
   MarketDataSet,
   PaperTradingSession,
   Trade,
 } from "../../domain/types";
 import {
+  cancelPaperOrder,
   createPaperTradingSession,
   processPaperBar,
   type PaperSessionDefaults,
 } from "../../domain/paper-trading";
+import type { PaperEntryAccess } from "../../domain/daily-session";
 import {
   averageTrueRange,
   bollingerBands,
@@ -146,6 +149,8 @@ export function MarketChart({
   paperSession = null,
   paperHistory = [],
   paperDefaults,
+  dailySession = null,
+  paperEntryAccess = { allowed: true, reason: "" },
   onPaperSessionChange,
 }: {
   dataSet: MarketDataSet;
@@ -158,6 +163,8 @@ export function MarketChart({
   paperSession?: PaperTradingSession | null;
   paperHistory?: PaperTradingSession[];
   paperDefaults?: PaperSessionDefaults;
+  dailySession?: DailySession | null;
+  paperEntryAccess?: PaperEntryAccess;
   onPaperSessionChange?(session: PaperTradingSession): void;
 }) {
   const [windowSize, setWindowSize] = useState(100);
@@ -231,6 +238,16 @@ export function MarketChart({
     setEndIndex(paperSession.replayIndex + 1);
     setWindowSize((current) => Math.min(current, paperSession.replayIndex + 1));
   }, [paperSession?.id]);
+
+  useEffect(() => {
+    if (
+      paperEntryAccess.allowed ||
+      !paperSession?.pendingOrder ||
+      paperSession.pendingOrder.action === "close_position"
+    )
+      return;
+    onPaperSessionChange?.(cancelPaperOrder(paperSession));
+  }, [onPaperSessionChange, paperEntryAccess.allowed, paperSession]);
 
   useEffect(() => {
     if (!expanded) return;
@@ -1200,7 +1217,10 @@ export function MarketChart({
     )
       onPaperSessionChange?.(
         processPaperBar(
-          paperSession,
+          !paperEntryAccess.allowed &&
+            paperSession.pendingOrder?.action !== "close_position"
+            ? cancelPaperOrder(paperSession)
+            : paperSession,
           dataSet.bars[next],
           next,
           dataSet.bars[next].timestamp,
@@ -1230,9 +1250,12 @@ export function MarketChart({
     else if (replayIndex === null) beginReplay();
   };
   const startPaperTrading = () => {
+    if (!paperEntryAccess.allowed) return;
     const index = replayIndex ?? beginReplay();
     onPaperSessionChange?.(
       createPaperTradingSession({
+        dailySessionId:
+          dailySession?.status === "active" ? dailySession.id : undefined,
         dataSetId: dataSet.id,
         symbol: dataSet.symbol,
         timeframe: dataSet.timeframe,
@@ -1873,6 +1896,7 @@ export function MarketChart({
           currentBar={paperBar}
           currentBarIndex={paperBarIndex}
           defaults={resolvedPaperDefaults}
+          entryAccess={paperEntryAccess}
           onStart={startPaperTrading}
           onChange={onPaperSessionChange}
         />

@@ -9,7 +9,7 @@ import { CoreLearningPath } from "./CoreLearningPath";
 afterEach(cleanup);
 
 describe("CoreLearningPath", () => {
-  it("shows the complete phased route and begins with evidence literacy", () => {
+  it("shows the complete phased route and begins with the latest-record boundary lesson", () => {
     const onOpen = vi.fn();
     render(
       <CoreLearningPath
@@ -28,7 +28,7 @@ describe("CoreLearningPath", () => {
     expect(
       screen.getByRole("heading", {
         level: 4,
-        name: "Reconstruct before you judge",
+        name: "Bound the thesis before the first buy",
       }),
     ).toBeInTheDocument();
 
@@ -45,12 +45,12 @@ describe("CoreLearningPath", () => {
       />,
     );
 
-    expect(screen.getByText("Next · Phase 2 of 6")).toBeInTheDocument();
+    expect(screen.getByText("Next · Phase 2 of 8")).toBeInTheDocument();
     expect(screen.getAllByText("Practiced").length).toBeGreaterThanOrEqual(2);
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: "Know the account before the setup",
+        name: "Reconstruct before you judge",
       }),
     ).toBeInTheDocument();
   });

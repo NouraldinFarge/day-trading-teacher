@@ -112,11 +112,12 @@ export function SettingsPage() {
         updateFidelityImport({
           folderPath,
           autoScan: true,
+          autoDetect: true,
           lastScanAt: null,
           lastFileKey: null,
         });
         setFidelityMessage(
-          "Export folder connected. The Journal will now scan it for the newest Fidelity Orders CSV.",
+          "Trading Records folder connected. The Evidence inbox will read supported Orders and chart CSVs across its dated subfolders.",
         );
       }
     } catch (error) {
@@ -642,8 +643,10 @@ export function SettingsPage() {
                     updateFidelityImport({
                       folderPath: "",
                       autoScan: false,
+                      autoDetect: false,
                       lastScanAt: null,
                       lastFileKey: null,
+                      lastScanSummary: undefined,
                     })
                   }
                 >
@@ -662,8 +665,10 @@ export function SettingsPage() {
                 updateFidelityImport({
                   folderPath: state.fidelityImport?.folderPath ?? "",
                   autoScan: event.target.checked,
+                  autoDetect: state.fidelityImport?.autoDetect,
                   lastScanAt: state.fidelityImport?.lastScanAt ?? null,
                   lastFileKey: state.fidelityImport?.lastFileKey ?? null,
+                  lastScanSummary: state.fidelityImport?.lastScanSummary,
                 })
               }
             />
@@ -672,19 +677,56 @@ export function SettingsPage() {
               Journal opens and while it remains open.
               <br />
               <span className="field-hint">
-                Up to 100 recent CSV exports are reconciled oldest-first.
-                Duplicate executions are ignored, import remains read-only, and
-                completed positions still require your reflection.
+                Up to 500 CSV files and 64 MB are considered per scan. Orders
+                are reconstructed oldest-first, chart exports are paired by date
+                and symbol, duplicates are ignored, and imported AI journal text
+                still requires your review.
               </span>
             </label>
           </div>
+          {state.fidelityImport?.lastScanSummary ? (
+            <div className="settings-scan-summary" role="status">
+              <div>
+                <strong>
+                  {state.fidelityImport.lastScanSummary.tradingDayCount}
+                </strong>
+                <span>days found</span>
+              </div>
+              <div>
+                <strong>
+                  {state.fidelityImport.lastScanSummary.orderFileCount}
+                </strong>
+                <span>Orders files</span>
+              </div>
+              <div>
+                <strong>
+                  {state.fidelityImport.lastScanSummary.chartFileCount}
+                </strong>
+                <span>chart files</span>
+              </div>
+              <div>
+                <strong>
+                  {state.fidelityImport.lastScanSummary.chartMatchedTradeCount}/
+                  {state.fidelityImport.lastScanSummary.reconstructedTradeCount}
+                </strong>
+                <span>trades chart-matched</span>
+              </div>
+              <small>
+                Last read{" "}
+                {state.fidelityImport.lastScanAt
+                  ? new Date(state.fidelityImport.lastScanAt).toLocaleString()
+                  : "not yet"}
+              </small>
+            </div>
+          ) : null}
           <div className="callout">
             <Shield size={18} />
             <p>
               Private by design: this companion never reads Fidelity
               credentials, watches the screen, or places orders. When you import
               an export, account columns are ignored and identifiers are not
-              stored.
+              stored. External-AI journal packages are created locally and are
+              never uploaded by the app.
             </p>
           </div>
         </section>

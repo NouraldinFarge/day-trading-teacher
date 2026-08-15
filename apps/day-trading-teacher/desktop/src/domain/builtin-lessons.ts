@@ -2,6 +2,167 @@ import type { Lesson } from "./types";
 
 export const builtInLessons: Lesson[] = [
   {
+    lesson_id: "builtin-rm-005",
+    version: "4.0.0",
+    title: "Bound the thesis before the first buy",
+    skill_ids: ["OE-003", "TR-002", "RM-001", "TP-002", "PB-006"],
+    objective:
+      "Interpret dollar-funded fractional buys correctly, precommit the total risk of every planned entry, exit when the thesis is invalid, and lock the symbol after a rescue exit.",
+    estimated_minutes: 34,
+    curriculum_role: "core",
+    session_blocks: [
+      {
+        title: "Reconstruct the position",
+        minutes: 10,
+        focus:
+          "Separate dollars invested, shares acquired, position cost, and unsupported cost basis.",
+      },
+      {
+        title: "Build the rescue-cycle firewall",
+        minutes: 14,
+        focus:
+          "Precommit the full thesis boundary, one optional add, invalidation, time failure, and lockout.",
+      },
+      {
+        title: "Rehearse the exit and reset",
+        minutes: 10,
+        focus:
+          "Practice closing an invalidated replay without another add, then preserve the no-re-entry decision.",
+      },
+    ],
+    sources: [
+      {
+        title: "Private local trading-record review — latest available day",
+        last_verified: "2026-08-15",
+        currency_note:
+          "The raw account record is not bundled. Buy Amount values are interpreted as dollars invested; sell Amount values are interpreted as shares only where the export and reconciliation support that reading.",
+      },
+    ],
+    sections: [
+      {
+        type: "retrieval",
+        title: "Read dollars and shares in the right units",
+        body: "A Fidelity-style order line says Buy 10 at $5.1768. The buy Amount is dollar-denominated, not a request for 10 shares.",
+        prompt:
+          "What position fact is supported before fees and broker-specific fractional rounding?",
+        answer:
+          "$10 was invested. Dividing $10 by $5.1768 gives about 1.932 shares. The line does not support a 10-share position or $51.768 of exposure.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "$10 was invested, creating about 1.932 shares before broker-specific rounding",
+            "10 shares were bought for a total position cost of $51.768",
+            "$5.1768 was invested and the resulting share quantity is 10",
+            "The amount is unusable because dollar-denominated orders cannot create fractional shares",
+          ],
+          correctOption: 0,
+          success:
+            "You kept order currency separate from share quantity and calculated the supported fraction.",
+          correction:
+            "For this export, the buy Amount is cash invested. Divide dollars by the fill price to estimate acquired shares; do not multiply it as though it were a share count.",
+        },
+      },
+      {
+        type: "explanation",
+        title: "Give every entry one shared boundary",
+        body: "Several small buys are still one thesis. Before the first order, write the maximum total dollars that may be invested, the maximum number and location of entries, structural invalidation, expected adverse execution, and maximum planned loss if every entry fills. Dollars invested describe exposure; they do not describe risk unless an exit boundary is also known. An unplanned lower buy is a new risk decision, not automatic risk reduction.",
+      },
+      {
+        type: "worked_example",
+        title: "Calculate the whole thesis, not one ticket",
+        body: "A replay plan permits $10 at $5.00 and one optional $10 add at $4.80 while the premise remains valid. Structural invalidation is $4.65. If both entries fill, the position is about 4.083 shares with $20 invested and a weighted-average entry near $4.898. Exiting all shares at $4.65 would lose about $1.01 before fees or adverse execution. The lower add improves the average entry but doubles invested dollars; it does not erase risk.",
+        prompt:
+          "Which statement correctly describes the fully filled plan before trading friction?",
+        answer:
+          "The plan has $20 of exposure, about 4.083 shares, a weighted-average entry near $4.898, and roughly $1.01 of price loss at the stated invalidation.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "The second buy removes the first loss because the average entry moved lower",
+            "$20 is invested in about 4.083 shares at a $4.898 average, with roughly $1.01 of price loss at $4.65",
+            "The maximum loss is $20 because dollars invested and planned loss are identical",
+            "Only the first $10 belongs in the risk calculation until the second order is submitted",
+          ],
+          correctOption: 1,
+          success:
+            "You combined every planned fill, preserved the shared invalidation, and kept exposure distinct from planned loss.",
+          correction:
+            "Calculate shares for both dollar-funded buys, combine their cost, and evaluate the entire resulting quantity at the same structural invalidation.",
+        },
+      },
+      {
+        type: "practice",
+        title: "Separate a planned scale-in from reactive averaging down",
+        body: "Price reaches a lower level after the initial fill. The chart feels cheaper, but the original trigger has weakened and no second entry was written before exposure began.",
+        prompt: "What would make an additional buy process-valid?",
+        answer:
+          "The add must have been specified before the first order, the original premise must still be valid, the add must have its own observable trigger, and the combined position must remain inside the prewritten exposure and loss boundaries. Otherwise, close or wait according to the original plan rather than redesigning risk while under pressure.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "A lower price is enough because every lower fill improves the average entry",
+            "The add is valid whenever the prior position is still small in dollar terms",
+            "The add was prewritten, has a fresh trigger, leaves the premise valid, and keeps total risk inside the original boundary",
+            "Any add is valid after a profitable session because earlier gains absorb the exposure",
+          ],
+          correctOption: 2,
+          success:
+            "You required precommitment, current evidence, and whole-position risk instead of treating discomfort as a trigger.",
+          correction:
+            "A planned scale-in exists before exposure and shares one bounded thesis. A lower price or desire to improve the average is not sufficient evidence.",
+        },
+      },
+      {
+        type: "practice",
+        title: "Run the no-add exit rehearsal",
+        body: "In an outcome-hidden replay, both permitted entries have filled and a completed bar closes through structural invalidation. The next lower price would improve the average entry, but the plan contains no third entry.",
+        prompt:
+          "Write the short ticket read-back that should happen before the exit is sent.",
+        answer:
+          "For example: 'The premise failed at the written invalidation. Both planned entries are already used. I am closing the full position using the preselected exit behavior; I am not adding, moving the boundary, or waiting to feel better.' The exact order behavior still depends on the replay's liquidity and accepted failure mode.",
+      },
+      {
+        type: "transfer",
+        title: "Turn a rescue exit into a symbol lockout",
+        body: "A position exceeds its planned entry count or time boundary, later rebounds, and is finally reduced or closed near a more comfortable result. Relief is an outcome, not new setup evidence. The rescue sequence shows that observation, risk, or attention needs recovery before another decision.",
+        prompt:
+          "What may continue after the rescue exit, and what must stop for that symbol during the session?",
+        answer:
+          "Review, journaling, and outcome-hidden practice may continue. New exposure in that symbol stops for the session. A later chart can be studied and annotated, but the prior recovery may not serve as evidence for a re-entry.",
+      },
+      {
+        type: "transfer",
+        title: "Preserve an unreconciled cost basis",
+        body: "An export contains more shares sold than its visible dollar-funded buys can explain. A carried position, omitted fill, or incomplete export may be responsible, but the available source does not distinguish them.",
+        prompt:
+          "How should the journal record the day result and the next evidence step?",
+        answer:
+          "Mark exact realized P&L and opening cost basis unknown, preserve the unmatched share quantity, and request a confirmation or prior position record. Visible cash flow may be reported as visible cash flow only; it must not be relabeled as exact profit or loss.",
+      },
+      {
+        type: "commitment",
+        title: "Make the first buy the last time risk is negotiated",
+        body: "Before exposure, I will write the full thesis boundary: correct units, maximum total investment, maximum two entries unless a separately validated plan requires fewer, structural invalidation, execution allowance, time failure, and rescue-exit lockout. After entry, I may execute the plan or exit sooner for safety; I will not add a new risk rule to avoid an uncomfortable result.",
+      },
+    ],
+    mastery_standard: {
+      minimum_first_try_correct: 2,
+      unseen_cases_required: 5,
+      minimum_successful_cases: 4,
+      minimum_rubric_level: 2,
+      retention_practice_dates: 2,
+      remediation:
+        "Reconstruct one changed dollar-funded position, calculate the complete two-entry boundary, then run a fresh no-add invalidation and symbol-lockout replay without revealing the outcome.",
+    },
+    mastery_criteria: [
+      "Converts dollar-denominated buys into supported fractional-share quantities",
+      "Distinguishes dollars invested, planned loss, realized loss, and unknown cost basis",
+      "Precommits every permitted entry and calculates risk for the whole position",
+      "Exits at structural or time invalidation without adding an unplanned entry",
+      "Applies a same-session symbol lockout after a rescue exit",
+    ],
+  },
+  {
     lesson_id: "builtin-tr-002",
     version: "4.0.0",
     title: "Reconstruct before you judge",
@@ -543,6 +704,262 @@ export const builtInLessons: Lesson[] = [
     ],
   },
   {
+    lesson_id: "builtin-cl-001",
+    version: "4.0.0",
+    title: "Read the candle inside its context",
+    skill_ids: ["CL-001"],
+    objective:
+      "Interpret candle shape, structure, participation, data quality, and execution context together while choosing plan, wait, or no trade without predicting the next bar.",
+    estimated_minutes: 30,
+    sections: [
+      {
+        type: "retrieval",
+        title: "Describe before you interpret",
+        body: "A candle has a small body, a long lower wick, and greater volume than the prior candle. Those are observations about one interval, not a complete market story.",
+        prompt:
+          "Name four additional facts you would want before assigning that candle a role in a replay plan.",
+        answer:
+          "Useful facts include the preceding structure, nearby structural levels, session and data-source freshness, participation across surrounding bars, contemporaneous spread or liquidity, and the exact confirmation and invalidation required by the practice playbook. The later outcome is not one of the permitted inputs.",
+      },
+      {
+        type: "explanation",
+        title: "Use a five-layer context stack",
+        body: "Read each paused chart through five layers: source quality, broader structure, location within that structure, participation evidence such as volume, and executable conditions such as spread or liquidity. Candle anatomy describes what occurred inside one bar. Its meaning remains conditional on the other layers. If a required layer is missing, waiting is the evidence-based response rather than a prediction with lower confidence.",
+      },
+      {
+        type: "worked_example",
+        title: "Grade the workflow, not the next color",
+        body: "A historical one-minute chart shows a sustained decline and then a long lower wick on elevated volume. The next bar is hidden. The dataset timestamp is known, but the spread and the playbook's confirmation rule are not recorded.",
+        prompt: "Which action best follows the evidence policy?",
+        answer:
+          "Wait. The wick can be described, but the missing confirmation and execution evidence do not support a replay plan yet. Whether the hidden bar later rises does not change the quality of this decision.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "Wait for the named confirmation and missing execution evidence",
+            "Plan a long entry because a lower wick predicts reversal",
+            "Plan a short entry because the preceding structure controls every later bar",
+            "Reveal the next bar first and then decide what the wick meant",
+          ],
+          correctOption: 0,
+          success:
+            "You treated the candle as one piece of evidence and kept the later outcome outside the decision.",
+          correction:
+            "Describe the candle, then check structure, location, participation, source quality, and executable conditions. Missing required evidence means wait.",
+        },
+      },
+      {
+        type: "practice",
+        title: "Build an observation grid",
+        body: "Pause an historical chart and write one sentence for each layer: data source and session, structure, location, participation, and spread or liquidity. In a separate column, list unknowns. Do not use bullish, bearish, strong, or weak unless you define the visible comparison that supports the word.",
+        prompt:
+          "How should you record a chart that looks orderly when the feed freshness and session filter are unknown?",
+        answer:
+          "Record the visible price structure as an observation, label freshness and session as unknown, and keep the case at wait. A clean shape cannot expand the authority of an incomplete source.",
+      },
+      {
+        type: "practice",
+        title: "Resolve conflicting evidence",
+        body: "A pause has small candle bodies, but volume expands on each down bar. The written practice playbook disqualifies increasing sell-side participation during this setup. Later bars remain hidden.",
+        prompt: "What is the process-complete decision?",
+        answer:
+          "No trade for this playbook. The price outline does not override a contemporaneous disqualifier, and waiting for a favorable outcome would rewrite the rule after the fact.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "Plan the replay because small bodies always mean controlled selling",
+            "Record no trade because a written participation disqualifier already failed",
+            "Ignore volume because candle shape contains all relevant information",
+            "Reveal one bar and keep the case only if price rises",
+          ],
+          correctOption: 1,
+          success:
+            "You let the prewritten disqualifier outrank a visually familiar outline.",
+          correction:
+            "When evidence conflicts, apply the rule that existed before reveal. A failed required field completes the decision as no trade.",
+        },
+      },
+      {
+        type: "transfer",
+        title: "Separate permission from prediction",
+        body: "A different chart shows an expansion, a lower-volume pullback that remains above the named structural boundary, a documented session, and acceptable historical spread evidence. The next bar is hidden.",
+        prompt: "What does the complete context actually permit?",
+        answer:
+          "It permits writing and locking a replay-only trigger, invalidation, risk boundary, and cancellation rule. It does not establish what the next bar will do or authorize live execution.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "It proves the setup has positive expectancy",
+            "It authorizes a live order if the candle looks the same",
+            "It guarantees that the structural boundary will hold",
+            "It permits a locked historical replay plan while the outcome remains unknown",
+          ],
+          correctOption: 3,
+          success:
+            "You converted complete context into permission to test, not certainty about the outcome.",
+          correction:
+            "A complete evidence gate earns only the next learning step: a pre-reveal replay plan. Validation and future direction remain unknown.",
+        },
+      },
+      {
+        type: "transfer",
+        title: "Carry one timestamp through the app",
+        body: "Use Context Reading in the Learning Lab to choose plan, wait, or no trade. If the case earns a plan, freeze the same timestamp in Chart Replay, write the trigger and invalidation in a Decision Card, and record the later adherence and outcome separately in the Evidence Journal. If it does not earn a plan, save the missing or failed field as the artifact.",
+        prompt:
+          "What protects this four-workspace chain from hindsight leakage?",
+        answer:
+          "The timestamp, visible evidence, unknowns, decision, and rules are captured before later bars appear. The outcome can then be reviewed without changing what the earlier evidence supported.",
+      },
+      {
+        type: "commitment",
+        title: "Keep shape in its proper place",
+        body: "I will describe a candle before interpreting it, require its surrounding evidence, and count wait or no trade as complete decisions. I will not use a later bar to upgrade an earlier process.",
+      },
+    ],
+    mastery_standard: {
+      minimum_first_try_correct: 2,
+      unseen_cases_required: 6,
+      minimum_successful_cases: 5,
+      minimum_rubric_level: 2,
+      retention_practice_dates: 2,
+      remediation:
+        "Complete three outcome-hidden Context Reading cases, label all five context layers and unknowns, then transfer one passing case into a locked Decision Card before reveal.",
+    },
+    mastery_criteria: [
+      "Separates candle anatomy from prediction",
+      "Checks source quality, structure, location, participation, and executable conditions",
+      "Chooses plan, wait, or no trade from prewritten evidence",
+      "Preserves the decision timestamp across Learning Lab, Chart Replay, Decision Card, and Evidence Journal",
+    ],
+  },
+  {
+    lesson_id: "builtin-sp-001",
+    version: "4.0.0",
+    title: "Build a practice-only setup playbook",
+    skill_ids: ["SP-001"],
+    objective:
+      "Convert a chart idea into a bounded, auditable practice hypothesis with observable context, trigger, invalidation, disqualifiers, management, and outcome-hidden review rules.",
+    estimated_minutes: 34,
+    sections: [
+      {
+        type: "retrieval",
+        title: "Find the missing rule",
+        body: "A learner writes: ‘Buy the first good pullback and sell when it feels weak.’ The sentence names neither the evidence nor the boundary that another reviewer could reproduce.",
+        prompt:
+          "List the fields needed before this idea can enter outcome-hidden replay.",
+        answer:
+          "Name the market and timeframe boundary, context and confirmation requirements, an observable trigger, structural invalidation, liquidity or spread rule, explicit disqualifiers, management rule, and review questions. Each field needs a missing-data response, normally wait or no trade.",
+      },
+      {
+        type: "explanation",
+        title: "Treat a playbook as a hypothesis",
+        body: "A setup playbook is a versioned learning instrument, not a promise of profitability. Draft status means fields are still missing. Practice-only status means the rules are complete enough to test on unseen historical cases. Retired status preserves what was learned without allowing new simulated entries. A complete form improves auditability; only repeated, cost-aware, out-of-sample evidence can reduce uncertainty, and it never removes it.",
+      },
+      {
+        type: "worked_example",
+        title: "Replace adjectives with observations",
+        body: "A draft requires a ‘strong breakout’ and a ‘tight spread.’ Neither term has a comparison, unit, source, or timestamp. The author has reviewed two favorable completed charts.",
+        prompt: "What is the strongest next revision?",
+        answer:
+          "Define the observable range or level, the comparison used for participation, the spread measurement and unit, when each field is sampled, and the fail-closed response. Keep the playbook in draft and begin with outcome-hidden examples rather than treating two selected winners as validation.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "Define every vague field and keep the two selected examples as preliminary, not validating, evidence",
+            "Mark it practice-only because two profitable charts establish the pattern",
+            "Remove the spread field so more examples qualify",
+            "Choose thresholds after each replay outcome to improve the score",
+          ],
+          correctOption: 0,
+          success:
+            "You improved observability without allowing selected outcomes to certify the idea.",
+          correction:
+            "Replace vague adjectives with source, unit, timestamp, threshold, and missing-data behavior. Selected completed charts remain exploratory evidence.",
+        },
+      },
+      {
+        type: "practice",
+        title: "Write the fail-closed version",
+        body: "Open Setup Playbooks in the Learning Lab. Write at least two context requirements, two confirmation requirements, one structural invalidation, one liquidity rule, two disqualifiers, a management rule, and three review questions. Use the completeness meter to find omissions, then rewrite the field-guide example in your own observable language.",
+        prompt:
+          "Why should the app prevent a field-incomplete playbook from being marked practice-only?",
+        answer:
+          "Because an incomplete rule can be filled in after the outcome is visible. Keeping it in draft preserves the distinction between a prewritten test and hindsight interpretation.",
+      },
+      {
+        type: "transfer",
+        title: "Freeze before evaluation",
+        body: "A complete playbook is tested on 12 historical cases. After the fourth case, the author changes the trigger, then reports one combined win rate for all 12.",
+        prompt: "How should the evidence be repaired?",
+        answer:
+          "Treat the edit as a new version. Separate the first four cases from the later eight, record the reason for the change, and evaluate the new rule on additional unseen cases without tuning it to each result.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "Keep one sample because the setup name stayed the same",
+            "Delete the first four cases so the latest rule looks consistent",
+            "Version the rule change and evaluate the revised hypothesis on new unseen cases",
+            "Continue changing thresholds until every historical loss is excluded",
+          ],
+          correctOption: 2,
+          success: "You protected the evaluation set from silent rule changes.",
+          correction:
+            "A changed trigger creates a changed hypothesis. Preserve the old evidence, version the rule, and test the revision on unseen cases.",
+        },
+      },
+      {
+        type: "practice",
+        title: "Keep costs and ordinary cases visible",
+        body: "A playbook review includes its three largest favorable moves, excludes flat and losing examples, and ignores spread, slippage, and fees. Its reviewed-example counter reads three.",
+        prompt: "Which review design best reduces the selection problem?",
+        answer:
+          "Use a predefined date or event sampling rule, include every qualifying and disqualified case, preserve ordinary outcomes, apply realistic recorded costs where supported, and keep missing execution evidence visible rather than assigning zero cost.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "Add three more unusually large winners",
+            "Use only cases with a clean visual pattern",
+            "Assume zero friction because replay orders are simulated",
+            "Predefine the sample, include ordinary and failed cases, and preserve cost uncertainty",
+          ],
+          correctOption: 3,
+          success:
+            "You designed the review to learn from the distribution instead of a highlight reel.",
+          correction:
+            "A playbook needs representative, outcome-hidden cases and explicit cost evidence. Favorable examples alone cannot test disqualifiers or fragility.",
+        },
+      },
+      {
+        type: "transfer",
+        title: "Link the playbook to evidence",
+        body: "Select one practice-only playbook, open Chart Replay at a hidden timestamp, and decide whether every required field passes simultaneously. If it passes, create a locked Decision Card. After reveal, use the Evidence Journal to answer the playbook's review questions and increase the reviewed-example count only when the case has a preserved pre-reveal decision.",
+        prompt: "What does the reviewed-example count mean?",
+        answer:
+          "It is an audit trail of completed historical practice cases under the named version. It is not a readiness score, a recommendation, or a reason to increase trade frequency or size.",
+      },
+      {
+        type: "commitment",
+        title: "Let the playbook remain falsifiable",
+        body: "I will keep rules observable, version meaningful changes, retain failed and ordinary cases, and retire a hypothesis when its evidence or boundaries no longer support practice. I will not turn form completeness into confidence about future outcomes.",
+      },
+    ],
+    mastery_standard: {
+      minimum_first_try_correct: 2,
+      unseen_cases_required: 6,
+      minimum_successful_cases: 5,
+      minimum_rubric_level: 2,
+      retention_practice_dates: 2,
+      remediation:
+        "Repair every missing Setup Playbook field, compare one selected example with three consecutively sampled hidden-outcome cases, and version any rule changed after review.",
+    },
+    mastery_criteria: [
+      "Defines every setup field in observable language",
+      "Uses draft, practice-only, and retired states without implying validation",
+      "Versions rule changes and protects unseen evaluation cases",
+      "Links playbook, Chart Replay, Decision Card, and Evidence Journal evidence",
+    ],
+  },
+  {
     lesson_id: "builtin-tp-003",
     version: "4.0.0",
     title: "Write the decision before the ticket",
@@ -1076,6 +1493,134 @@ export const builtInLessons: Lesson[] = [
       "Uses not scorable when the evidence does not support a judgment",
       "Writes one neutral, specific, and testable correction",
       "Separates seven review dimensions and treats small samples as hypotheses rather than proof",
+    ],
+  },
+  {
+    lesson_id: "builtin-pr-001",
+    version: "4.0.0",
+    title: "Audit the tails, not just the average",
+    skill_ids: ["PR-001"],
+    objective:
+      "Stress-test journal conclusions by measuring outcome concentration, ordinary results, recovery burden, process adherence, and the difference between valid losses and rule-breaking mistakes.",
+    estimated_minutes: 32,
+    sections: [
+      {
+        type: "retrieval",
+        title: "Challenge a persuasive average",
+        body: "A journal shows a positive average result. That summary does not reveal whether most decisions were ordinary, one large win supplied nearly all profit, or one loss created a disproportionate recovery burden.",
+        prompt:
+          "Which additional views would you request before describing the sample?",
+        answer:
+          "Request the median, largest win and loss, each tail's share of gross profit or loss, net result with one largest win and loss removed, drawdown sequence, average win and loss, and process evidence around the ordinary and extreme cases. Also ask how the sample was selected and whether costs are complete.",
+      },
+      {
+        type: "explanation",
+        title: "Read the center and both tails",
+        body: "The mean uses every result and can move sharply when one outcome is extreme. The median describes the middle recorded result. Tail share asks how much gross profit or loss comes from one case. Recovery burden compares the largest loss with the average win. A trimmed core removes one largest win and one largest loss to expose the remaining sample. None of these statistics predicts the next trade; together they show which conclusions are fragile.",
+      },
+      {
+        type: "worked_example",
+        title: "Measure concentration",
+        body: "Ten recorded outcomes contain wins of $500, $25, $20, $18, $15, and $12, plus losses of $10, $12, $14, and $16. Gross profit is $590, and the largest win is $500.",
+        prompt:
+          "Which statement is supported without turning the sample into a forecast?",
+        answer:
+          "The largest win supplies about 85% of recorded gross profit, so the positive total is concentrated. The next step is to compare the process and sampling of that case with the ordinary cases—not to assume the outlier will repeat or can never repeat.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "The playbook will remain profitable because the total is positive",
+            "About 85% of gross profit comes from one win, so the conclusion is tail-sensitive",
+            "The largest win should be deleted because outliers are always invalid",
+            "The remaining cases prove the setup has no value",
+          ],
+          correctOption: 1,
+          success:
+            "You described concentration and uncertainty without deleting evidence or forecasting repetition.",
+          correction:
+            "Divide the largest win by gross profit, then state what that concentration means for confidence. Preserve the outlier and inspect its process and sampling.",
+        },
+      },
+      {
+        type: "practice",
+        title: "Compare average with ordinary outcomes",
+        body: "Open the Tail and outlier audit in Journal Insights. Read the largest-win share, largest-loss share, median, recovery wins, and core net result. Then inspect the journal entries for the largest win, largest loss, and two outcomes nearest the median. Keep missing plan or cost evidence marked unknown.",
+        prompt:
+          "Why are the ordinary cases part of this review rather than background noise?",
+        answer:
+          "They show what the recorded process most often produced without the tails dominating the story. Comparing their context and adherence with the extremes helps distinguish a repeatable process question from a result that depended on unusual conditions or incomplete evidence.",
+      },
+      {
+        type: "transfer",
+        title: "Separate a valid loss from a mistake",
+        body: "One losing replay followed a complete prewritten plan, stayed inside the loss boundary, and preserved execution evidence. A profitable replay ignored its disqualifier and moved the stop. Both outcomes are fully documented.",
+        prompt: "Which review preserves the learning signal?",
+        answer:
+          "Classify the disciplined loss as a valid unfavorable outcome and the profitable rule break as weak process. Record separate corrections only where process evidence failed; do not use P&L to reverse those classifications.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "Upgrade the profitable rule break because it improved the account",
+            "Downgrade both because any loss or rule break proves the setup is unusable",
+            "Preserve the valid loss and classify the profitable rule break as weak process",
+            "Average the two outcomes and omit the process distinction",
+          ],
+          correctOption: 2,
+          success: "You kept outcome and adherence in separate evidence lanes.",
+          correction:
+            "A valid loss can come from sound process, and a weak decision can make money. Grade the recorded decision before allowing outcome into the review.",
+        },
+      },
+      {
+        type: "practice",
+        title: "Find the recovery burden",
+        body: "A sample's largest loss is $180 and its average recorded win is $45. The loss is supported by complete execution records, while the reason for exceeding the planned boundary is missing.",
+        prompt: "What can the journal state responsibly?",
+        answer:
+          "The largest loss equals four average recorded wins. The boundary breach is observable if the plan is available, but motive remains unknown. Review the sequence and guardrails; do not prescribe four additional trades as a recovery task.",
+        check: {
+          kind: "single_choice",
+          options: [
+            "The learner needs exactly four winning trades next",
+            "The strategy must increase its win rate to recover",
+            "The loss can be ignored if a future outlier offsets it",
+            "The recorded loss equals four average wins, but no future trade count is implied",
+          ],
+          correctOption: 3,
+          success:
+            "You measured the burden without creating a trade quota or inventing intent.",
+          correction:
+            "Recovery wins is a descriptive ratio: absolute largest loss divided by average win. It is not a schedule for taking more trades.",
+        },
+      },
+      {
+        type: "transfer",
+        title: "Route the smallest useful correction",
+        body: "If the tail audit is concentrated, inspect sampling and ordinary cases before changing a playbook. If the largest loss contains a rule break, use the Reset Drill and Daily Session Guard. If the tail followed the plan, review risk size and execution assumptions without rewriting the earlier decision. Repeat the audit after a naturally accumulated, consistently recorded sample rather than trading to fill a quota.",
+        prompt: "What makes a correction testable while avoiding overtrading?",
+        answer:
+          "It names one observed process failure, routes it to the relevant tool, and defines what evidence will show improvement in future eligible practice. It does not require a number of trades, a profit target, or immediate recovery.",
+      },
+      {
+        type: "commitment",
+        title: "Keep every outcome in proportion",
+        body: "I will inspect the median, both tails, ordinary cases, costs, and process evidence before trusting an average. I will preserve valid losses, correct rule breaks, and never use an outlier audit as a reason to trade more often.",
+      },
+    ],
+    mastery_standard: {
+      minimum_first_try_correct: 2,
+      unseen_cases_required: 5,
+      minimum_successful_cases: 4,
+      minimum_rubric_level: 2,
+      retention_practice_dates: 2,
+      remediation:
+        "Recalculate tail share, median, core net result, and recovery burden for a different journal sample; then classify one valid loss and one outcome-process mismatch before proposing one correction.",
+    },
+    mastery_criteria: [
+      "Measures largest-outcome concentration and recovery burden accurately",
+      "Compares the mean, median, tails, and trimmed core without forecasting",
+      "Separates valid losses from profitable or losing process mistakes",
+      "Routes corrections to practice tools without creating trade or profit quotas",
     ],
   },
   {

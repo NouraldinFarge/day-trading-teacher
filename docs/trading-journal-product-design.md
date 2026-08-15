@@ -1,6 +1,6 @@
 # Trading Journal product design
 
-Status: current for v0.32.6. This document distinguishes implemented behavior from advanced enhancements.
+Status: current for v0.36.0. This document distinguishes implemented behavior from advanced enhancements.
 
 ## Product principle
 
@@ -10,19 +10,22 @@ The Journal is a local-first performance laboratory. It rewards complete evidenc
 
 In the default lesson-guided workspace, primary navigation is **Lessons**, **Progress**, and **Settings**. A lesson opens the Journal with its evidence mission and a direct return path. Learners who enable **Show tools separately** in Settings also receive standalone Plan, Journal, and Chart navigation without changing or duplicating data.
 
-Journal has five task-oriented sections:
+Journal has six task-oriented sections:
 
 1. Overview — performance snapshot, interactive chart, records, recommendations, and activity feed.
-2. Trades — Fidelity import, manual capture, searchable records, reflection, decision replay, notes, screenshots, and tags.
-3. Calendar — monthly/yearly P&L calendar, daily drill-down, filters, and process heatmap.
-4. Patterns — weekly/monthly summaries and breakdowns by asset, strategy, setup, direction, session, weekday, and time.
-5. Goals — process-based goals for reflection, planning, risk adherence, focus, and daily-loss boundaries.
+2. Evidence inbox — recursive Trading Records scan, Orders reconstruction, chart pairing, day-level coverage, and privacy-safe external-AI journal handoff.
+3. Trades — manual capture, searchable records, reviewable journal drafts, decision replay, notes, screenshots, and tags.
+4. Calendar — monthly/yearly P&L calendar, daily drill-down, filters, and process heatmap.
+5. Patterns — weekly/monthly summaries and breakdowns by asset, strategy, setup, direction, session, weekday, and time.
+6. Goals — process-based goals for reflection, planning, risk adherence, focus, and daily-loss boundaries.
 
 Achievements are a dedicated vault reached from Progress. Each achievement has its own URL and detail page.
 
+After a validated external-AI draft import, **Lessons → Trade Lessons** provides a separate newest-to-oldest learning surface. It preserves the Journal as the factual/reflection record while auditing lesson quality, separating hindsight, connecting recurring mechanisms, and routing the learner into a focused Decision Card, replay, or learning exercise.
+
 ## 2. Main dashboard layout
 
-- Header: Journal purpose, Fidelity import, and manual-entry action.
+- Header: Journal purpose, Evidence inbox, chart handoff, one-file import fallback, and manual-entry fallback.
 - Sticky Journal section navigation.
 - Time-range control: day, week, month, quarter, year, all.
 - Four primary KPIs: net P&L, win rate, expectancy, and maximum drawdown.
@@ -78,7 +81,13 @@ Each detail page includes category, tier, progress, transparent requirement, rew
 
 ### Fidelity import
 
-Export Orders CSV in Fidelity → import manually or place it in the opt-in export inbox → local reconciliation and duplicate checks → review warnings → create factual entries → complete reflections.
+Place dated Orders and chart CSVs under the selected `Trading_Records/` root → the portable app detects or scans the root recursively → apply Fidelity's dollar-buy/share-sell interpretation → reconstruct and deduplicate completed positions → pair chart sessions by New York date and symbol → review unresolved evidence → open an exact day/symbol chart replay or continue to journal drafting.
+
+### External-AI journal draft
+
+Scan Trading Records → create a sanitized evidence JSON package locally → explicitly upload it to an AI chosen by the learner → paste the app's bounded request → save the AI's response JSON → import it → validate package identity, trade identity, evidence references, confidence, non-diagnostic mental-state rules, and prohibited live-trading directives → choose drafts → import only into incomplete reflections → generate newest-to-oldest Trade Lessons locally → compare every hypothesis and revised lesson against personal memory → explicitly save the reflection.
+
+No automatic upload occurs. The package excludes Fidelity account columns, credentials, screenshots, and absolute file paths. A returned strategy or mental-state statement is labeled as an AI hypothesis, does not overwrite learner-authored text, cannot replace a completed reflection, and never becomes a clinical diagnosis or a claimed memory.
 
 ### Post-trade reflection
 
@@ -132,6 +141,7 @@ Desktop uses a wide chart stage, four-column KPIs, two-column insight areas, and
 - Trade reflection expansion, checklists, screenshots, tags, emotions, confidence, mistakes, and replay timeline.
 - Tiered achievement vault, hidden achievements, unlock history, and detail pages.
 - Accessibility, dark mode, reduced motion, mobile layouts, and polished empty states.
+- Newest-to-oldest trade lesson audits with preserved originals, temporal evidence lanes, pattern synthesis, knowledge hierarchy, rules, checklist, focus plan, and Markdown export.
 
 ### Advanced enhancements
 

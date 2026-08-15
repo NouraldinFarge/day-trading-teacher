@@ -10,6 +10,7 @@ export function normalizeAppState(
     stored.trades.length > 0 ||
     stored.progress.completedLessonIds.length > 0 ||
     (stored.marketDataSets?.length ?? 0) > 0 ||
+    (stored.setupPlaybooks?.length ?? 0) > 0 ||
     stored.profile.displayName !== fallback.profile.displayName;
   const legacyAcquisition = stored.chartAcquisition as
     | (typeof stored.chartAcquisition & {
@@ -116,7 +117,9 @@ export function normalizeAppState(
         ...(stored.chartWorkspace?.overlays ?? {}),
       },
     },
+    dailySessions: stored.dailySessions ?? [],
     paperTradingSessions: stored.paperTradingSessions ?? [],
+    setupPlaybooks: stored.setupPlaybooks ?? [],
     onboardingComplete: stored.onboardingComplete ?? hasExistingWork,
   };
 }

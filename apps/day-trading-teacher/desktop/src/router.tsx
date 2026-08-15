@@ -5,7 +5,8 @@ import {
   Link,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { Compass, RefreshCw, ShieldAlert } from "lucide-react";
+import { lazy, Suspense } from "react";
+import { BookOpenCheck, Compass, RefreshCw, ShieldAlert } from "lucide-react";
 import { AppShell } from "./shell/AppShell";
 import { LearnPage } from "./features/learning/LearnPage";
 import { PlanPage } from "./features/planning/PlanPage";
@@ -16,6 +17,26 @@ import { AchievementsPage } from "./features/achievements/AchievementsPage";
 import { AchievementDetailPage } from "./features/achievements/AchievementDetailPage";
 import { ChartLabPage } from "./features/charting/ChartLabPage";
 import { LearningToolsPage } from "./features/learning/LearningToolsPage";
+
+const TradeLessonsPage = lazy(
+  () => import("./features/learning/TradeLessonsPage"),
+);
+
+function TradeLessonsRoutePage() {
+  return (
+    <Suspense
+      fallback={
+        <section className="card compact-empty large route-empty" role="status">
+          <BookOpenCheck size={28} />
+          <h1>Opening your trade lessons…</h1>
+          <p>The original journal and Trading Records remain unchanged.</p>
+        </section>
+      }
+    >
+      <TradeLessonsPage />
+    </Suspense>
+  );
+}
 
 function NotFoundPage() {
   return (
@@ -75,6 +96,11 @@ const learningToolsRoute = createRoute({
   path: "/learn/tools",
   component: LearningToolsPage,
 });
+const tradeLessonsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/learn/trade-lessons",
+  component: TradeLessonsRoutePage,
+});
 const planRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/plan",
@@ -115,6 +141,7 @@ const routeTree = rootRoute.addChildren([
   todayRoute,
   learnRoute,
   learningToolsRoute,
+  tradeLessonsRoute,
   planRoute,
   tradesRoute,
   progressRoute,

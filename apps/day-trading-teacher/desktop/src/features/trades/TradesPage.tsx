@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { Link } from "@tanstack/react-router";
 import {
   BarChart3,
@@ -11,6 +18,7 @@ import {
   FileUp,
   Flag,
   FolderSync,
+  Inbox,
   LayoutDashboard,
   LineChart,
   NotebookPen,
@@ -31,11 +39,23 @@ import { PageHeader } from "../../components/PageHeader";
 import { dollars } from "../../domain/calculations";
 import { readLessonWorkspaceContext } from "../../domain/lesson-session";
 import {
+  aiJournalRequestText,
+  createAiJournalEvidencePackage,
+  mergeExternalAiJournalDraft,
+  validateExternalAiJournalResponse,
+  type AiJournalEvidencePackage,
+  type ExternalAiJournalValidation,
+} from "../../domain/ai-journal";
+import {
   parseFidelityOrdersCsv,
   type FidelityImportPreview,
   type FidelityRoundTrip,
 } from "../../domain/fidelity-import";
-import { calculateResult, scanFidelityExports } from "../../platform/bridge";
+import {
+  calculateResult,
+  detectTradingRecordsFolder,
+  scanFidelityExports,
+} from "../../platform/bridge";
 import { useAppState } from "../../state/AppStateContext";
 import type {
   JournalReflection,
@@ -51,6 +71,14 @@ import { JournalDashboard } from "./JournalDashboard";
 import { JournalCalendar } from "./JournalCalendar";
 import { JournalInsights } from "./JournalInsights";
 import { JournalGoals } from "./JournalGoals";
+import { FidelityEvidenceInbox } from "./FidelityEvidenceInbox";
+import {
+  analyzeTradingRecordsScan,
+  marketDataSetForTradingRecord,
+  type TradingRecordChartSession,
+  type TradingRecordsAnalysis,
+} from "../../domain/trading-records";
+import { buildTradeLearningSystem } from "../../domain/trade-learning";
 
 const blank = {
   symbol: "",
@@ -165,7 +193,7 @@ async function importedTrade(candidate: FidelityRoundTrip): Promise<Trade> {
     followedPlan: false,
     respectedStop: false,
     notes:
-      "Imported from a Fidelity Orders CSV. Add the setup, decisions, and emotional context in the journal.",
+      "Imported from a Fidelity Orders CSV. Decision context is unknown until a learner reviews a manual or external-AI journal draft.",
     occurredAt: candidate.exitAt,
     grossPnl: result.gross_pnl,
     netPnl: result.net_pnl,
@@ -184,7 +212,9 @@ async function importedTrade(candidate: FidelityRoundTrip): Promise<Trade> {
         `Holding time: ${candidate.holdingSeconds} seconds`,
         `Order path: ${candidate.orderType}`,
         `Fill path: ${candidate.entryFillCount} entr${candidate.entryFillCount === 1 ? "y" : "ies"} and ${candidate.exitFillCount} exit${candidate.exitFillCount === 1 ? "" : "s"}`,
-        `Quantity interpretation: ${candidate.quantityBasis.replace("_", " ")} · ${candidate.reconciliationConfidence} confidence`,
+        `Fidelity buy interpretation: $${candidate.investedDollars.toFixed(2)} invested; quantity calculated from filled dollars ÷ fill price`,
+        `Calculated gross exit proceeds: $${candidate.grossExitProceeds.toFixed(2)}`,
+        `Quantity reconciliation: ${candidate.quantityBasis.replace("_", " ")} · ${candidate.reconciliationConfidence} confidence`,
       ],
       assignedLessonId: "builtin-tr-002",
     },
@@ -205,7 +235,17 @@ function formatDuration(seconds?: number) {
   return `${minutes}m ${seconds % 60}s`;
 }
 
-type JournalTab = "overview" | "trades" | "calendar" | "insights" | "goals";
+function downloadText(name: string, content: string, type: string) {
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = name;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+type JournalTab =
+  "overview" | "inbox" | "trades" | "calendar" | "insights" | "goals";
 
 export function TradesPage() {
   const {
@@ -213,7 +253,9 @@ export function TradesPage() {
     addTrade,
     addTrades,
     updateTrade,
+    updateTradeLearningSystem,
     updateFidelityImport,
+    addMarketDataSet,
     addJournalGoal,
     updateJournalGoal,
     updateJournalDashboard,
@@ -241,7 +283,21 @@ export function TradesPage() {
   );
   const [journalError, setJournalError] = useState("");
   const [screenshotError, setScreenshotError] = useState("");
+  const [recordsAnalysis, setRecordsAnalysis] =
+    useState<TradingRecordsAnalysis | null>(null);
+  const recordsAnalysisRef = useRef<TradingRecordsAnalysis | null>(null);
+  const [recordsScanBusy, setRecordsScanBusy] = useState(false);
+  const [recordsScanError, setRecordsScanError] = useState("");
+  const [aiPreview, setAiPreview] = useState<{
+    validation: ExternalAiJournalValidation;
+    package: AiJournalEvidencePackage;
+    fileName: string;
+  } | null>(null);
+  const [selectedAiDrafts, setSelectedAiDrafts] = useState<Set<string>>(
+    () => new Set(),
+  );
   const fileRef = useRef<HTMLInputElement>(null);
+  const aiResponseRef = useRef<HTMLInputElement>(null);
 
   const visibleTrades = state.trades.filter(
     (trade) =>
@@ -287,75 +343,148 @@ export function TradesPage() {
     );
 
   useEffect(() => {
-    const settings = state.fidelityImport;
-    if (!settings?.autoScan || !settings.folderPath) return;
+    if (
+      state.fidelityImport?.folderPath ||
+      state.fidelityImport?.autoDetect === false
+    )
+      return;
     let stopped = false;
-    const scan = async () => {
+    void detectTradingRecordsFolder()
+      .then((folderPath) => {
+        if (stopped || !folderPath) return;
+        updateFidelityImport({
+          folderPath,
+          autoScan: true,
+          autoDetect: true,
+          lastScanAt: null,
+          lastFileKey: null,
+        });
+        setSavedMessage(
+          "Trading_Records was detected beside the project and connected automatically.",
+        );
+      })
+      .catch(() => {
+        // Manual folder selection remains available in Settings.
+      });
+    return () => {
+      stopped = true;
+    };
+  }, [
+    state.fidelityImport?.autoDetect,
+    state.fidelityImport?.folderPath,
+    updateFidelityImport,
+  ]);
+
+  const runRecordsScan = useCallback(
+    async (force = false) => {
+      const folderPath = state.fidelityImport?.folderPath ?? "";
+      if (!folderPath) {
+        setRecordsScanError(
+          "Choose the Trading_Records root folder in Settings first.",
+        );
+        return;
+      }
+      setRecordsScanBusy(true);
+      setRecordsScanError("");
+      setImportError("");
       try {
-        const files = await scanFidelityExports(settings.folderPath);
-        if (stopped) return;
-        const fileKey = files
-          .map((file) => `${file.path}:${file.modifiedAt}`)
+        const scan = await scanFidelityExports(folderPath);
+        const fileKey = scan.files
+          .map(
+            (file) =>
+              `${file.relativePath}:${file.modifiedAt}:${file.sizeBytes}:${file.kind}`,
+          )
           .join("\n");
-        if (fileKey === settings.lastFileKey) {
+        if (
+          !force &&
+          recordsAnalysisRef.current &&
+          fileKey === state.fidelityImport?.lastFileKey
+        ) {
           updateFidelityImport({
-            ...settings,
+            folderPath,
+            autoScan: Boolean(state.fidelityImport?.autoScan),
+            autoDetect: state.fidelityImport?.autoDetect,
             lastScanAt: new Date().toISOString(),
+            lastFileKey: fileKey,
+            lastScanSummary: state.fidelityImport?.lastScanSummary,
           });
           return;
         }
+
+        const analysis = analyzeTradingRecordsScan(scan);
+        recordsAnalysisRef.current = analysis;
+        setRecordsAnalysis(analysis);
         const batchSourceIds = new Set(knownSourceIds);
-        const candidates: FidelityRoundTrip[] = [];
-        let filesNeedingReview = 0;
-        for (const file of files) {
-          try {
-            const importPreview = parseFidelityOrdersCsv(file.content);
-            if (
-              importPreview.warnings.length ||
-              importPreview.unmatchedOrderCount
-            )
-              filesNeedingReview += 1;
-            for (const candidate of importPreview.trades) {
-              if (batchSourceIds.has(candidate.sourceId)) continue;
-              batchSourceIds.add(candidate.sourceId);
-              candidates.push(candidate);
-            }
-          } catch {
-            filesNeedingReview += 1;
-          }
-        }
+        const candidates = analysis.trades.filter((candidate) => {
+          if (batchSourceIds.has(candidate.sourceId)) return false;
+          batchSourceIds.add(candidate.sourceId);
+          return true;
+        });
         const trades = await Promise.all(candidates.map(importedTrade));
-        if (stopped) return;
         if (trades.length) addTrades(trades);
+        const chartMatchedTradeCount = analysis.trades.filter(
+          (trade) => analysis.chartContextByTrade[trade.sourceId]?.available,
+        ).length;
+        const unresolvedOrderCount = analysis.days.reduce(
+          (sum, day) => sum + day.unresolvedOrderCount,
+          0,
+        );
+        const warningCount =
+          analysis.warnings.length +
+          analysis.days.reduce((sum, day) => sum + day.warnings.length, 0);
         updateFidelityImport({
-          ...settings,
+          folderPath,
+          autoScan: Boolean(state.fidelityImport?.autoScan),
+          autoDetect: state.fidelityImport?.autoDetect,
           lastScanAt: new Date().toISOString(),
           lastFileKey: fileKey,
+          lastScanSummary: {
+            tradingDayCount: analysis.days.length,
+            filesRead: analysis.filesRead,
+            orderFileCount: analysis.orderFileCount,
+            chartFileCount: analysis.chartFileCount,
+            reconstructedTradeCount: analysis.trades.length,
+            chartMatchedTradeCount,
+            unresolvedOrderCount,
+            unsupportedCsvCount: analysis.unsupportedCsvCount,
+            skippedCsvCount: analysis.skippedCsvCount,
+            warningCount,
+          },
         });
         setSavedMessage(
-          trades.length
-            ? `Imported ${trades.length} completed position${trades.length === 1 ? "" : "s"} from ${files.length} Fidelity export${files.length === 1 ? "" : "s"}.${filesNeedingReview ? ` ${filesNeedingReview} file${filesNeedingReview === 1 ? " needs" : "s need"} review.` : ""}`
-            : files.length
-              ? `${files.length} Fidelity export${files.length === 1 ? " is" : "s are"} up to date.`
-              : "No supported Fidelity Orders exports were found in the selected folder or its dated subfolders.",
+          `Read ${analysis.days.length} trading day${analysis.days.length === 1 ? "" : "s"}: ${analysis.orderFileCount} Orders export${analysis.orderFileCount === 1 ? "" : "s"}, ${analysis.chartFileCount} chart export${analysis.chartFileCount === 1 ? "" : "s"}, and ${analysis.trades.length} reconstructed position${analysis.trades.length === 1 ? "" : "s"}. ${chartMatchedTradeCount}/${analysis.trades.length} positions have same-day chart context.${trades.length ? ` Imported ${trades.length} new position${trades.length === 1 ? "" : "s"}.` : " No duplicate trades were added."}`,
         );
       } catch (reason) {
-        if (!stopped)
-          setImportError(
-            reason instanceof Error ? reason.message : String(reason),
-          );
+        const message =
+          reason instanceof Error ? reason.message : String(reason);
+        setRecordsScanError(message);
+        setImportError(message);
+      } finally {
+        setRecordsScanBusy(false);
       }
-    };
-    void scan();
-    const timer = window.setInterval(() => void scan(), 60_000);
-    return () => {
-      stopped = true;
-      window.clearInterval(timer);
-    };
+    },
+    [
+      addTrades,
+      knownSourceIds,
+      state.fidelityImport?.autoScan,
+      state.fidelityImport?.autoDetect,
+      state.fidelityImport?.folderPath,
+      state.fidelityImport?.lastFileKey,
+      state.fidelityImport?.lastScanSummary,
+      updateFidelityImport,
+    ],
+  );
+
+  useEffect(() => {
+    if (!state.fidelityImport?.autoScan || !state.fidelityImport.folderPath)
+      return;
+    void runRecordsScan(false);
+    const timer = window.setInterval(() => void runRecordsScan(false), 60_000);
+    return () => window.clearInterval(timer);
   }, [
+    runRecordsScan,
     state.fidelityImport?.autoScan,
     state.fidelityImport?.folderPath,
-    state.fidelityImport?.lastFileKey,
   ]);
 
   const update = <K extends keyof typeof form>(
@@ -475,10 +604,152 @@ export function TradesPage() {
     }
   };
 
+  const currentAiPackage = () => {
+    if (!recordsAnalysis)
+      throw new Error(
+        "Scan the Trading_Records folder before creating or importing an AI journal package.",
+      );
+    return createAiJournalEvidencePackage(recordsAnalysis, state.trades);
+  };
+
+  const createAiPackage = () => {
+    setRecordsScanError("");
+    try {
+      const pkg = currentAiPackage();
+      const newest = pkg.days[0]?.date ?? new Date().toISOString().slice(0, 10);
+      const oldest = pkg.days.at(-1)?.date ?? newest;
+      downloadText(
+        `day-trading-teacher_ai-journal-evidence_${oldest}_to_${newest}.json`,
+        JSON.stringify(pkg, null, 2),
+        "application/json",
+      );
+      setSavedMessage(
+        `Sanitized AI journal package created for ${pkg.days.length} trading day${pkg.days.length === 1 ? "" : "s"}. Nothing was uploaded; choose where to share it.`,
+      );
+    } catch (reason) {
+      setRecordsScanError(
+        reason instanceof Error ? reason.message : String(reason),
+      );
+    }
+  };
+
+  const copyAiRequest = async () => {
+    setRecordsScanError("");
+    try {
+      const pkg = currentAiPackage();
+      await navigator.clipboard.writeText(aiJournalRequestText(pkg));
+      setSavedMessage(
+        "AI request copied. Upload the evidence JSON to the AI you choose, paste the request, and save its JSON response.",
+      );
+    } catch (reason) {
+      setRecordsScanError(
+        reason instanceof Error
+          ? reason.message
+          : "The AI request could not be copied.",
+      );
+    }
+  };
+
+  const readAiResponse = async (file?: File) => {
+    if (!file) return;
+    setRecordsScanError("");
+    try {
+      if (file.size > 8_000_000)
+        throw new Error("The AI response exceeds the 8 MB safety limit.");
+      const pkg = currentAiPackage();
+      const validation = validateExternalAiJournalResponse(
+        await file.text(),
+        pkg,
+      );
+      const defaultSelected = validation.entries.flatMap((entry) => {
+        const trade = state.trades.find(
+          (candidate) => candidate.sourceId === entry.tradeSourceId,
+        );
+        return trade && trade.journal?.status !== "reviewed"
+          ? [entry.tradeSourceId]
+          : [];
+      });
+      setSelectedAiDrafts(new Set(defaultSelected));
+      setAiPreview({ validation, package: pkg, fileName: file.name });
+    } catch (reason) {
+      setRecordsScanError(
+        reason instanceof Error ? reason.message : String(reason),
+      );
+    }
+  };
+
+  const applyAiDrafts = () => {
+    if (!aiPreview?.validation.valid) return;
+    const selectedEntries = aiPreview.validation.entries.filter((entry) =>
+      selectedAiDrafts.has(entry.tradeSourceId),
+    );
+    let learningSystem;
+    try {
+      learningSystem = buildTradeLearningSystem(
+        aiPreview.package,
+        selectedEntries,
+        state.trades,
+        new Date().toISOString(),
+        state.tradeLearningSystem,
+      );
+    } catch (reason) {
+      setRecordsScanError(
+        reason instanceof Error
+          ? reason.message
+          : "The trade-derived lessons could not be created.",
+      );
+      return;
+    }
+    let applied = 0;
+    let preserved = 0;
+    for (const entry of selectedEntries) {
+      const trade = state.trades.find(
+        (candidate) => candidate.sourceId === entry.tradeSourceId,
+      );
+      if (!trade || trade.journal?.status === "reviewed") {
+        preserved += 1;
+        continue;
+      }
+      try {
+        updateTrade(
+          mergeExternalAiJournalDraft(
+            trade,
+            entry,
+            aiPreview.package.packageId,
+          ),
+        );
+        applied += 1;
+      } catch {
+        preserved += 1;
+      }
+    }
+    if (applied) updateTradeLearningSystem(learningSystem);
+    setAiPreview(null);
+    setActiveTab("trades");
+    setSavedMessage(
+      `${applied} AI journal draft${applied === 1 ? " was" : "s were"} imported with a newest-to-oldest lesson audit.${preserved ? ` ${preserved} completed or unmatched reflection${preserved === 1 ? " was" : "s were"} preserved.` : ""} No draft or lesson was marked complete automatically.`,
+    );
+  };
+
+  const openTradingRecordChart = (session: TradingRecordChartSession) => {
+    const matched = recordsAnalysis
+      ? recordsAnalysis.trades.filter(
+          (trade) =>
+            trade.tradingDate === session.date &&
+            trade.symbol === session.symbol,
+        ).length
+      : 0;
+    addMarketDataSet(marketDataSetForTradingRecord(session, matched));
+  };
+
   const openJournal = (trade: Trade) => {
     setJournalTrade(trade);
     setJournalDraft(trade.journal ?? blankJournal());
-    setReflectionMode("quick");
+    setReflectionMode(
+      trade.journal?.aiDraft?.reviewStatus === "awaiting_user_review"
+        ? "deep"
+        : "quick",
+    );
     setJournalError("");
     setScreenshotError("");
   };
@@ -502,6 +773,12 @@ export function TradesPage() {
         .map((tag) => tag.trim().toLowerCase())
         .filter(Boolean),
       reviewedAt: new Date().toISOString(),
+      aiDraft: journalDraft.aiDraft
+        ? {
+            ...journalDraft.aiDraft,
+            reviewStatus: "reviewed_by_user" as const,
+          }
+        : undefined,
     };
     updateTrade({
       ...journalTrade,
@@ -573,21 +850,36 @@ export function TradesPage() {
         }
         description={
           guidedByLesson
-            ? "Import execution facts, reconstruct the decision, reflect without hindsight, and use the evidence to choose what deserves practice next."
-            : "Import execution facts, add the missing decision context, and explore patterns without treating P&L or trade count as a verdict."
+            ? "Read your full Trading Records evidence set, pair executions with charts, review externally generated journal hypotheses, and use the evidence to choose what deserves practice next."
+            : "Read execution and chart evidence, bring back externally generated journal drafts for review, and explore patterns without treating P&L or trade count as a verdict."
         }
         actions={
           <>
+            {state.tradeLearningSystem?.tradeAudits.length ? (
+              <Link to="/learn/trade-lessons" className="button primary">
+                <BookOpenCheck size={16} />
+                Trade lessons
+              </Link>
+            ) : null}
             <Link to="/chart" className="button secondary">
               <CandlestickChart size={16} />
               Chart & backtest
             </Link>
             <button
-              className="button secondary"
+              className={
+                activeTab === "inbox" ? "button secondary" : "button primary"
+              }
+              onClick={() => setActiveTab("inbox")}
+            >
+              <Inbox size={16} />
+              Evidence inbox
+            </button>
+            <button
+              className="button ghost"
               onClick={() => fileRef.current?.click()}
             >
               <FileUp size={16} />
-              Import from Fidelity
+              Import one CSV
             </button>
             <input
               ref={fileRef}
@@ -600,7 +892,7 @@ export function TradesPage() {
               className={
                 activeTab === "trades" && showForm
                   ? "button secondary"
-                  : "button primary"
+                  : "button ghost"
               }
               onClick={() => {
                 if (activeTab === "trades" && showForm) closeForm();
@@ -627,6 +919,7 @@ export function TradesPage() {
         {(
           [
             { id: "overview", label: "Overview", icon: LayoutDashboard },
+            { id: "inbox", label: "Evidence inbox", icon: Inbox },
             { id: "trades", label: "Trades", icon: BarChart3 },
             { id: "calendar", label: "Calendar", icon: CalendarRange },
             { id: "insights", label: "Patterns", icon: BrainCircuit },
@@ -651,24 +944,51 @@ export function TradesPage() {
             <BookOpenCheck size={21} />
           </span>
           <div>
-            <span className="eyebrow">Reflection queue</span>
+            <span className="eyebrow">Journal draft queue</span>
             <strong>
               {pendingTrades.length} completed{" "}
               {pendingTrades.length === 1 ? "trade needs" : "trades need"}{" "}
               context
             </strong>
             <p>
-              Start with {pendingTrades[0].symbol}. A focused reflection takes
-              only a few minutes; deeper notes remain optional.
+              Start with {pendingTrades[0].symbol}. You can review it manually
+              or use the evidence inbox to create externally generated drafts
+              for every supported trade.
             </p>
           </div>
           <button
             className="button primary"
-            onClick={() => openJournal(pendingTrades[0])}
+            onClick={() =>
+              recordsAnalysis
+                ? setActiveTab("inbox")
+                : openJournal(pendingTrades[0])
+            }
           >
-            Review {pendingTrades[0].symbol}
+            {recordsAnalysis
+              ? "Create AI drafts"
+              : `Review ${pendingTrades[0].symbol}`}
           </button>
         </section>
+      ) : null}
+
+      {activeTab === "inbox" ? (
+        <FidelityEvidenceInbox
+          analysis={recordsAnalysis}
+          settings={state.fidelityImport}
+          busy={recordsScanBusy}
+          error={recordsScanError}
+          canCreateAiPackage={Boolean(
+            recordsAnalysis?.trades.some((trade) =>
+              knownSourceIds.has(trade.sourceId),
+            ),
+          )}
+          responseInputRef={aiResponseRef}
+          onScan={() => void runRecordsScan(true)}
+          onCreateAiPackage={createAiPackage}
+          onCopyAiRequest={() => void copyAiRequest()}
+          onReadAiResponse={(file) => void readAiResponse(file)}
+          onOpenChart={openTradingRecordChart}
+        />
       ) : null}
 
       {activeTab === "overview" ? (
@@ -998,6 +1318,12 @@ export function TradesPage() {
                             Fidelity import
                           </span>
                         ) : null}
+                        {trade.journal?.aiDraft?.reviewStatus ===
+                        "awaiting_user_review" ? (
+                          <span className="badge ai-draft-badge">
+                            AI draft · review required
+                          </span>
+                        ) : null}
                         <OutcomeBadge value={trade.review.outcome} />
                       </div>
                       <strong
@@ -1114,7 +1440,10 @@ export function TradesPage() {
                           <strong>
                             {trade.journal?.status === "reviewed"
                               ? "Reflection complete"
-                              : "Reflection needed"}
+                              : trade.journal?.aiDraft?.reviewStatus ===
+                                  "awaiting_user_review"
+                                ? "External AI draft ready"
+                                : "Reflection needed"}
                           </strong>
                         </div>
                         <p>
@@ -1122,7 +1451,10 @@ export function TradesPage() {
                             ? trade.journal.whatToImprove ||
                               trade.journal.whatWentWell ||
                               "Context preserved for pattern review."
-                            : "The CSV knows what filled—not why you acted, what you noticed, or what you will repeat."}
+                            : trade.journal?.aiDraft?.reviewStatus ===
+                                "awaiting_user_review"
+                              ? "Evidence-cited hypotheses were imported. Check them against your memory before accepting anything."
+                              : "The CSV knows what filled—not why you acted, what you noticed, or what you will repeat."}
                         </p>
                       </div>
                       <button
@@ -1135,7 +1467,10 @@ export function TradesPage() {
                       >
                         {trade.journal?.status === "reviewed"
                           ? "Edit reflection"
-                          : "Complete reflection"}
+                          : trade.journal?.aiDraft?.reviewStatus ===
+                              "awaiting_user_review"
+                            ? "Review AI draft"
+                            : "Complete reflection"}
                       </button>
                     </div>
                   </article>
@@ -1230,9 +1565,10 @@ export function TradesPage() {
           <div className="callout">
             <ShieldAlert size={18} />
             <p>
-              This creates factual journal entries only. It does not connect to
-              your Fidelity account, place orders, or treat the export as a tax
-              record.
+              This creates factual execution records only. Fidelity buy Amount
+              and Filled values are treated as dollars invested—not shares. The
+              app does not connect to your account, place orders, or treat the
+              export as a tax record.
             </p>
           </div>
           <div className="form-actions">
@@ -1259,6 +1595,149 @@ export function TradesPage() {
         </Modal>
       ) : null}
 
+      {aiPreview ? (
+        <Modal
+          wide
+          title="Review the external AI journal draft"
+          description={`${aiPreview.fileName} was validated locally. Nothing in this response is accepted as fact or marked complete automatically.`}
+          onClose={() => setAiPreview(null)}
+        >
+          <div className="import-summary-grid ai-draft-summary">
+            <div>
+              <strong>{aiPreview.validation.entries.length}</strong>
+              <span>drafts matched to trades</span>
+            </div>
+            <div>
+              <strong>{selectedAiDrafts.size}</strong>
+              <span>selected for import</span>
+            </div>
+            <div>
+              <strong>
+                {
+                  aiPreview.validation.entries.filter(
+                    (entry) => entry.mentalStateHypotheses.length > 0,
+                  ).length
+                }
+              </strong>
+              <span>with mental-state hypotheses</span>
+            </div>
+            <div>
+              <strong>
+                {aiPreview.validation.aiProvider ?? "External AI"}
+              </strong>
+              <span>declared source</span>
+            </div>
+          </div>
+          {aiPreview.validation.errors.length ? (
+            <ul className="validation-list errors" role="alert">
+              {aiPreview.validation.errors.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
+          {aiPreview.validation.warnings.length ? (
+            <ul className="validation-list warnings">
+              {aiPreview.validation.warnings.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
+          {aiPreview.validation.valid ? (
+            <div className="ai-draft-preview-list">
+              {aiPreview.validation.entries.map((entry) => {
+                const trade = state.trades.find(
+                  (candidate) => candidate.sourceId === entry.tradeSourceId,
+                );
+                const preserved = trade?.journal?.status === "reviewed";
+                const mental = entry.mentalStateHypotheses[0];
+                return (
+                  <label
+                    className={`ai-draft-preview-card ${preserved ? "preserved" : ""}`}
+                    key={entry.tradeSourceId}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedAiDrafts.has(entry.tradeSourceId)}
+                      disabled={preserved}
+                      onChange={(event) =>
+                        setSelectedAiDrafts((current) => {
+                          const next = new Set(current);
+                          if (event.target.checked)
+                            next.add(entry.tradeSourceId);
+                          else next.delete(entry.tradeSourceId);
+                          return next;
+                        })
+                      }
+                    />
+                    <div>
+                      <div className="record-topline">
+                        <strong>
+                          {entry.symbol} · {entry.tradingDate}
+                        </strong>
+                        <span
+                          className={`badge ${entry.strategy.confidence === "high" ? "badge-strong" : "badge-partial"}`}
+                        >
+                          Strategy · {entry.strategy.confidence}
+                        </span>
+                      </div>
+                      <p>{entry.strategy.statement}</p>
+                      <small>
+                        Mental state:{" "}
+                        {mental?.statement ??
+                          "No hypothesis—evidence insufficient"}
+                      </small>
+                      <div className="ai-draft-correction">
+                        <span>Proposed correction</span>
+                        <strong>{entry.whatToImprove}</strong>
+                      </div>
+                      {preserved ? (
+                        <em>
+                          Completed reflection preserved. Reopen that trade
+                          manually if you want to change it.
+                        </em>
+                      ) : (
+                        <em>
+                          Imports as “needs review” and fills only currently
+                          empty reflection fields.
+                        </em>
+                      )}
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          ) : null}
+          <div className="callout warning">
+            <ShieldAlert size={18} />
+            <p>
+              Orders and candles cannot reveal private thoughts. Strategy,
+              behavior, and mental-state text remains an AI hypothesis until you
+              compare it with your own memory. Mental-state language is never a
+              diagnosis.
+            </p>
+          </div>
+          <div className="form-actions">
+            <button
+              className="button secondary"
+              onClick={() => setAiPreview(null)}
+            >
+              Cancel
+            </button>
+            <button
+              className="button primary"
+              disabled={
+                !aiPreview.validation.valid || selectedAiDrafts.size === 0
+              }
+              onClick={applyAiDrafts}
+            >
+              <CheckCircle2 size={16} />
+              Import {selectedAiDrafts.size} draft
+              {selectedAiDrafts.size === 1 ? "" : "s"} for review
+            </button>
+          </div>
+        </Modal>
+      ) : null}
+
       {journalTrade ? (
         <Modal
           wide
@@ -1278,6 +1757,21 @@ export function TradesPage() {
               </p>
             </div>
           </div>
+          {journalDraft.aiDraft?.reviewStatus === "awaiting_user_review" ? (
+            <div className="ai-draft-review-notice">
+              <BrainCircuit size={20} />
+              <div>
+                <strong>External AI draft—review every statement</strong>
+                <p>{journalDraft.aiDraft.inferenceNotice}</p>
+                <small>
+                  {journalDraft.aiDraft.evidenceRefs.length} evidence citation
+                  {journalDraft.aiDraft.evidenceRefs.length === 1 ? "" : "s"} ·
+                  imported{" "}
+                  {new Date(journalDraft.aiDraft.importedAt).toLocaleString()}
+                </small>
+              </div>
+            </div>
+          ) : null}
           <div
             className="reflection-mode-tabs"
             role="group"

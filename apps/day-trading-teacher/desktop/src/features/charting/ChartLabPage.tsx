@@ -33,6 +33,10 @@ import {
   parseMarketDataCsv,
 } from "../../domain/market-data";
 import {
+  findDailySessionForDate,
+  paperEntryAccess,
+} from "../../domain/daily-session";
+import {
   addAcquisitionSubscription,
   createProviderMarketDataSet,
   MARKET_DATA_PROVIDERS,
@@ -145,6 +149,7 @@ export function ChartLabPage() {
     dataSets[0] ??
     null;
   const activeProvider = providerDetails(acquisition.provider);
+  const dailySession = findDailySessionForDate(state.dailySessions);
 
   useEffect(() => {
     if (!selected && dataSets[0]) setSelectedId(dataSets[0].id);
@@ -192,10 +197,49 @@ export function ChartLabPage() {
     : [];
   const activePaperSession =
     paperHistory.find((session) => session.status === "active") ?? null;
+  const basePaperAccess = paperEntryAccess(dailySession, guidedByLesson);
+  const linkedDailySession = activePaperSession?.dailySessionId
+    ? state.dailySessions?.find(
+        (session) => session.id === activePaperSession.dailySessionId,
+      )
+    : null;
+  const paperAccess = !basePaperAccess.allowed
+    ? basePaperAccess
+    : activePaperSession?.dailySessionId &&
+        linkedDailySession?.status !== "active"
+      ? {
+          allowed: false,
+          reason:
+            linkedDailySession?.stopNote ||
+            "This paper session belongs to a Session Guard that no longer allows new entries. End it and begin a new session when eligible.",
+        }
+      : dailySession?.status === "active" &&
+          activePaperSession?.dailySessionId &&
+          activePaperSession.dailySessionId !== dailySession.id
+        ? {
+            allowed: false,
+            reason:
+              "This paper session belongs to an earlier practice day. End it safely, then start a new session under today’s guard.",
+          }
+        : dailySession?.status === "active" &&
+            activePaperSession &&
+            !activePaperSession.dailySessionId &&
+            (activePaperSession.trades.length > 0 ||
+              Boolean(activePaperSession.position) ||
+              Boolean(activePaperSession.pendingOrder))
+          ? {
+              allowed: false,
+              reason:
+                "This legacy paper session already contains decisions. End it safely, then start a clean session under today’s guard.",
+            }
+          : basePaperAccess;
   const paperDefaults = {
     startingBalance: Number(state.profile.startingBalance) || 10_000,
     maxRiskPerTrade: Number(state.profile.maxRiskPerTrade) || 25,
-    dailyLossLimit: Number(state.profile.dailyLossLimit) || 75,
+    dailyLossLimit:
+      dailySession?.status === "active"
+        ? dailySession.dailyLossLimit
+        : Number(state.profile.dailyLossLimit) || 75,
     slippagePerShare: applied.slippagePerShare,
     commissionPerOrder: applied.feePerTrade / 2,
   };
@@ -1148,6 +1192,8 @@ export function ChartLabPage() {
             paperSession={activePaperSession}
             paperHistory={paperHistory}
             paperDefaults={paperDefaults}
+            dailySession={dailySession}
+            paperEntryAccess={paperAccess}
             onPaperSessionChange={upsertPaperTradingSession}
           />
 

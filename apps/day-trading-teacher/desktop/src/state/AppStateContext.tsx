@@ -10,13 +10,19 @@ import {
 } from "react";
 import { loadState, saveState } from "../platform/bridge";
 import { evaluateAchievements } from "../domain/achievements";
+import {
+  enforceDailySessionGuards,
+  findDailySessionForDate,
+} from "../domain/daily-session";
 import { buildRecallRecord, type RecallRating } from "../domain/learning-tools";
+import { cancelPaperOrder } from "../domain/paper-trading";
 import { defaultChartWorkspace } from "../domain/chart-workspace";
 import type {
   AppState,
   ChartAcquisitionSettings,
   ChartWorkspacePreferences,
   CustomLessonPlan,
+  DailySession,
   FidelityImportSettings,
   JournalDashboardPreferences,
   JournalGoal,
@@ -25,7 +31,9 @@ import type {
   PaperTradingSession,
   Profile,
   Progress,
+  SetupPlaybook,
   Trade,
+  TradeLearningSystem,
   TradePlan,
 } from "../domain/types";
 import { normalizeAppState } from "./state-migration";
@@ -68,6 +76,7 @@ export const defaultState: AppState = {
   fidelityImport: {
     folderPath: "",
     autoScan: false,
+    autoDetect: true,
     lastScanAt: null,
     lastFileKey: null,
   },
@@ -92,7 +101,9 @@ export const defaultState: AppState = {
     lastRefreshMessage: "",
   },
   chartWorkspace: defaultChartWorkspace,
+  dailySessions: [],
   paperTradingSessions: [],
+  setupPlaybooks: [],
 };
 
 function freshDefaultState() {
@@ -113,6 +124,8 @@ type AppStateActions = {
   addTrade(trade: Trade): void;
   addTrades(trades: Trade[]): void;
   updateTrade(trade: Trade): void;
+  updateTradeLearningSystem(system: TradeLearningSystem): void;
+  reviewTradeLesson(tradeSourceId: string): void;
   updateFidelityImport(settings: FidelityImportSettings): void;
   addJournalGoal(goal: JournalGoal): void;
   updateJournalGoal(goal: JournalGoal): void;
@@ -121,8 +134,11 @@ type AppStateActions = {
   removeMarketDataSet(dataSetId: string): void;
   updateChartAcquisition(settings: ChartAcquisitionSettings): void;
   updateChartWorkspace(preferences: ChartWorkspacePreferences): void;
+  upsertDailySession(session: DailySession): void;
   upsertPaperTradingSession(session: PaperTradingSession): void;
   removePaperTradingSession(sessionId: string): void;
+  upsertSetupPlaybook(playbook: SetupPlaybook): void;
+  removeSetupPlaybook(playbookId: string): void;
   completeLesson(
     lessonId: string,
     confidence?: 1 | 2 | 3,
@@ -373,6 +389,28 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       })),
     [],
   );
+  const updateTradeLearningSystem = useCallback(
+    (system: TradeLearningSystem) =>
+      setState((current) => ({ ...current, tradeLearningSystem: system })),
+    [],
+  );
+  const reviewTradeLesson = useCallback((tradeSourceId: string) => {
+    const reviewedAt = new Date().toISOString();
+    setState((current) => {
+      if (!current.tradeLearningSystem) return current;
+      return {
+        ...current,
+        tradeLearningSystem: {
+          ...current.tradeLearningSystem,
+          tradeAudits: current.tradeLearningSystem.tradeAudits.map((audit) =>
+            audit.tradeSourceId === tradeSourceId
+              ? { ...audit, reviewedAt }
+              : audit,
+          ),
+        },
+      };
+    });
+  }, []);
   const updateFidelityImport = useCallback(
     (settings: FidelityImportSettings) =>
       setState((current) => ({ ...current, fidelityImport: settings })),
@@ -434,17 +472,60 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setState((current) => ({ ...current, chartWorkspace: preferences })),
     [],
   );
+  const upsertDailySession = useCallback(
+    (session: DailySession) =>
+      setState((current) => {
+        const blocksNewEntries = session.status !== "active";
+        const paperTradingSessions = (current.paperTradingSessions ?? []).map(
+          (paperSession) =>
+            blocksNewEntries &&
+            paperSession.dailySessionId === session.id &&
+            paperSession.pendingOrder &&
+            paperSession.pendingOrder.action !== "close_position"
+              ? cancelPaperOrder(paperSession, session.updatedAt)
+              : paperSession,
+        );
+        return {
+          ...current,
+          dailySessions: [
+            session,
+            ...(current.dailySessions ?? []).filter(
+              (candidate) => candidate.id !== session.id,
+            ),
+          ].slice(0, 730),
+          paperTradingSessions,
+        };
+      }),
+    [],
+  );
   const upsertPaperTradingSession = useCallback(
     (session: PaperTradingSession) =>
-      setState((current) => ({
-        ...current,
-        paperTradingSessions: [
-          session,
+      setState((current) => {
+        const activeDailySession = findDailySessionForDate(
+          current.dailySessions,
+        );
+        const linkedSession =
+          !session.dailySessionId && activeDailySession?.status === "active"
+            ? { ...session, dailySessionId: activeDailySession.id }
+            : session;
+        const paperTradingSessions = [
+          linkedSession,
           ...(current.paperTradingSessions ?? []).filter(
-            (candidate) => candidate.id !== session.id,
+            (candidate) => candidate.id !== linkedSession.id,
           ),
-        ].slice(0, 50),
-      })),
+        ].slice(0, 50);
+        const now = new Date();
+        const guarded = enforceDailySessionGuards(
+          current.dailySessions ?? [],
+          paperTradingSessions,
+          now,
+        );
+        return {
+          ...current,
+          paperTradingSessions: guarded.paperSessions,
+          dailySessions: guarded.dailySessions,
+        };
+      }),
     [],
   );
   const removePaperTradingSession = useCallback(
@@ -453,6 +534,29 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         ...current,
         paperTradingSessions: (current.paperTradingSessions ?? []).filter(
           (session) => session.id !== sessionId,
+        ),
+      })),
+    [],
+  );
+  const upsertSetupPlaybook = useCallback(
+    (playbook: SetupPlaybook) =>
+      setState((current) => ({
+        ...current,
+        setupPlaybooks: [
+          playbook,
+          ...(current.setupPlaybooks ?? []).filter(
+            (candidate) => candidate.id !== playbook.id,
+          ),
+        ].slice(0, 200),
+      })),
+    [],
+  );
+  const removeSetupPlaybook = useCallback(
+    (playbookId: string) =>
+      setState((current) => ({
+        ...current,
+        setupPlaybooks: (current.setupPlaybooks ?? []).filter(
+          (playbook) => playbook.id !== playbookId,
         ),
       })),
     [],
@@ -650,6 +754,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       addTrade,
       addTrades,
       updateTrade,
+      updateTradeLearningSystem,
+      reviewTradeLesson,
       updateFidelityImport,
       addJournalGoal,
       updateJournalGoal,
@@ -663,8 +769,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       removeMarketDataSet,
       updateChartAcquisition,
       updateChartWorkspace,
+      upsertDailySession,
       upsertPaperTradingSession,
       removePaperTradingSession,
+      upsertSetupPlaybook,
+      removeSetupPlaybook,
       replaceState,
       resetState,
       completeOnboarding,
@@ -679,6 +788,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       addTrade,
       addTrades,
       updateTrade,
+      updateTradeLearningSystem,
+      reviewTradeLesson,
       updateFidelityImport,
       addJournalGoal,
       updateJournalGoal,
@@ -687,8 +798,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       removeMarketDataSet,
       updateChartAcquisition,
       updateChartWorkspace,
+      upsertDailySession,
       upsertPaperTradingSession,
       removePaperTradingSession,
+      upsertSetupPlaybook,
+      removeSetupPlaybook,
       completeLesson,
       recordLearningToolPractice,
       recordConceptRecall,

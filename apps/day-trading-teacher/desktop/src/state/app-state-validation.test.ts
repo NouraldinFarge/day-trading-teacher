@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createDailySession } from "../domain/daily-session";
 import { defaultState } from "./AppStateContext";
 import { validateAppState } from "./app-state-validation";
 
@@ -15,6 +16,58 @@ describe("app state validation", () => {
     };
     damaged.profile.standaloneTools = "yes";
     expect(validateAppState(damaged)).toMatchObject({ valid: false });
+  });
+
+  it("accepts a bounded daily Session Guard and rejects unsafe limits", () => {
+    const guarded = structuredClone(defaultState);
+    guarded.dailySessions = [
+      createDailySession(guarded.profile, { id: "daily-guard-test" }),
+    ];
+    expect(validateAppState(guarded)).toMatchObject({ valid: true });
+
+    guarded.dailySessions[0].maxPaperTrades = 21;
+    const result = validateAppState(guarded);
+    expect(result.valid).toBe(false);
+    if (!result.valid)
+      expect(result.errors.join(" ")).toContain(
+        "dailySessions.0.maxPaperTrades",
+      );
+  });
+
+  it("accepts bounded setup playbooks and rejects oversized evidence collections", () => {
+    const state = structuredClone(defaultState);
+    state.setupPlaybooks = [
+      {
+        id: "playbook-test",
+        title: "Historical pullback study",
+        market: "US equities",
+        timeframe: "1 minute",
+        contextRequirements: ["Known session"],
+        confirmationRequirements: ["Observable confirmation"],
+        trigger: "Written before reveal",
+        invalidation: "Named structural boundary",
+        liquidityRule: "Contemporaneous spread is known",
+        disqualifiers: ["Missing data"],
+        managementRule: "Use the locked exit architecture",
+        reviewQuestions: ["Was the rule followed?"],
+        reviewedExamples: 6,
+        status: "practice_only",
+        createdAt: "2026-08-13T12:00:00.000Z",
+        updatedAt: "2026-08-13T12:00:00.000Z",
+      },
+    ];
+    expect(validateAppState(state)).toMatchObject({ valid: true });
+
+    state.setupPlaybooks[0].contextRequirements = Array.from(
+      { length: 21 },
+      (_, index) => `Rule ${index + 1}`,
+    );
+    const result = validateAppState(state);
+    expect(result.valid).toBe(false);
+    if (!result.valid)
+      expect(result.errors.join(" ")).toContain(
+        "setupPlaybooks.0.contextRequirements",
+      );
   });
 
   it("rejects structurally incomplete trade data before it can replace local records", () => {

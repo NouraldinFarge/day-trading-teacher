@@ -59,6 +59,19 @@ export type CalendarDay = {
   notable: string[];
 };
 
+export type TailRiskAudit = {
+  sampleSize: number;
+  status: "insufficient" | "balanced" | "fragile";
+  largestWin: number;
+  largestLoss: number;
+  largestWinShareOfGrossProfit: number;
+  largestLossShareOfGrossLoss: number;
+  recoveryWinsNeeded: number | null;
+  medianPnl: number;
+  coreNetPnl: number;
+  reasons: string[];
+};
+
 const rangeDays: Record<Exclude<JournalRange, "all">, number> = {
   day: 1,
   week: 7,
@@ -176,6 +189,89 @@ export function performanceMetrics(
         100
       : 0,
     tradeCount: trades.length,
+  };
+}
+
+function median(values: number[]) {
+  if (!values.length) return 0;
+  const sorted = [...values].sort((left, right) => left - right);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2
+    ? sorted[middle]
+    : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+export function tailRiskAudit(trades: Trade[]): TailRiskAudit {
+  const pnls = trades
+    .map((trade) => Number(trade.netPnl))
+    .filter(Number.isFinite);
+  const wins = pnls.filter((value) => value > 0);
+  const losses = pnls.filter((value) => value < 0);
+  const grossProfit = wins.reduce((total, value) => total + value, 0);
+  const grossLoss = Math.abs(losses.reduce((total, value) => total + value, 0));
+  const largestWin = wins.length ? Math.max(...wins) : 0;
+  const largestLoss = losses.length ? Math.min(...losses) : 0;
+  const averageWin = wins.length ? grossProfit / wins.length : 0;
+  const largestWinShareOfGrossProfit = grossProfit
+    ? (largestWin / grossProfit) * 100
+    : 0;
+  const largestLossShareOfGrossLoss = grossLoss
+    ? (Math.abs(largestLoss) / grossLoss) * 100
+    : 0;
+  const recoveryWinsNeeded =
+    largestLoss < 0 && averageWin > 0
+      ? Math.abs(largestLoss) / averageWin
+      : null;
+  const trimmed = [...pnls];
+  if (largestWin > 0) trimmed.splice(trimmed.indexOf(largestWin), 1);
+  if (largestLoss < 0) trimmed.splice(trimmed.indexOf(largestLoss), 1);
+  const coreNetPnl = trimmed.reduce((total, value) => total + value, 0);
+  const reasons: string[] = [];
+
+  if (pnls.length < 10)
+    reasons.push(
+      `Only ${pnls.length} recorded outcome${pnls.length === 1 ? " is" : "s are"} available; at least 10 are needed for a basic concentration check.`,
+    );
+  else {
+    if (largestWinShareOfGrossProfit >= 50)
+      reasons.push(
+        `One win supplies ${largestWinShareOfGrossProfit.toFixed(0)}% of recorded gross profit.`,
+      );
+    if (largestLossShareOfGrossLoss >= 50)
+      reasons.push(
+        `One loss supplies ${largestLossShareOfGrossLoss.toFixed(0)}% of recorded gross loss.`,
+      );
+    if (recoveryWinsNeeded !== null && recoveryWinsNeeded >= 3)
+      reasons.push(
+        `The largest loss equals ${recoveryWinsNeeded.toFixed(1)} average recorded wins.`,
+      );
+    if (pnls.reduce((total, value) => total + value, 0) > 0 && coreNetPnl <= 0)
+      reasons.push(
+        "Removing one largest win and one largest loss leaves the remaining sample non-positive.",
+      );
+  }
+
+  return {
+    sampleSize: pnls.length,
+    status:
+      pnls.length < 10
+        ? "insufficient"
+        : reasons.length
+          ? "fragile"
+          : "balanced",
+    largestWin,
+    largestLoss,
+    largestWinShareOfGrossProfit,
+    largestLossShareOfGrossLoss,
+    recoveryWinsNeeded,
+    medianPnl: median(pnls),
+    coreNetPnl,
+    reasons:
+      reasons.length > 0
+        ? reasons
+        : [
+            "No single recorded outcome crosses the current concentration thresholds. Keep monitoring as the sample changes.",
+          ],
   };
 }
 
@@ -333,6 +429,7 @@ export function calendarDays(trades: Trade[]) {
 
 export function generatedInsights(trades: Trade[], startingBalance = 10_000) {
   const metrics = performanceMetrics(trades, startingBalance);
+  const tails = tailRiskAudit(trades);
   const insights: Array<{
     tone: "positive" | "attention" | "neutral";
     title: string;
@@ -363,6 +460,12 @@ export function generatedInsights(trades: Trade[], startingBalance = 10_000) {
       tone: "attention",
       title: "Strengthen pre-trade evidence",
       body: `Only ${Math.round(metrics.planCoverage)}% of trades link to a timestamped plan. Record the trigger, invalidation, and risk before entry.`,
+    });
+  if (tails.status === "fragile")
+    insights.push({
+      tone: "attention",
+      title: "Audit outcome concentration",
+      body: `${tails.reasons[0]} Compare the ordinary trades with the largest win and loss before drawing a conclusion from the average.`,
     });
   if (metrics.maximumDrawdown > Math.max(25, startingBalance * 0.02))
     insights.push({
