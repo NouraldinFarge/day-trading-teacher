@@ -12,7 +12,7 @@
 
 **A local-first Windows learning environment that connects structured lessons, historical chart replay, paper practice, and evidence-based post-trade review.**
 
-[Download the latest verified release](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest) · [Open the visual project site](https://nouraldinfarge.github.io/day-trading-teacher/) · [Take the five-minute project tour](#five-minute-project-tour) · [Browse the documentation](docs/README.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md)
+[Download the latest verified release](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest) · [Preview the visual project site source](site/index.html) · [Take the five-minute project tour](#five-minute-project-tour) · [Browse the documentation](docs/README.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md)
 
 Active development · 2026 · Current release **0.37.0**
 
