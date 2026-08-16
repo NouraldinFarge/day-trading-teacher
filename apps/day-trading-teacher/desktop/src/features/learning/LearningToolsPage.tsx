@@ -98,6 +98,7 @@ export function LearningToolsPage() {
     upsertDailySession,
     upsertSetupPlaybook,
     removeSetupPlaybook,
+    linkLearningCaseEvidence,
   } = useAppState();
   const [lessonContext] = useState(() => readLessonWorkspaceContext("lab"));
   const [activeTool, setActiveTool] = useState<ToolId>(
@@ -106,6 +107,22 @@ export function LearningToolsPage() {
   const dueCount = dueConceptCards(state.progress.conceptRecall).length;
   const active = tools.find((tool) => tool.id === activeTool) ?? tools[0];
   const activeDailySession = findDailySessionForDate(state.dailySessions);
+  const linkToolPractice = (toolId: string) => {
+    if (!lessonContext) return;
+    const linkedAt = new Date().toISOString();
+    linkLearningCaseEvidence(lessonContext.learningCaseId, {
+      id: crypto.randomUUID(),
+      kind: "learning_tool",
+      referenceId: `${toolId}:${linkedAt}`,
+      label: `${toolId.replaceAll("-", " ")} practice`,
+      workspace: "lab",
+      linkedAt,
+    });
+  };
+  const recordPractice = (toolId: string) => {
+    recordLearningToolPractice(toolId);
+    linkToolPractice(toolId);
+  };
 
   const moveSessionToReview = () => {
     if (!activeDailySession || activeDailySession.status !== "active") return;
@@ -187,21 +204,17 @@ export function LearningToolsPage() {
       </p>
 
       {activeTool === "risk" ? (
-        <RiskLab onPractice={() => recordLearningToolPractice("risk-lab")} />
+        <RiskLab onPractice={() => recordPractice("risk-lab")} />
       ) : null}
       {activeTool === "expectancy" ? (
-        <ExpectancyLab
-          onPractice={() => recordLearningToolPractice("expectancy-lab")}
-        />
+        <ExpectancyLab onPractice={() => recordPractice("expectancy-lab")} />
       ) : null}
       {activeTool === "decisions" ? (
-        <DecisionDrill
-          onPractice={() => recordLearningToolPractice("decision-drill")}
-        />
+        <DecisionDrill onPractice={() => recordPractice("decision-drill")} />
       ) : null}
       {activeTool === "context" ? (
         <ContextReadingLab
-          onPractice={() => recordLearningToolPractice("context-reading")}
+          onPractice={() => recordPractice("context-reading")}
         />
       ) : null}
       {activeTool === "playbook" ? (
@@ -209,25 +222,26 @@ export function LearningToolsPage() {
           playbooks={state.setupPlaybooks ?? []}
           onSave={upsertSetupPlaybook}
           onRemove={removeSetupPlaybook}
-          onPractice={() => recordLearningToolPractice("setup-playbook")}
+          onPractice={() => recordPractice("setup-playbook")}
         />
       ) : null}
       {activeTool === "reset" ? (
         <ResetDrill
           canMoveSessionToReview={activeDailySession?.status === "active"}
           onMoveSessionToReview={moveSessionToReview}
-          onPractice={() => recordLearningToolPractice("reset-drill")}
+          onPractice={() => recordPractice("reset-drill")}
         />
       ) : null}
       {activeTool === "plan" ? (
-        <PlanQualityCoach
-          onPractice={() => recordLearningToolPractice("plan-quality")}
-        />
+        <PlanQualityCoach onPractice={() => recordPractice("plan-quality")} />
       ) : null}
       {activeTool === "recall" ? (
         <RecallDeck
           records={state.progress.conceptRecall}
-          onRate={recordConceptRecall}
+          onRate={(conceptId, rating) => {
+            recordConceptRecall(conceptId, rating);
+            linkToolPractice(`recall-${conceptId}`);
+          }}
         />
       ) : null}
 

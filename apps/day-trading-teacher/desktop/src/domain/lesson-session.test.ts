@@ -30,6 +30,7 @@ describe("lesson workspace session", () => {
 
   it("keeps a lesson activity resumable across a workspace handoff", () => {
     saveLessonWorkspaceContext({
+      learningCaseId: "case-1",
       lessonId: "builtin-rm-004",
       lessonTitle: "Set the loss boundary first",
       workspaceId: "lab",
@@ -57,6 +58,7 @@ describe("lesson workspace session", () => {
 
   it("marks a workspace artifact ready without losing the resumable lesson", () => {
     saveLessonWorkspaceContext({
+      learningCaseId: "case-2",
       lessonId: "builtin-rm-004",
       lessonTitle: "Set the loss boundary first",
       workspaceId: "chart",

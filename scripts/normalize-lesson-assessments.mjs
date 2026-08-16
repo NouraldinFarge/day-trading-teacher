@@ -149,7 +149,9 @@ function normalizeBundledPlan() {
   for (const lesson of plan.lessons) {
     const extension = extensions[lesson.lesson_id];
     if (!extension) {
-      throw new Error("Missing extension metadata for " + lesson.lesson_id + ".");
+      throw new Error(
+        "Missing extension metadata for " + lesson.lesson_id + ".",
+      );
     }
     lesson.version = "3.0.0";
     lesson.estimated_minutes = extension.minutes;

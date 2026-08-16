@@ -98,6 +98,22 @@ try {
 
 $sourceExecutable = Join-Path $workspaceRoot "target\release\day-trading-teacher-desktop.exe"
 if (-not (Test-Path -LiteralPath $sourceExecutable)) { throw "Portable executable was not created: $sourceExecutable" }
+$certificateBase64 = [Environment]::GetEnvironmentVariable("DTT_WINDOWS_CERTIFICATE_BASE64")
+$certificatePassword = [Environment]::GetEnvironmentVariable("DTT_WINDOWS_CERTIFICATE_PASSWORD")
+$authenticodeSigned = $false
+if ([string]::IsNullOrWhiteSpace($certificateBase64) -xor [string]::IsNullOrWhiteSpace($certificatePassword)) {
+  throw "Both DTT_WINDOWS_CERTIFICATE_BASE64 and DTT_WINDOWS_CERTIFICATE_PASSWORD are required for signing."
+}
+if (-not [string]::IsNullOrWhiteSpace($certificateBase64)) {
+  & (Join-Path $workspaceRoot "build\sign-windows-executable.ps1") `
+    -ExecutablePath $sourceExecutable `
+    -CertificateBase64 $certificateBase64 `
+    -CertificatePassword $certificatePassword
+  if ($LASTEXITCODE -ne 0) { throw "Windows executable signing failed." }
+  $authenticodeSigned = $true
+} else {
+  Write-Host "No Authenticode certificate configured; the portable executable will be unsigned." -ForegroundColor Yellow
+}
 
 $stageRoot = Join-Path $outputDirectory $portableFolderName
 if (Test-Path -LiteralPath $stageRoot) { throw "Refusing to overwrite existing staged portable folder: $stageRoot" }
@@ -119,6 +135,14 @@ Copy-Item `
   -LiteralPath (Join-Path $workspaceRoot "content\lesson-plans\evidence-to-execution-v7-resources") `
   -Destination (Join-Path $curriculumAssetRoot "resources") `
   -Recurse
+
+Push-Location $workspaceRoot
+try {
+  & node "scripts/generate-third-party-licenses.mjs" --output (Join-Path $stageRoot "licenses")
+  if ($LASTEXITCODE -ne 0) { throw "Third-party license generation failed." }
+} finally {
+  Pop-Location
+}
 
 & (Join-Path $workspaceRoot "build\verify-portable-build.ps1") -PortableFolder $stageRoot
 if ($LASTEXITCODE -ne 0) { throw "Portable folder verification failed." }
@@ -148,6 +172,7 @@ $metadata = [ordered]@{
   sha256 = $hash
   portable_data_root = "data/"
   installer_generation = $false
+  authenticode_signed = $authenticodeSigned
 } | ConvertTo-Json
 Set-Content -LiteralPath (Join-Path $metadataDirectory "day-trading-teacher-v$version-windows-x64-portable.json") -Value $metadata -Encoding utf8
 

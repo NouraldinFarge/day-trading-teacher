@@ -34,9 +34,16 @@ export type FidelityExportFile = {
   relativePath: string;
   modifiedAt: number;
   sizeBytes: number;
+  fingerprint: string;
   kind: "orders" | "chart";
   folderDate: string | null;
   content: string;
+};
+
+export type FidelityFolderProbe = {
+  discoveryKey: string;
+  discoveredCsvCount: number;
+  latestModifiedAt: number | null;
 };
 
 export type FidelityExportScan = {
@@ -150,6 +157,20 @@ export async function scanFidelityExports(
       warnings: ["Folder scanning is available in the portable desktop app."],
     };
   return invoke<FidelityExportScan>("scan_fidelity_exports", {
+    folderPath,
+  });
+}
+
+export async function probeFidelityExports(
+  folderPath: string,
+): Promise<FidelityFolderProbe> {
+  if (!isTauri())
+    return {
+      discoveryKey: "",
+      discoveredCsvCount: 0,
+      latestModifiedAt: null,
+    };
+  return invoke<FidelityFolderProbe>("probe_fidelity_exports", {
     folderPath,
   });
 }

@@ -78,7 +78,9 @@ export function PaperTradingPanel({
   const [side, setSide] = useState<TradeSide>("long");
   const [orderType, setOrderType] = useState<PaperOrderType>("market");
   const [quantity, setQuantity] = useState(1);
-  const [limitPrice, setLimitPrice] = useState(currentBar.close);
+  const [limitPrice, setLimitPrice] = useState(() =>
+    roundPrice(currentBar.close * 0.998),
+  );
   const [stopPrice, setStopPrice] = useState(
     initialProtection(currentBar, "long").stop,
   );
@@ -92,16 +94,19 @@ export function PaperTradingPanel({
   const [error, setError] = useState("");
   const [confirmEnd, setConfirmEnd] = useState(false);
 
-  useEffect(() => {
-    const protection = initialProtection(currentBar, side);
+  const changeSide = (nextSide: TradeSide) => {
+    const protection = initialProtection(currentBar, nextSide);
+    setSide(nextSide);
     setLimitPrice(
       roundPrice(
-        side === "long" ? currentBar.close * 0.998 : currentBar.close * 1.002,
+        nextSide === "long"
+          ? currentBar.close * 0.998
+          : currentBar.close * 1.002,
       ),
     );
     setStopPrice(protection.stop);
     setTargetPrice(protection.target);
-  }, [session?.id, side]);
+  };
 
   useEffect(() => {
     if (!session?.position) return;
@@ -109,7 +114,7 @@ export function PaperTradingPanel({
     setProtectionTarget(
       session.position.targetPrice ?? session.position.entryPrice,
     );
-  }, [session?.position?.id]);
+  }, [session?.position]);
 
   const metrics = session
     ? paperSessionMetrics(session, currentBar.close)
@@ -340,7 +345,7 @@ export function PaperTradingPanel({
               type="button"
               className={side === "long" ? "long active" : "long"}
               aria-pressed={side === "long"}
-              onClick={() => setSide("long")}
+              onClick={() => changeSide("long")}
             >
               Long
             </button>
@@ -348,7 +353,7 @@ export function PaperTradingPanel({
               type="button"
               className={side === "short" ? "short active" : "short"}
               aria-pressed={side === "short"}
-              onClick={() => setSide("short")}
+              onClick={() => changeSide("short")}
             >
               Short
             </button>

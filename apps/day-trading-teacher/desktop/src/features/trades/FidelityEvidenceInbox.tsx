@@ -158,6 +158,10 @@ export function FidelityEvidenceInbox({
           <strong>{analysis ? bytes(analysis.totalBytes) : "—"}</strong>
           <span>supported CSV data read</span>
         </div>
+        <div>
+          <strong>{summary?.newOrChangedFileCount ?? "—"}</strong>
+          <span>new or changed this scan</span>
+        </div>
       </section>
 
       <section className="ai-journal-workflow card">
@@ -245,6 +249,7 @@ export function FidelityEvidenceInbox({
             className="file-input"
             type="file"
             accept=".json,application/json,text/json"
+            aria-label="Choose an external AI journal response JSON file"
             onChange={(event) => {
               onReadAiResponse(event.target.files?.[0]);
               event.currentTarget.value = "";

@@ -84,8 +84,8 @@ type TrendLine = { id: string; start: TrendAnchor; end: TrendAnchor };
 
 const quickWindows = [25, 50, 100, 200, 400];
 const minimumZoomWindow = 10;
-const maximumZoomWindow = 800;
-const granularZoomRatio = 0.02;
+const maximumZoomWindow = 2000;
+const granularZoomRatio = 0.005;
 const chartWidth = 1120;
 const chartHeight = 590;
 const chartMargin = { top: 28, right: 88, bottom: 58, left: 22 } as const;
@@ -180,6 +180,7 @@ export function MarketChart({
   const [trendStart, setTrendStart] = useState<TrendAnchor | null>(null);
   const [trendLines, setTrendLines] = useState<TrendLine[]>([]);
   const [crosshairPrice, setCrosshairPrice] = useState<number | null>(null);
+  const [priceScaleFactor, setPriceScaleFactor] = useState(1);
   const [replayIndex, setReplayIndex] = useState<number | null>(null);
   const [replayPlaying, setReplayPlaying] = useState(false);
   const [replaySpeed, setReplaySpeed] = useState<1 | 2 | 4>(1);
@@ -190,6 +191,7 @@ export function MarketChart({
   const study = preferences.lowerStudy;
   const overlays = preferences.overlays;
   const drag = useRef<{ clientX: number; endIndex: number } | null>(null);
+  const didDrag = useRef(false);
   const chart = useRef<SVGSVGElement | null>(null);
   const lastWheelZoomAt = useRef(Number.NEGATIVE_INFINITY);
   const wheelHandler = useRef<(event: WheelEvent) => void>(() => undefined);
@@ -220,6 +222,7 @@ export function MarketChart({
     setReplayPlaying(false);
     setPaperOpen(false);
     setDragging(false);
+    setPriceScaleFactor(1);
     drag.current = null;
   }, [dataSet.id, dataSet.bars.length]);
 
@@ -237,7 +240,7 @@ export function MarketChart({
     setReplayIndex(paperSession.replayIndex);
     setEndIndex(paperSession.replayIndex + 1);
     setWindowSize((current) => Math.min(current, paperSession.replayIndex + 1));
-  }, [paperSession?.id]);
+  }, [paperSession]);
 
   useEffect(() => {
     if (
@@ -439,11 +442,16 @@ export function MarketChart({
     const rawMin = Math.min(...scaleValues);
     const rawMax = Math.max(...scaleValues);
     const padding = Math.max((rawMax - rawMin) * 0.09, rawMax * 0.001);
+    const paddedMinimum = rawMin - padding;
+    const paddedMaximum = rawMax + padding;
+    const center = (paddedMinimum + paddedMaximum) / 2;
+    const scaledHalfRange =
+      ((paddedMaximum - paddedMinimum) / 2) * priceScaleFactor;
     const minimum =
       preferences.scaleMode === "log"
-        ? Math.max(0.0000001, rawMin - padding)
-        : rawMin - padding;
-    const maximum = rawMax + padding;
+        ? Math.max(0.0000001, center - scaledHalfRange)
+        : center - scaledHalfRange;
+    const maximum = center + scaledHalfRange;
     const span = Math.max(0.0001, maximum - minimum);
     const logMinimum = Math.log(Math.max(minimum, 0.0000001));
     const logMaximum = Math.log(Math.max(maximum, 0.0000002));
@@ -455,6 +463,7 @@ export function MarketChart({
     displayedEntries,
     overlays.bollinger,
     paperLevels,
+    priceScaleFactor,
     preferences.scaleMode,
     startIndex,
   ]);
@@ -707,23 +716,20 @@ export function MarketChart({
   const atrPath = useMemo(() => studyLine(atr), [atr, studyLine]);
   const candleElements = useMemo(
     () =>
-      displayedEntries.map(({ bar, relative }) => {
-        const rising = bar.close >= bar.open;
-        const candleY = Math.min(y(bar.open), y(bar.close));
-        const bodyHeight = Math.max(1.5, Math.abs(y(bar.open) - y(bar.close)));
-        return (
-          <g
-            key={bar.timestamp}
-            className={rising ? "candle rising" : "candle falling"}
-          >
-            <title>
-              {new Date(bar.timestamp).toLocaleString()} · O{" "}
-              {formatPrice(bar.open)} · H {formatPrice(bar.high)} · L{" "}
-              {formatPrice(bar.low)} · C {formatPrice(bar.close)} · Vol{" "}
-              {compactVolume(bar.volume)}
-            </title>
-            {(chartStyle === "candles" || chartStyle === "hollow") && (
-              <>
+      chartStyle === "line"
+        ? null
+        : displayedEntries.map(({ bar, relative }) => {
+            const rising = bar.close >= bar.open;
+            const candleY = Math.min(y(bar.open), y(bar.close));
+            const bodyHeight = Math.max(
+              1.5,
+              Math.abs(y(bar.open) - y(bar.close)),
+            );
+            return (
+              <g
+                key={bar.timestamp}
+                className={rising ? "candle rising" : "candle falling"}
+              >
                 <line
                   x1={x(relative)}
                   x2={x(relative)}
@@ -737,29 +743,10 @@ export function MarketChart({
                   height={bodyHeight}
                   rx="0.8"
                 />
-              </>
-            )}
-            <rect
-              className="candle-hit"
-              data-relative={relative}
-              x={x(relative) - step / 2}
-              y={margin.top}
-              width={Math.max(2, step)}
-              height={priceBottom - margin.top}
-            />
-          </g>
-        );
-      }),
-    [
-      candleWidth,
-      chartStyle,
-      displayedEntries,
-      margin.top,
-      priceBottom,
-      step,
-      x,
-      y,
-    ],
+              </g>
+            );
+          }),
+    [candleWidth, chartStyle, displayedEntries, x, y],
   );
 
   const markers = useMemo(() => {
@@ -1011,6 +998,7 @@ export function MarketChart({
     setEndIndex(clamp(next, actualWindow, availableLength));
     setActiveRelative(-1);
     setCrosshairPrice(null);
+    setPriceScaleFactor(1);
   };
   const shift = (direction: -1 | 1) =>
     setViewEnd(
@@ -1050,10 +1038,11 @@ export function MarketChart({
     direction: -1 | 1,
     anchorRatio?: number,
     anchorIndex?: number,
+    intensity = 1,
   ) => {
     const granularStep = Math.max(
       1,
-      Math.round(actualWindow * granularZoomRatio),
+      Math.round(actualWindow * granularZoomRatio * intensity),
     );
     applyWindowSize(
       actualWindow + direction * granularStep,
@@ -1061,6 +1050,8 @@ export function MarketChart({
       anchorIndex,
     );
   };
+  const zoomOneBar = (direction: -1 | 1) =>
+    applyWindowSize(actualWindow + direction);
 
   const queuePointerInspection = (relative: number, price: number | null) => {
     pendingPointer.current = { relative, price };
@@ -1094,7 +1085,7 @@ export function MarketChart({
     event.stopPropagation();
     if (event.deltaY === 0 && event.deltaX === 0) return;
     const now = performance.now();
-    if (now - lastWheelZoomAt.current < 32) return;
+    if (now - lastWheelZoomAt.current < 16) return;
     lastWheelZoomAt.current = now;
     const element = chart.current;
     if (!element) return;
@@ -1103,6 +1094,12 @@ export function MarketChart({
       ? ((event.clientX - bounds.left) / bounds.width) * width
       : x(selectedRelative);
     const anchorRatio = clamp((svgX - margin.left) / plotWidth, 0, 1);
+    if (event.altKey) {
+      setPriceScaleFactor((current) =>
+        clamp(current * (event.deltaY < 0 ? 0.96 : 1.04), 0.35, 4),
+      );
+      return;
+    }
     const horizontalGesture = Math.abs(event.deltaX) > Math.abs(event.deltaY);
     if (event.shiftKey || horizontalGesture) {
       const panDelta = horizontalGesture ? event.deltaX : event.deltaY;
@@ -1114,7 +1111,12 @@ export function MarketChart({
         displayedEntries.length - 1,
       );
       const anchorIndex = startIndex + displayedEntries[plottedIndex].relative;
-      zoom(event.deltaY < 0 ? -1 : 1, anchorRatio, anchorIndex);
+      zoom(
+        event.deltaY < 0 ? -1 : 1,
+        anchorRatio,
+        anchorIndex,
+        clamp(Math.ceil(Math.abs(event.deltaY) / 80), 1, 4),
+      );
     }
   };
 
@@ -1337,10 +1339,10 @@ export function MarketChart({
       });
     } else if (event.key === "+" || event.key === "=") {
       event.preventDefault();
-      zoom(-1);
+      zoomOneBar(-1);
     } else if (event.key === "-") {
       event.preventDefault();
-      zoom(1);
+      zoomOneBar(1);
     } else if (event.key === "PageUp" && canOlder) {
       event.preventDefault();
       shift(-1);
@@ -1425,7 +1427,7 @@ export function MarketChart({
           <button
             className="icon-button"
             disabled={actualWindow <= minimumAvailableWindow}
-            onClick={() => zoom(-1)}
+            onClick={() => zoomOneBar(-1)}
             aria-label="Zoom in"
             title="Zoom in (+)"
           >
@@ -1437,7 +1439,7 @@ export function MarketChart({
           <button
             className="icon-button"
             disabled={actualWindow >= maximumAvailableWindow}
-            onClick={() => zoom(1)}
+            onClick={() => zoomOneBar(1)}
             aria-label="Zoom out"
             title="Zoom out (-)"
           >
@@ -1891,6 +1893,7 @@ export function MarketChart({
 
       {paperOpen && onPaperSessionChange && (
         <PaperTradingPanel
+          key={`${dataSet.id}:${paperSession?.id ?? "draft"}`}
           session={paperSession?.status === "active" ? paperSession : null}
           history={paperHistory}
           currentBar={paperBar}
@@ -2005,13 +2008,25 @@ export function MarketChart({
             onKeyDown={handleKeyDown}
             onDoubleClick={resetView}
             onClick={(event) => {
-              const target = event.target as Element;
-              const hit = target.closest?.(".candle-hit");
-              const relative = Number(hit?.getAttribute("data-relative"));
-              if (Number.isInteger(relative)) selectBar(relative);
+              if (didDrag.current) {
+                didDrag.current = false;
+                return;
+              }
+              const bounds = event.currentTarget.getBoundingClientRect();
+              const svgX = bounds.width
+                ? ((event.clientX - bounds.left) / bounds.width) * width
+                : 0;
+              if (svgX < margin.left || svgX > width - margin.right) return;
+              const plottedIndex = clamp(
+                Math.floor((svgX - margin.left) / step),
+                0,
+                displayedEntries.length - 1,
+              );
+              selectBar(displayedEntries[plottedIndex].relative);
             }}
             onPointerDown={(event) => {
               if (event.button !== 0) return;
+              didDrag.current = false;
               event.currentTarget.setPointerCapture(event.pointerId);
               drag.current = { clientX: event.clientX, endIndex };
               setDragging(true);
@@ -2048,6 +2063,7 @@ export function MarketChart({
               }
               const delta = event.clientX - drag.current.clientX;
               if (Math.abs(delta) < 3) return;
+              didDrag.current = true;
               const barShift = Math.round(
                 (-delta / Math.max(320, event.currentTarget.clientWidth)) *
                   actualWindow,
@@ -2744,6 +2760,28 @@ export function MarketChart({
             aria-label="Inspect visible bar"
           />
         </label>
+        <label>
+          <span>
+            Price scale
+            <output>
+              {Math.abs(priceScaleFactor - 1) < 0.01
+                ? "Auto"
+                : `${(1 / priceScaleFactor).toFixed(2)}×`}
+            </output>
+          </span>
+          <input
+            type="range"
+            min="0.35"
+            max="4"
+            step="0.01"
+            value={priceScaleFactor}
+            onChange={(event) =>
+              setPriceScaleFactor(Number(event.target.value))
+            }
+            onDoubleClick={() => setPriceScaleFactor(1)}
+            aria-label="Adjust chart price scale"
+          />
+        </label>
       </div>
 
       <div className="chart-legend">
@@ -2780,8 +2818,9 @@ export function MarketChart({
       <p id="chart-interaction-guide" className="chart-interaction-hint">
         Move across candles to inspect · click a candle or trade marker to keep
         its context · drawing tools stay at the left edge · scroll for
-        pointer-anchored zoom · Shift+scroll or drag to pan · double-click to
-        fit · arrows inspect · +/- zoom · Page Up/Down pan · Space plays replay
+        pointer-anchored granular zoom · Alt+scroll adjusts price scale ·
+        Shift+scroll or drag pans · double-click fits · arrows inspect · +/-
+        changes one visible bar · Page Up/Down pans · Space plays replay
       </p>
     </section>
   );

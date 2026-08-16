@@ -54,6 +54,7 @@ import {
 import {
   calculateResult,
   detectTradingRecordsFolder,
+  probeFidelityExports,
   scanFidelityExports,
 } from "../../platform/bridge";
 import { useAppState } from "../../state/AppStateContext";
@@ -79,6 +80,7 @@ import {
   type TradingRecordsAnalysis,
 } from "../../domain/trading-records";
 import { buildTradeLearningSystem } from "../../domain/trade-learning";
+import { guidedJournalSample } from "../../domain/guided-journal-sample";
 
 const blank = {
   symbol: "",
@@ -259,6 +261,7 @@ export function TradesPage() {
     addJournalGoal,
     updateJournalGoal,
     updateJournalDashboard,
+    linkLearningCaseEvidence,
   } = useAppState();
   const guidedByLesson = !state.profile.standaloneTools;
   const [lessonContext] = useState(() => readLessonWorkspaceContext("journal"));
@@ -296,8 +299,15 @@ export function TradesPage() {
   const [selectedAiDrafts, setSelectedAiDrafts] = useState<Set<string>>(
     () => new Set(),
   );
+  const [guidedSampleActive, setGuidedSampleActive] = useState(false);
+  const [guidedSampleNotice, setGuidedSampleNotice] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const aiResponseRef = useRef<HTMLInputElement>(null);
+  const sampleTrades = useMemo(() => guidedJournalSample(), []);
+  const journalTrades =
+    guidedSampleActive && state.trades.length === 0
+      ? sampleTrades
+      : state.trades;
 
   const visibleTrades = state.trades.filter(
     (trade) =>
@@ -358,6 +368,8 @@ export function TradesPage() {
           autoDetect: true,
           lastScanAt: null,
           lastFileKey: null,
+          lastDiscoveryKey: null,
+          processedFileKeys: [],
         });
         setSavedMessage(
           "Trading_Records was detected beside the project and connected automatically.",
@@ -388,12 +400,27 @@ export function TradesPage() {
       setRecordsScanError("");
       setImportError("");
       try {
+        const probe = await probeFidelityExports(folderPath);
+        if (
+          !force &&
+          recordsAnalysisRef.current &&
+          probe.discoveryKey === state.fidelityImport?.lastDiscoveryKey
+        ) {
+          updateFidelityImport({
+            folderPath,
+            autoScan: Boolean(state.fidelityImport?.autoScan),
+            autoDetect: state.fidelityImport?.autoDetect,
+            lastScanAt: new Date().toISOString(),
+            lastFileKey: state.fidelityImport?.lastFileKey ?? null,
+            lastDiscoveryKey: probe.discoveryKey,
+            processedFileKeys: state.fidelityImport?.processedFileKeys ?? [],
+            lastScanSummary: state.fidelityImport?.lastScanSummary,
+          });
+          return;
+        }
         const scan = await scanFidelityExports(folderPath);
         const fileKey = scan.files
-          .map(
-            (file) =>
-              `${file.relativePath}:${file.modifiedAt}:${file.sizeBytes}:${file.kind}`,
-          )
+          .map((file) => `${file.fingerprint}:${file.kind}`)
           .join("\n");
         if (
           !force &&
@@ -406,6 +433,8 @@ export function TradesPage() {
             autoDetect: state.fidelityImport?.autoDetect,
             lastScanAt: new Date().toISOString(),
             lastFileKey: fileKey,
+            lastDiscoveryKey: probe.discoveryKey,
+            processedFileKeys: state.fidelityImport?.processedFileKeys ?? [],
             lastScanSummary: state.fidelityImport?.lastScanSummary,
           });
           return;
@@ -432,12 +461,20 @@ export function TradesPage() {
         const warningCount =
           analysis.warnings.length +
           analysis.days.reduce((sum, day) => sum + day.warnings.length, 0);
+        const previouslyProcessed = new Set(
+          state.fidelityImport?.processedFileKeys ?? [],
+        );
+        const newOrChangedFileCount = scan.files.filter(
+          (file) => !previouslyProcessed.has(file.fingerprint),
+        ).length;
         updateFidelityImport({
           folderPath,
           autoScan: Boolean(state.fidelityImport?.autoScan),
           autoDetect: state.fidelityImport?.autoDetect,
           lastScanAt: new Date().toISOString(),
           lastFileKey: fileKey,
+          lastDiscoveryKey: probe.discoveryKey,
+          processedFileKeys: scan.files.map((file) => file.fingerprint),
           lastScanSummary: {
             tradingDayCount: analysis.days.length,
             filesRead: analysis.filesRead,
@@ -449,10 +486,11 @@ export function TradesPage() {
             unsupportedCsvCount: analysis.unsupportedCsvCount,
             skippedCsvCount: analysis.skippedCsvCount,
             warningCount,
+            newOrChangedFileCount,
           },
         });
         setSavedMessage(
-          `Read ${analysis.days.length} trading day${analysis.days.length === 1 ? "" : "s"}: ${analysis.orderFileCount} Orders export${analysis.orderFileCount === 1 ? "" : "s"}, ${analysis.chartFileCount} chart export${analysis.chartFileCount === 1 ? "" : "s"}, and ${analysis.trades.length} reconstructed position${analysis.trades.length === 1 ? "" : "s"}. ${chartMatchedTradeCount}/${analysis.trades.length} positions have same-day chart context.${trades.length ? ` Imported ${trades.length} new position${trades.length === 1 ? "" : "s"}.` : " No duplicate trades were added."}`,
+          `Read ${analysis.days.length} trading day${analysis.days.length === 1 ? "" : "s"}: ${analysis.orderFileCount} Orders export${analysis.orderFileCount === 1 ? "" : "s"}, ${analysis.chartFileCount} chart export${analysis.chartFileCount === 1 ? "" : "s"}, and ${analysis.trades.length} reconstructed position${analysis.trades.length === 1 ? "" : "s"}. ${newOrChangedFileCount} file${newOrChangedFileCount === 1 ? " was" : "s were"} new or changed since the prior full scan. ${chartMatchedTradeCount}/${analysis.trades.length} positions have same-day chart context.${trades.length ? ` Imported ${trades.length} new position${trades.length === 1 ? "" : "s"}.` : " No duplicate trades were added."}`,
         );
       } catch (reason) {
         const message =
@@ -470,6 +508,8 @@ export function TradesPage() {
       state.fidelityImport?.autoDetect,
       state.fidelityImport?.folderPath,
       state.fidelityImport?.lastFileKey,
+      state.fidelityImport?.lastDiscoveryKey,
+      state.fidelityImport?.processedFileKeys,
       state.fidelityImport?.lastScanSummary,
       updateFidelityImport,
     ],
@@ -739,7 +779,17 @@ export function TradesPage() {
             trade.symbol === session.symbol,
         ).length
       : 0;
-    addMarketDataSet(marketDataSetForTradingRecord(session, matched));
+    const dataSet = marketDataSetForTradingRecord(session, matched);
+    addMarketDataSet(dataSet);
+    if (lessonContext)
+      linkLearningCaseEvidence(lessonContext.learningCaseId, {
+        id: crypto.randomUUID(),
+        kind: "chart_dataset",
+        referenceId: dataSet.id,
+        label: `${dataSet.symbol} trading-record chart context`,
+        workspace: "journal",
+        linkedAt: new Date().toISOString(),
+      });
   };
 
   const openJournal = (trade: Trade) => {
@@ -766,13 +816,14 @@ export function TradesPage() {
       );
       return;
     }
+    const reviewedAt = new Date().toISOString();
     const journal = {
       ...journalDraft,
       status: "reviewed" as const,
       tags: journalDraft.tags
         .map((tag) => tag.trim().toLowerCase())
         .filter(Boolean),
-      reviewedAt: new Date().toISOString(),
+      reviewedAt,
       aiDraft: journalDraft.aiDraft
         ? {
             ...journalDraft.aiDraft,
@@ -788,6 +839,15 @@ export function TradesPage() {
         journal.postTradeChecklist?.respectedRisk ?? journalTrade.respectedStop,
       journal,
     });
+    if (lessonContext)
+      linkLearningCaseEvidence(lessonContext.learningCaseId, {
+        id: crypto.randomUUID(),
+        kind: "journal_entry",
+        referenceId: journalTrade.id,
+        label: `${journalTrade.symbol} reviewed journal entry`,
+        workspace: "journal",
+        linkedAt: reviewedAt,
+      });
     setJournalTrade(null);
     setSavedMessage(
       `${journalTrade.symbol} reflection completed. The lesson is now preserved beyond the P&L.`,
@@ -865,6 +925,24 @@ export function TradesPage() {
               <CandlestickChart size={16} />
               Chart & backtest
             </Link>
+            {state.trades.length === 0 ? (
+              <button
+                className="button secondary"
+                onClick={() => {
+                  setGuidedSampleActive(true);
+                  setGuidedSampleNotice("");
+                  setShowForm(false);
+                  setActiveTab("overview");
+                  updateJournalDashboard({
+                    ...dashboardPreferences,
+                    defaultRange: "quarter",
+                  });
+                }}
+              >
+                <Sparkles size={16} />
+                Guided sample
+              </button>
+            ) : null}
             <button
               className={
                 activeTab === "inbox" ? "button secondary" : "button primary"
@@ -886,6 +964,7 @@ export function TradesPage() {
               className="file-input"
               type="file"
               accept=".csv,text/csv"
+              aria-label="Choose one trade CSV file"
               onChange={(event) => void readCsv(event.target.files?.[0])}
             />
             <button
@@ -937,6 +1016,33 @@ export function TradesPage() {
           </button>
         ))}
       </nav>
+
+      {guidedSampleActive && state.trades.length === 0 ? (
+        <section className="synthetic-data-banner" role="status">
+          <span>
+            <Sparkles size={20} />
+          </span>
+          <div>
+            <strong>Synthetic journal preview</strong>
+            <p>
+              Twelve fictional, mixed-outcome records are temporarily powering
+              the analytics, calendar, and patterns. They are not saved, do not
+              affect XP or achievements, and disappear when you import or record
+              a real trade.
+            </p>
+            {guidedSampleNotice ? <small>{guidedSampleNotice}</small> : null}
+          </div>
+          <button
+            className="button secondary compact"
+            onClick={() => {
+              setGuidedSampleActive(false);
+              setGuidedSampleNotice("");
+            }}
+          >
+            Exit preview
+          </button>
+        </section>
+      ) : null}
 
       {pendingTrades.length ? (
         <section className="journal-attention-banner" role="status">
@@ -993,24 +1099,36 @@ export function TradesPage() {
 
       {activeTab === "overview" ? (
         <JournalDashboard
-          trades={state.trades}
+          trades={journalTrades}
           profile={state.profile}
           preferences={dashboardPreferences}
           onPreferences={updateJournalDashboard}
-          onOpenTrade={openJournal}
+          onOpenTrade={(trade) =>
+            guidedSampleActive && state.trades.length === 0
+              ? setGuidedSampleNotice(
+                  `${trade.symbol} is a read-only synthetic example. Exit the preview to work with your records.`,
+                )
+              : openJournal(trade)
+          }
           onNavigate={setActiveTab}
         />
       ) : null}
       {activeTab === "calendar" ? (
         <JournalCalendar
-          trades={state.trades}
+          trades={journalTrades}
           preferences={dashboardPreferences}
           onPreferences={updateJournalDashboard}
-          onOpenTrade={openJournal}
+          onOpenTrade={(trade) =>
+            guidedSampleActive && state.trades.length === 0
+              ? setGuidedSampleNotice(
+                  `${trade.symbol} is a read-only synthetic example. Exit the preview to work with your records.`,
+                )
+              : openJournal(trade)
+          }
         />
       ) : null}
       {activeTab === "insights" ? (
-        <JournalInsights trades={state.trades} profile={state.profile} />
+        <JournalInsights trades={journalTrades} profile={state.profile} />
       ) : null}
       {activeTab === "goals" ? (
         <JournalGoals

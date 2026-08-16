@@ -20,7 +20,7 @@ Include the affected version, Windows version, smallest reproducible sequence, e
 | CSV import | Local parsing of supported Orders and chart fields; account identifiers and raw rows are not stored as journal evidence |
 | AI journal handoff | Redacted local package, no automatic upload, strict response validation, evidence citations, non-diagnostic hypotheses, and explicit learner review before completion |
 | Trade-derived lessons | Local deterministic synthesis of validated drafts; original records remain intact, hindsight is labeled, psychological cause stays unconfirmed, and review is not mastery |
-| Historical providers | Explicit provider configuration, local separated credentials, allowlisted requests, visible provider/freshness context |
+| Historical providers | Explicit provider configuration, Windows Credential Manager protection for the current user, legacy plaintext migration/removal, allowlisted requests, and visible provider/freshness context |
 | State and exports | Desktop-owned persistence, migration and validation, secret-shaped-field rejection, and export sanitization |
 | Calculations | Validated decimal inputs and deterministic Rust authority with a tested development fallback |
 | Release | Verified Windows build, checksum, SBOM, provenance attestation, immutable release, and portable upgrade/rollback checks |
@@ -34,3 +34,5 @@ Include the affected version, Windows version, smallest reproducible sequence, e
 - A Trade Lesson cannot reconstruct a missing contemporaneous plan, private mental state, sub-minute path, or executable candle-extreme price. Learners must confirm or reject hypotheses against their own memory and prospective records.
 
 Architecture details and code locations are in [`docs/architecture/overview.md`](docs/architecture/overview.md). Dependency-specific findings and narrowly justified exceptions are in [`docs/dependency-audit.md`](docs/dependency-audit.md).
+
+The local-data lifecycle, explicit export boundaries, and public-release exclusions are documented in [`PRIVACY.md`](PRIVACY.md). Third-party product names are used only for compatibility descriptions; see [`TRADEMARKS.md`](TRADEMARKS.md).

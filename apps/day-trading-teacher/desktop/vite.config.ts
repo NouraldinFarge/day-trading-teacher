@@ -12,14 +12,15 @@ export default defineConfig({
     },
   },
   build: {
+    manifest: true,
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes("/src/domain/skills")) return "skill-catalog";
           if (
             id.includes("/src/domain/builtin-lessons") ||
             id.includes("/src/domain/core-path") ||
-            id.includes("/src/domain/lesson-workspaces") ||
-            id.includes("/src/domain/skills")
+            id.includes("/src/domain/lesson-workspaces")
           )
             return "curriculum";
           if (id.includes("/src/domain/achievements"))
@@ -38,5 +39,18 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
+    coverage: {
+      provider: "v8",
+      reportsDirectory: "./coverage",
+      reporter: ["text", "json-summary", "html", "lcov"],
+      include: ["src/domain/**/*.ts", "src/state/**/*.ts"],
+      exclude: ["src/**/*.test.ts", "src/domain/types.ts"],
+      thresholds: {
+        branches: 70,
+        functions: 85,
+        lines: 90,
+        statements: 90,
+      },
+    },
   },
 });

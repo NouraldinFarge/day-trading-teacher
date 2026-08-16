@@ -16,10 +16,6 @@ export function MarketDataAutoRefresh() {
     useAppState();
   const inFlight = useRef(false);
   const settings = state.chartAcquisition;
-  const subscriptionsKey =
-    settings?.subscriptions
-      .map((item) => `${item.provider}:${item.symbol}:${item.interval}`)
-      .join("|") ?? "";
 
   useEffect(() => {
     if (
@@ -107,15 +103,7 @@ export function MarketDataAutoRefresh() {
     void refreshIfDue();
     const timer = window.setInterval(() => void refreshIfDue(), 5 * 60_000);
     return () => window.clearInterval(timer);
-  }, [
-    ready,
-    settings?.autoRefresh,
-    settings?.lastDailyRefreshAt,
-    settings?.lastOneMinuteRefreshAt,
-    subscriptionsKey,
-    addMarketDataSet,
-    updateChartAcquisition,
-  ]);
+  }, [ready, settings, addMarketDataSet, updateChartAcquisition]);
 
   return null;
 }

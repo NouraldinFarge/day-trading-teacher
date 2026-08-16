@@ -115,6 +115,8 @@ export function SettingsPage() {
           autoDetect: true,
           lastScanAt: null,
           lastFileKey: null,
+          lastDiscoveryKey: null,
+          processedFileKeys: [],
         });
         setFidelityMessage(
           "Trading Records folder connected. The Evidence inbox will read supported Orders and chart CSVs across its dated subfolders.",
@@ -646,6 +648,8 @@ export function SettingsPage() {
                       autoDetect: false,
                       lastScanAt: null,
                       lastFileKey: null,
+                      lastDiscoveryKey: null,
+                      processedFileKeys: [],
                       lastScanSummary: undefined,
                     })
                   }
@@ -668,6 +672,10 @@ export function SettingsPage() {
                   autoDetect: state.fidelityImport?.autoDetect,
                   lastScanAt: state.fidelityImport?.lastScanAt ?? null,
                   lastFileKey: state.fidelityImport?.lastFileKey ?? null,
+                  lastDiscoveryKey:
+                    state.fidelityImport?.lastDiscoveryKey ?? null,
+                  processedFileKeys:
+                    state.fidelityImport?.processedFileKeys ?? [],
                   lastScanSummary: state.fidelityImport?.lastScanSummary,
                 })
               }
@@ -677,9 +685,11 @@ export function SettingsPage() {
               Journal opens and while it remains open.
               <br />
               <span className="field-hint">
-                Up to 500 CSV files and 64 MB are considered per scan. Orders
-                are reconstructed oldest-first, chart exports are paired by date
-                and symbol, duplicates are ignored, and imported AI journal text
+                A quick metadata check runs every minute; full CSV reads happen
+                only after a file changes or after the Journal is reopened. Up
+                to 500 CSV files and 64 MB are considered. Orders are
+                reconstructed oldest-first, chart exports are paired by date and
+                symbol, duplicates are ignored, and imported AI journal text
                 still requires your review.
               </span>
             </label>
@@ -711,6 +721,13 @@ export function SettingsPage() {
                 </strong>
                 <span>trades chart-matched</span>
               </div>
+              <div>
+                <strong>
+                  {state.fidelityImport.lastScanSummary.newOrChangedFileCount ??
+                    "—"}
+                </strong>
+                <span>new or changed files</span>
+              </div>
               <small>
                 Last read{" "}
                 {state.fidelityImport.lastScanAt
@@ -736,8 +753,10 @@ export function SettingsPage() {
           <p>
             Export includes profile, plans, trades, reviews, progress, custom
             lessons, provider-bound chart watchlists, and historical datasets.
-            Market-data credentials are deliberately excluded. Review the file
-            before sharing it.
+            Market-data credentials are protected by Windows Credential Manager
+            for this Windows account and deliberately excluded. Re-enter them
+            after moving to another Windows user, and review every export before
+            sharing it.
           </p>
           <div className="data-actions section-gap">
             <button
@@ -793,8 +812,9 @@ export function SettingsPage() {
               import. Fidelity imports are read-only. Automatic OHLCV requests
               go only to the market-data provider you explicitly configure.
               Credentials stay outside exports, provider/feed provenance stays
-              visible, and backtests remain local simulations—not forecasts,
-              live quotes, or order automation.
+              visible, and Windows Credential Manager protects saved provider
+              keys for this Windows account. Backtests remain local
+              simulations—not forecasts, live quotes, or order automation.
             </p>
           </div>
         </section>

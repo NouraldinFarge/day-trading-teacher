@@ -1,24 +1,29 @@
 # Product media
 
-The repository images are authentic captures of the current application, not reconstructed UI mockups. They were refreshed on 2026-08-08 from the browser development build after completing the normal first-run flow.
+The repository images are authentic captures of application version 0.37.0, not reconstructed UI mockups. They were refreshed on 2026-08-15 from an isolated browser-development origin after completing the normal first-run flow. The isolated origin prevents existing local practice data from entering public media.
 
 ## Gallery and provenance
 
 | File | Captured state | Data classification |
 | --- | --- | --- |
 | [`day-trading-teacher-lessons.png`](day-trading-teacher-lessons.png) | Default lesson-first workspace and connected practice tools | Fresh local profile; no learner records |
+| [`day-trading-teacher-lesson.png`](day-trading-teacher-lesson.png) | Core lesson opening guide, brief summary, purpose, practice counts, and linked learning-case explanation | Bundled curriculum and fictional framing only |
 | [`day-trading-teacher-chart.png`](day-trading-teacher-chart.png) | Focused Chart Replay with overlays, volume, simulation markers, and inspection controls | Built-in `DEMO` synthetic practice series, visibly labeled `Sample` |
-| [`day-trading-teacher-journal.png`](day-trading-teacher-journal.png) | Journal metrics, reflection queue, and equity curve | Six synthetic round trips using the symbols `DEMO`, `LEARN`, and `PRACT`; no account data retained |
-| [`day-trading-teacher-progress.png`](day-trading-teacher-progress.png) | Rest-day-safe learning contribution calendar and achievement vault | Fresh local profile plus the built-in chart-sample practice event |
+| [`day-trading-teacher-journal.png`](day-trading-teacher-journal.png) | Quarterly journal metrics, deterministic insights, and equity curve | Temporary guided preview with twelve fictional mixed-outcome records; nothing persisted |
+| [`day-trading-teacher-calendar.png`](day-trading-teacher-calendar.png) | Detailed monthly calendar and four-mode process heatmap | The same temporary fictional guided preview; no account data |
+| [`day-trading-teacher-progress.png`](day-trading-teacher-progress.png) | Earned achievement detail with transparent requirement, reward boundary, and evidence ledger | Fresh profile plus one built-in synthetic chart-practice achievement |
 | [`day-trading-teacher-social-preview.png`](day-trading-teacher-social-preview.png) | 1280×640 GitHub social card | Composed from the verified Lessons capture and the reproducible SVG frame |
 
 The images intentionally retain the visible **Browser preview mode** label where the application shell is shown. Native-only behavior is described in text instead of being implied by a browser capture.
+
+[`manifest.json`](manifest.json) records the captured application version, capture authority, dimensions, SHA-256 digest, and synthetic-data classification for every published PNG. The documentation gate fails if an image changes without a reviewed manifest update.
 
 ## Privacy and honesty checklist
 
 Before replacing any image:
 
 - Start from an empty profile created only for documentation.
+- Use a separate localhost origin so an existing browser-preview profile cannot be reused accidentally.
 - Use built-in or purpose-made synthetic inputs; never use a personal Fidelity export, journal, provider credential, account number, or imported assessment packet.
 - Keep provider/sample identity and educational limitations visible.
 - Capture the interface after the welcome flow; do not publish several differently named images of the same modal.

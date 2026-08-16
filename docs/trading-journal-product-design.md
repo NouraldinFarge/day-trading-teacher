@@ -1,6 +1,6 @@
 # Trading Journal product design
 
-Status: current for v0.36.0. This document distinguishes implemented behavior from advanced enhancements.
+Status: current for v0.37.0. This document distinguishes implemented behavior from advanced enhancements.
 
 ## Product principle
 

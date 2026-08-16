@@ -82,7 +82,6 @@ export function WelcomeFlow() {
               <label htmlFor="welcome-name">What should we call you?</label>
               <input
                 id="welcome-name"
-                autoFocus
                 value={profile.displayName}
                 onChange={(event) => update("displayName", event.target.value)}
                 maxLength={40}

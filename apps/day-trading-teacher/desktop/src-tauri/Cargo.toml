@@ -23,3 +23,7 @@ reqwest.workspace = true
 chrono.workspace = true
 teacher-calculations = { path = "../../../../crates/calculations" }
 lesson-plan-import = { path = "../../../../crates/lesson-plan-import" }
+
+[target.'cfg(windows)'.dependencies]
+keyring-core = "1.0"
+windows-native-keyring-store = "1.1"

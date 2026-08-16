@@ -1,4 +1,5 @@
 import { readFile, readdir, stat } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -80,8 +81,10 @@ async function checkMedia() {
   const media = [
     ["docs/images/day-trading-teacher-social-preview.png", 1280, 640, true],
     ["docs/images/day-trading-teacher-lessons.png", 1200, 600, false],
+    ["docs/images/day-trading-teacher-lesson.png", 1200, 600, false],
     ["docs/images/day-trading-teacher-chart.png", 1200, 600, false],
     ["docs/images/day-trading-teacher-journal.png", 1200, 600, false],
+    ["docs/images/day-trading-teacher-calendar.png", 1200, 600, false],
     ["docs/images/day-trading-teacher-progress.png", 1200, 600, false],
   ];
   for (const [relative, minimumWidth, minimumHeight, exact] of media) {
@@ -108,6 +111,85 @@ async function checkMedia() {
       );
     }
   }
+
+  try {
+    const manifest = JSON.parse(
+      await readFile(path.join(root, "docs/images/manifest.json"), "utf8"),
+    );
+    const expectedNames = new Set(
+      media.map(([relative]) => path.basename(relative)),
+    );
+    if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.files))
+      failures.push("docs/images/manifest.json: unsupported media manifest");
+    else {
+      for (const item of manifest.files) {
+        const relative = `docs/images/${item.name}`;
+        expectedNames.delete(item.name);
+        try {
+          const raw = await readFile(path.join(root, relative));
+          const dimensions = pngDimensions(raw);
+          const hash = createHash("sha256").update(raw).digest("hex");
+          if (
+            !dimensions ||
+            dimensions.width !== item.width ||
+            dimensions.height !== item.height
+          )
+            failures.push(
+              `${relative}: dimensions do not match the media manifest`,
+            );
+          if (hash !== item.sha256)
+            failures.push(
+              `${relative}: SHA-256 does not match the media manifest`,
+            );
+          if (!item.synthetic || !item.dataClassification)
+            failures.push(
+              `${relative}: synthetic classification is incomplete`,
+            );
+        } catch {
+          failures.push(`${relative}: manifest entry is missing`);
+        }
+      }
+      for (const name of expectedNames)
+        failures.push(`docs/images/manifest.json: missing ${name}`);
+    }
+  } catch {
+    failures.push(
+      "docs/images/manifest.json: required media manifest is missing or invalid",
+    );
+  }
+}
+
+async function checkProjectSite() {
+  const site = await readFile(path.join(root, "site/index.html"), "utf8");
+  const workflow = await readFile(
+    path.join(root, ".github/workflows/pages.yml"),
+    "utf8",
+  );
+  for (const required of [
+    "day-trading-teacher-chart.png",
+    "day-trading-teacher-lesson.png",
+    "day-trading-teacher-lessons.png",
+    "day-trading-teacher-journal.png",
+    "day-trading-teacher-calendar.png",
+    "day-trading-teacher-progress.png",
+    "Educational software only",
+    "releases/latest",
+  ]) {
+    if (!site.includes(required))
+      failures.push(
+        `site/index.html: missing required presentation content ${required}`,
+      );
+  }
+  for (const action of [
+    "actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b",
+    "actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b",
+    "actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e",
+  ]) {
+    if (!workflow.includes(action))
+      failures.push(
+        `.github/workflows/pages.yml: missing pinned official action ${action}`,
+      );
+  }
 }
 
 async function checkReleaseReference() {
@@ -124,7 +206,10 @@ async function checkReleaseReference() {
     "docs/images/day-trading-teacher-chart.png",
     "docs/images/day-trading-teacher-journal.png",
     "docs/images/day-trading-teacher-progress.png",
+    "PRIVACY.md",
     "SECURITY.md",
+    "THIRD_PARTY_NOTICES.md",
+    "TRADEMARKS.md",
   ]) {
     if (!readme.includes(required)) {
       failures.push(
@@ -139,6 +224,7 @@ const markdown = files.filter((file) => file.endsWith(".md"));
 await Promise.all(markdown.map(checkMarkdown));
 await checkMedia();
 await checkReleaseReference();
+await checkProjectSite();
 
 if (failures.length) {
   console.error("Documentation check failed:\n");
@@ -146,6 +232,6 @@ if (failures.length) {
   process.exitCode = 1;
 } else {
   console.log(
-    `Documentation check passed: ${markdown.length} Markdown files and 5 product images verified.`,
+    `Documentation check passed: ${markdown.length} Markdown files and 7 product images verified.`,
   );
 }

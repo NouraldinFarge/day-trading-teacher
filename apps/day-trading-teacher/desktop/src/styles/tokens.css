@@ -13,7 +13,7 @@
     --ink-900: #192c27;
     --ink-800: #243a35;
     --ink-650: #4a615b;
-    --ink-500: #6d817c;
+    --ink-500: #5c706b;
     --canvas: #f3f5f0;
     --topbar: rgba(243, 245, 240, 0.92);
     --surface: #ffffff;
@@ -25,13 +25,17 @@
     --brand-900: #123c32;
     --brand-700: #1d6753;
     --brand-600: #278168;
+    --brand-500: #2f8e73;
     --brand-100: #dff0e8;
     --accent-500: #db7c3c;
     --accent-100: #faeadc;
     --danger-700: #a5413b;
     --danger-100: #fae8e6;
     --warning-700: #85610c;
+    --warning-800: #674700;
     --warning-100: #fff3ce;
+    --success-800: #235c3a;
+    --success-100: #e2f3e8;
     --blue-700: #315b88;
     --blue-100: #e6eef8;
     --shadow-sm:
@@ -68,13 +72,17 @@
     --brand-900: #b9ead7;
     --brand-700: #67c0a1;
     --brand-600: #79cfb1;
+    --brand-500: #67bfa0;
     --brand-100: #183a30;
     --accent-500: #ee9a5f;
     --accent-100: #432a1d;
     --danger-700: #f09a93;
     --danger-100: #422321;
     --warning-700: #e8c766;
+    --warning-800: #f2d778;
     --warning-100: #3a3219;
+    --success-800: #8ed7ad;
+    --success-100: #183a2a;
     --blue-700: #8eb9e8;
     --blue-100: #1d3045;
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.18), 0 7px 20px rgba(0, 0, 0, 0.15);
@@ -100,13 +108,17 @@
       --brand-900: #b9ead7;
       --brand-700: #67c0a1;
       --brand-600: #79cfb1;
+      --brand-500: #67bfa0;
       --brand-100: #183a30;
       --accent-500: #ee9a5f;
       --accent-100: #432a1d;
       --danger-700: #f09a93;
       --danger-100: #422321;
       --warning-700: #e8c766;
+      --warning-800: #f2d778;
       --warning-100: #3a3219;
+      --success-800: #8ed7ad;
+      --success-100: #183a2a;
       --blue-700: #8eb9e8;
       --blue-100: #1d3045;
       --shadow-sm:

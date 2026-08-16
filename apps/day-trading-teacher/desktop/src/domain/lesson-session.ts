@@ -32,6 +32,7 @@ export type LessonSessionSnapshot = {
 };
 
 export type LessonWorkspaceContext = {
+  learningCaseId: string;
   lessonId: string;
   lessonTitle: string;
   workspaceId: LessonWorkspaceId;
@@ -60,6 +61,8 @@ function validContext(value: unknown): value is LessonWorkspaceContext {
   const item = value as Partial<LessonWorkspaceContext>;
   const savedAt = Date.parse(item.savedAt ?? "");
   return (
+    typeof item.learningCaseId === "string" &&
+    item.learningCaseId.length > 0 &&
     typeof item.lessonId === "string" &&
     item.lessonId.length > 0 &&
     typeof item.lessonTitle === "string" &&

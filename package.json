@@ -1,6 +1,6 @@
 {
   "name": "day-trading-teacher-workspace",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "private": true,
   "packageManager": "npm@11.6.0",
   "workspaces": [
@@ -8,19 +8,37 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace @day-trading-teacher/desktop",
-    "build": "npm run build --workspace @day-trading-teacher/desktop",
-    "format": "prettier --write \"apps/day-trading-teacher/desktop/src/**/*.{ts,tsx,css}\" \"apps/day-trading-teacher/desktop/*.{ts,json}\" scripts/check-documentation.mjs package.json && cargo fmt --all",
-    "format:check": "prettier --check \"apps/day-trading-teacher/desktop/src/**/*.{ts,tsx,css}\" \"apps/day-trading-teacher/desktop/*.{ts,json}\" scripts/check-documentation.mjs package.json && cargo fmt --all --check",
+    "build": "npm run build --workspace @day-trading-teacher/desktop && npm run bundle:check",
+    "format": "prettier --write \"apps/day-trading-teacher/desktop/src/**/*.{ts,tsx,css}\" \"apps/day-trading-teacher/desktop/*.{ts,json}\" \"scripts/*.mjs\" package.json && cargo fmt --all",
+    "format:check": "prettier --check \"apps/day-trading-teacher/desktop/src/**/*.{ts,tsx,css}\" \"apps/day-trading-teacher/desktop/*.{ts,json}\" \"scripts/*.mjs\" package.json && cargo fmt --all --check",
     "test": "npm run test --workspace @day-trading-teacher/desktop",
     "test:run": "npm run test:run --workspace @day-trading-teacher/desktop",
+    "test:coverage": "npm run test:coverage --workspace @day-trading-teacher/desktop",
+    "lint": "eslint . --max-warnings 0",
+    "e2e": "playwright test",
+    "dependencies:check": "npm audit --omit=dev --audit-level=high",
+    "licenses:generate": "node scripts/generate-third-party-licenses.mjs",
     "docs:check": "node scripts/check-documentation.mjs",
+    "privacy:check": "node scripts/check-public-release.mjs",
+    "bundle:check": "node scripts/check-bundle-size.mjs",
+    "release:notes": "node scripts/generate-release-notes.mjs",
     "test:portable-deployment": "powershell -NoProfile -ExecutionPolicy Bypass -File ./build/test-portable-deployment.ps1",
-    "verify": "npm run format:check && npm run docs:check && npm run typecheck --workspace @day-trading-teacher/desktop && npm run test:run --workspace @day-trading-teacher/desktop && npm run test:portable-deployment && npm run build --workspace @day-trading-teacher/desktop && cargo clippy --workspace --all-targets --locked -- -D warnings && cargo test --workspace --locked",
+    "verify": "npm run format:check && npm run lint && npm run docs:check && npm run privacy:check && npm run dependencies:check && npm run typecheck --workspace @day-trading-teacher/desktop && npm run test:coverage && npm run test:portable-deployment && npm run build --workspace @day-trading-teacher/desktop && npm run bundle:check && cargo clippy --workspace --all-targets --locked -- -D warnings && cargo test --workspace --locked",
     "tauri:dev": "npm run tauri:dev --workspace @day-trading-teacher/desktop",
     "portable:binary": "npm run portable:binary --workspace @day-trading-teacher/desktop",
     "portable:build": "powershell -NoProfile -ExecutionPolicy Bypass -File ./build/build-portable.ps1"
   },
   "devDependencies": {
-    "prettier": "^3.9.6"
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.62.1",
+    "@vitest/coverage-v8": "3.2.7",
+    "axe-core": "4.13.0",
+    "eslint": "9.39.5",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.4",
+    "globals": "17.11.0",
+    "prettier": "^3.9.6",
+    "typescript-eslint": "8.67.0"
   }
 }

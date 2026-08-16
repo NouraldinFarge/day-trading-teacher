@@ -2,7 +2,7 @@ import { z } from "zod";
 import { allowedSkillIds } from "./skills";
 import { calculatePositionSize } from "./calculations";
 import type { CustomLessonPlan } from "./types";
-import { importedLessonPlanQualityWarnings } from "./imported-lesson-plan";
+import { importedLessonPlanQualityWarnings } from "./lesson-plan-quality";
 
 const sectionSchema = z
   .object({

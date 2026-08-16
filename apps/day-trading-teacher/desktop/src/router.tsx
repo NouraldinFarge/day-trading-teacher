@@ -5,38 +5,58 @@ import {
   Link,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
-import { BookOpenCheck, Compass, RefreshCw, ShieldAlert } from "lucide-react";
+import { lazy } from "react";
+import { Compass, RefreshCw, ShieldAlert } from "lucide-react";
 import { AppShell } from "./shell/AppShell";
-import { LearnPage } from "./features/learning/LearnPage";
-import { PlanPage } from "./features/planning/PlanPage";
-import { TradesPage } from "./features/trades/TradesPage";
-import { ProgressPage } from "./features/progress/ProgressPage";
-import { SettingsPage } from "./features/settings/SettingsPage";
-import { AchievementsPage } from "./features/achievements/AchievementsPage";
-import { AchievementDetailPage } from "./features/achievements/AchievementDetailPage";
-import { ChartLabPage } from "./features/charting/ChartLabPage";
-import { LearningToolsPage } from "./features/learning/LearningToolsPage";
 
+const LearnPage = lazy(() =>
+  import("./features/learning/LearnPage").then((module) => ({
+    default: module.LearnPage,
+  })),
+);
+const LearningToolsPage = lazy(() =>
+  import("./features/learning/LearningToolsPage").then((module) => ({
+    default: module.LearningToolsPage,
+  })),
+);
 const TradeLessonsPage = lazy(
   () => import("./features/learning/TradeLessonsPage"),
 );
-
-function TradeLessonsRoutePage() {
-  return (
-    <Suspense
-      fallback={
-        <section className="card compact-empty large route-empty" role="status">
-          <BookOpenCheck size={28} />
-          <h1>Opening your trade lessons…</h1>
-          <p>The original journal and Trading Records remain unchanged.</p>
-        </section>
-      }
-    >
-      <TradeLessonsPage />
-    </Suspense>
-  );
-}
+const PlanPage = lazy(() =>
+  import("./features/planning/PlanPage").then((module) => ({
+    default: module.PlanPage,
+  })),
+);
+const TradesPage = lazy(() =>
+  import("./features/trades/TradesPage").then((module) => ({
+    default: module.TradesPage,
+  })),
+);
+const ProgressPage = lazy(() =>
+  import("./features/progress/ProgressPage").then((module) => ({
+    default: module.ProgressPage,
+  })),
+);
+const SettingsPage = lazy(() =>
+  import("./features/settings/SettingsPage").then((module) => ({
+    default: module.SettingsPage,
+  })),
+);
+const AchievementsPage = lazy(() =>
+  import("./features/achievements/AchievementsPage").then((module) => ({
+    default: module.AchievementsPage,
+  })),
+);
+const AchievementDetailPage = lazy(() =>
+  import("./features/achievements/AchievementDetailPage").then((module) => ({
+    default: module.AchievementDetailPage,
+  })),
+);
+const ChartLabPage = lazy(() =>
+  import("./features/charting/ChartLabPage").then((module) => ({
+    default: module.ChartLabPage,
+  })),
+);
 
 function NotFoundPage() {
   return (
@@ -99,7 +119,7 @@ const learningToolsRoute = createRoute({
 const tradeLessonsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/learn/trade-lessons",
-  component: TradeLessonsRoutePage,
+  component: TradeLessonsPage,
 });
 const planRoute = createRoute({
   getParentRoute: () => rootRoute,

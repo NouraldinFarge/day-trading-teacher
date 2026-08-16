@@ -77,6 +77,7 @@ import {
   evaluateAchievements,
   lessonAchievementIdFor,
 } from "../../domain/achievements";
+import { createLearningCase } from "../../domain/learning-cases";
 import { CoreLearningPath } from "./CoreLearningPath";
 import { CurrentRecordFocus } from "./CurrentRecordFocus";
 
@@ -161,8 +162,13 @@ function requestFor(skillIds: string[], level: string): ExternalLessonRequest {
 
 export function LearnPage() {
   const navigate = useNavigate();
-  const { state, completeLesson, installLessonPlan, removeLessonPlan } =
-    useAppState();
+  const {
+    state,
+    completeLesson,
+    installLessonPlan,
+    removeLessonPlan,
+    upsertLearningCase,
+  } = useAppState();
   const [selected, setSelected] = useState<Lesson | null>(null);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const [lessonStep, setLessonStep] = useState(0);
@@ -175,6 +181,7 @@ export function LearnPage() {
     useState(false);
   const [resumedFromWorkspace, setResumedFromWorkspace] = useState("");
   const [resumedEvidenceArtifact, setResumedEvidenceArtifact] = useState("");
+  const [activeLearningCaseId, setActiveLearningCaseId] = useState("");
   const [responseReviews, setResponseReviews] = useState<
     Record<number, "matched" | "corrected">
   >({});
@@ -253,6 +260,7 @@ export function LearnPage() {
     if (!lesson) return;
     const session = context.session;
     setSelected(lesson);
+    setActiveLearningCaseId(context.learningCaseId);
     setLessonStage(session.stage);
     setLessonStep(Math.min(session.step, lesson.sections.length - 1));
     setRevealed(new Set(session.revealed));
@@ -293,6 +301,26 @@ export function LearnPage() {
   }, []);
 
   const openLesson = (lesson: Lesson) => {
+    const startedAt = new Date().toISOString();
+    const learningCaseId = crypto.randomUUID();
+    const imported = customLessons.some(
+      (candidate) => candidate.lesson_id === lesson.lesson_id,
+    );
+    upsertLearningCase(
+      createLearningCase({
+        id: learningCaseId,
+        lessonId: lesson.lesson_id,
+        lessonTitle: lesson.title,
+        source:
+          state.trades[0]?.review.assignedLessonId === lesson.lesson_id
+            ? "trade_assigned"
+            : imported
+              ? "imported"
+              : "core",
+        startedAt,
+      }),
+    );
+    setActiveLearningCaseId(learningCaseId);
     clearLessonWorkspaceContext();
     setSelected(lesson);
     setRevealed(new Set());
@@ -332,12 +360,23 @@ export function LearnPage() {
   const closeLesson = () => {
     clearLessonWorkspaceContext();
     setSelected(null);
+    setActiveLearningCaseId("");
     setResumedFromWorkspace("");
     setResumedEvidenceArtifact("");
   };
 
   const preserveLessonForReturn = (workspace: LessonWorkspaceMission) => {
-    if (!selected) return;
+    if (!selected || !activeLearningCaseId) return;
+    const savedAt = new Date().toISOString();
+    const learningCase = state.learningCases?.find(
+      (candidate) => candidate.id === activeLearningCaseId,
+    );
+    if (learningCase)
+      upsertLearningCase({
+        ...learningCase,
+        currentWorkspace: workspace.id,
+        updatedAt: savedAt,
+      });
     const session: LessonSessionSnapshot = {
       stage: lessonStage,
       step: lessonStep,
@@ -359,6 +398,7 @@ export function LearnPage() {
       rubricScores,
     };
     saveLessonWorkspaceContext({
+      learningCaseId: activeLearningCaseId,
       lessonId: selected.lesson_id,
       lessonTitle: selected.title,
       workspaceId: workspace.id,
@@ -368,7 +408,7 @@ export function LearnPage() {
       labTool: workspace.labTool,
       journalTab: workspace.journalTab,
       activityTitle: selected.sections[lessonStep]?.title,
-      savedAt: new Date().toISOString(),
+      savedAt,
       session,
     });
   };
@@ -414,6 +454,9 @@ export function LearnPage() {
   const linkedAchievement = selected
     ? lessonAchievementByLesson[selected.lesson_id]
     : undefined;
+  const activeLearningCase = state.learningCases?.find(
+    (candidate) => candidate.id === activeLearningCaseId,
+  );
   const selectedImportedPlan = selected
     ? state.customLessonPlans.find((plan) =>
         plan.lessons.some((lesson) => lesson.lesson_id === selected.lesson_id),
@@ -913,6 +956,22 @@ export function LearnPage() {
                       : selected.skill_ids.join(" · ")}
                   </small>
                 </span>
+              </div>
+              <div className="lesson-evidence-chain" role="status">
+                <FileCheck2 size={18} />
+                <div>
+                  <strong>One learning case follows this lesson</strong>
+                  <p>
+                    Decision Cards, chart evidence, paper sessions, journal
+                    reflections, and lab practice created from the lesson stay
+                    linked here instead of becoming disconnected activity.
+                  </p>
+                  <small>
+                    {activeLearningCase?.evidenceLinks.length
+                      ? `${activeLearningCase.evidenceLinks.length} saved evidence link${activeLearningCase.evidenceLinks.length === 1 ? "" : "s"} in this case`
+                      : "No artifact is required to begin; use only the workspaces that fit this lesson."}
+                  </small>
+                </div>
               </div>
               {state.progress.lessonMastery?.[selected.lesson_id] ? (
                 <div className="lesson-history-note">
@@ -1762,16 +1821,21 @@ export function LearnPage() {
                     key={option.value}
                     onClick={() => {
                       setConfidence(option.value);
-                      completeLesson(selected.lesson_id, option.value, {
-                        lessonVersion: selected.version,
-                        objectiveChecks: objectiveCheckCount,
-                        firstTryCorrect: firstTryChecks.size,
-                        correctionsCompleted,
-                        standardMet: masteryEvaluation?.met ?? false,
-                        independentCases,
-                        successfulCases,
-                        rubricAverage: masteryEvaluation?.rubricAverage ?? 0,
-                      });
+                      completeLesson(
+                        selected.lesson_id,
+                        option.value,
+                        {
+                          lessonVersion: selected.version,
+                          objectiveChecks: objectiveCheckCount,
+                          firstTryCorrect: firstTryChecks.size,
+                          correctionsCompleted,
+                          standardMet: masteryEvaluation?.met ?? false,
+                          independentCases,
+                          successfulCases,
+                          rubricAverage: masteryEvaluation?.rubricAverage ?? 0,
+                        },
+                        activeLearningCaseId,
+                      );
                       moveToLessonStage("celebration");
                     }}
                   >
@@ -1848,6 +1912,27 @@ export function LearnPage() {
                   </small>
                 </span>
               </div>
+              {activeLearningCase ? (
+                <div className="lesson-evidence-chain completed">
+                  <FileCheck2 size={19} />
+                  <div>
+                    <span className="eyebrow">Learning case preserved</span>
+                    <strong>
+                      {activeLearningCase.evidenceLinks.length
+                        ? `${activeLearningCase.evidenceLinks.length} linked evidence artifact${activeLearningCase.evidenceLinks.length === 1 ? "" : "s"}`
+                        : "Guided practice recorded without an outside artifact"}
+                    </strong>
+                    <p>
+                      {activeLearningCase.evidenceLinks.length
+                        ? activeLearningCase.evidenceLinks
+                            .slice(0, 3)
+                            .map((link) => link.label)
+                            .join(" · ")
+                        : "You can add a Decision Card, chart replay, reflection, or lab result on a later pass when it supports the objective."}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
               {linkedAchievement ? (
                 <div
                   className={`lesson-artifact-result ${linkedAchievement.unlocked ? "earned" : "in-progress"}`}

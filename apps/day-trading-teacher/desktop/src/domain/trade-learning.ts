@@ -811,7 +811,8 @@ function buildPatterns(signals: TradeSignal[]): TradeLearningPattern[] {
         right.evidence.observed.entryAt,
       ),
     );
-    const { matches: _matches, ...base } = definition;
+    const { matches: omittedMatcher, ...base } = definition;
+    void omittedMatcher;
     return [
       {
         ...base,

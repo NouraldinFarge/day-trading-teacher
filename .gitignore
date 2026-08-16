@@ -2,6 +2,7 @@
 node_modules/
 dist/
 coverage/
+.eslintcache
 *.tsbuildinfo
 
 # Rust and Tauri
@@ -22,6 +23,7 @@ var/
 runtime/
 test-results/
 playwright-report/
+blob-report/
 *.log
 
 # Local credentials; keep only the documented placeholder file

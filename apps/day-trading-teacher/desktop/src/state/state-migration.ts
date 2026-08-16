@@ -120,6 +120,7 @@ export function normalizeAppState(
     dailySessions: stored.dailySessions ?? [],
     paperTradingSessions: stored.paperTradingSessions ?? [],
     setupPlaybooks: stored.setupPlaybooks ?? [],
+    learningCases: stored.learningCases ?? [],
     onboardingComplete: stored.onboardingComplete ?? hasExistingWork,
   };
 }

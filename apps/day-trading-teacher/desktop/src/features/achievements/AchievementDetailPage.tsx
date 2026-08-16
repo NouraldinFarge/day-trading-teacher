@@ -11,7 +11,10 @@ import {
   Sparkles,
   Target,
 } from "lucide-react";
-import { evaluateAchievements } from "../../domain/achievements";
+import {
+  achievementEvidence,
+  evaluateAchievements,
+} from "../../domain/achievements";
 import { useAppState } from "../../state/AppStateContext";
 
 export function AchievementDetailPage() {
@@ -33,6 +36,7 @@ export function AchievementDetailPage() {
       </div>
     );
   const concealed = achievement.hidden && !achievement.unlocked;
+  const evidence = achievementEvidence(achievement, state);
   return (
     <div className="achievement-detail-page">
       <Link to="/achievements" className="text-button">
@@ -151,6 +155,78 @@ export function AchievementDetailPage() {
           </div>
         </article>
       </div>
+      {!concealed ? (
+        <section className="card section-gap achievement-evidence-ledger">
+          <div className="card-header">
+            <div>
+              <h2>Evidence ledger</h2>
+              <p>What counted, what did not, and why</p>
+            </div>
+            <ShieldCheck size={19} />
+          </div>
+          <div className="card-body">
+            <div className="achievement-evidence-numbers">
+              <span>
+                <strong>
+                  {evidence.counted.toFixed(evidence.counted % 1 ? 1 : 0)}
+                </strong>
+                <small>current metric</small>
+              </span>
+              <span>
+                <strong>{evidence.eligible}</strong>
+                <small>eligible records</small>
+              </span>
+              <span>
+                <strong>{evidence.excluded}</strong>
+                <small>not counted</small>
+              </span>
+            </div>
+            <p className="achievement-evidence-calculation">
+              <strong>Calculation</strong>
+              {evidence.calculation}
+            </p>
+            {evidence.sampleRequired !== null ? (
+              <div
+                className={`achievement-sample-gate ${evidence.sampleMet ? "met" : "pending"}`}
+              >
+                <Target size={17} />
+                <span>
+                  <strong>
+                    Sample gate {evidence.sampleMet ? "met" : "still open"}
+                  </strong>
+                  <small>
+                    {evidence.sampleCurrent} of {evidence.sampleRequired}{" "}
+                    eligible records. The percentage cannot unlock this
+                    achievement before the sample gate is met.
+                  </small>
+                </span>
+              </div>
+            ) : null}
+            <div className="achievement-evidence-rules">
+              <div>
+                <strong>Counted</strong>
+                <p>{evidence.countingRule}</p>
+              </div>
+              <div>
+                <strong>Not counted</strong>
+                <p>{evidence.exclusionRule}</p>
+              </div>
+            </div>
+            {evidence.recentEvidenceDates.length ? (
+              <div className="achievement-evidence-dates">
+                <strong>Recent evidence dates</strong>
+                <span>
+                  {evidence.recentEvidenceDates
+                    .map((date) =>
+                      new Date(`${date}T12:00:00`).toLocaleDateString(),
+                    )
+                    .join(" · ")}
+                </span>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
       <section className="card section-gap">
         <div className="card-header">
           <div>

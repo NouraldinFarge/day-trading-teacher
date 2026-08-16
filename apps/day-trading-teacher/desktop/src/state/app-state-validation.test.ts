@@ -10,6 +10,24 @@ describe("app state validation", () => {
     });
   });
 
+  it("accepts an active learning case before it has a completion timestamp", () => {
+    const state = structuredClone(defaultState);
+    state.learningCases = [
+      {
+        id: "learning-case-active",
+        lessonId: "core-risk-boundary",
+        lessonTitle: "Bound the thesis before the first buy",
+        source: "core",
+        status: "active",
+        startedAt: "2026-08-15T12:00:00.000Z",
+        updatedAt: "2026-08-15T12:00:00.000Z",
+        evidenceLinks: [],
+      },
+    ];
+
+    expect(validateAppState(state)).toMatchObject({ valid: true });
+  });
+
   it("validates the standalone workspace preference", () => {
     const damaged = structuredClone(defaultState) as unknown as {
       profile: Record<string, unknown>;

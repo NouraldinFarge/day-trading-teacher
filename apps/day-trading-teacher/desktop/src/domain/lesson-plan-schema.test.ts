@@ -42,6 +42,18 @@ const validPlan = {
   created_at: "2026-07-16T10:00:00.000Z",
 };
 
+type MutablePlan = Omit<typeof validPlan, "lessons" | "sources"> & {
+  lessons: Array<
+    Record<string, unknown> & { sections: Array<Record<string, unknown>> }
+  >;
+  sources: Array<Record<string, unknown>>;
+  [key: string]: unknown;
+};
+
+function mutablePlan(): MutablePlan {
+  return structuredClone(validPlan) as unknown as MutablePlan;
+}
+
 describe("lesson plan import", () => {
   it("accepts a bounded plan and warns about missing sources", () => {
     const result = validateImportedLessonPlan(JSON.stringify(validPlan));
@@ -83,7 +95,7 @@ describe("lesson plan import", () => {
   });
 
   it("rejects non-web source URLs", () => {
-    const plan = structuredClone(validPlan) as Record<string, any>;
+    const plan = mutablePlan();
     plan.sources = [{ title: "Local file", url: "file:///C:/secret.txt" }];
     const result = validateImportedLessonPlan(JSON.stringify(plan));
     expect(result.valid).toBe(false);
@@ -91,7 +103,7 @@ describe("lesson plan import", () => {
   });
 
   it("accepts bounded multi-session retention and remediation metadata", () => {
-    const plan = structuredClone(validPlan) as Record<string, any>;
+    const plan = mutablePlan();
     plan.scope_boundary = {
       included: ["Simulation-only equities"],
       excluded: ["Live trade signals"],
@@ -156,7 +168,7 @@ describe("lesson plan import", () => {
   });
 
   it("rejects facilitator-only outcome blueprints from learner plans", () => {
-    const plan = structuredClone(validPlan) as Record<string, any>;
+    const plan = mutablePlan();
     plan.lessons[0].capstone_blueprint = [
       { case_id: "SECURE-A", required_outcome: "PROCEED" },
     ];
@@ -168,7 +180,7 @@ describe("lesson plan import", () => {
   });
 
   it("rejects facilitator-only keys regardless of naming style", () => {
-    const plan = structuredClone(validPlan) as Record<string, any>;
+    const plan = mutablePlan();
     plan.lessons[0].answerKey = "Do not distribute";
     const result = validateImportedLessonPlan(JSON.stringify(plan));
     expect(result.valid).toBe(false);

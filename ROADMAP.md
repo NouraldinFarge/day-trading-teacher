@@ -2,14 +2,14 @@
 
 Day-Trading Teacher prioritizes measurable learning, evidence quality, privacy, accessibility, and recoverability over engagement, trade frequency, or simulated profit. This roadmap describes direction rather than a delivery promise.
 
-Last reviewed: 2026-08-15 for v0.36.0.
+Last reviewed: 2026-08-15 for v0.37.0.
 
 ## Now — strengthen the evidence loop
 
-- Add more fault-injection coverage for interrupted state writes, malformed restores, provider failures, and portable rollback.
-- Deepen keyboard, screen-reader, contrast, reduced-motion, and resized-window checks across lesson handoffs, Chart Replay, and Journal review.
+- Add more fault-injection coverage for malformed restores, provider failures, and portable rollback beyond the coordinated interrupted-state recovery now covered.
+- Extend the desktop and compact browser accessibility journeys beyond the current welcome, command menu, chart, and serious/critical axe checks.
 - Extend the new Trade Lessons system with prospective Decision Card adherence evidence so future audits can distinguish a missing plan, a followed plan, and a documented deviation without rewriting old records.
-- Improve the link from a lesson artifact to its Decision Card, exact chart moment, completed execution, reflection, and remediation evidence without duplicating records.
+- Extend the new canonical learning-case links from saved artifacts to exact chart timestamps and remediation history without duplicating records.
 - Surface the new persistent Daily Session Guard records in the Journal timeline and contribution views, including explicit no-trade, study-only, and stop-work evidence.
 - Extend the new Setup Playbook and Tail Audit records with version-to-version comparisons and direct links to their preserved replay cases.
 - Expand synthetic fixtures for Fidelity reconciliation edge cases while keeping unsupported options, multi-leg, flip, and corporate-action records explicit.

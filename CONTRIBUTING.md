@@ -4,7 +4,7 @@ Day-Trading Teacher welcomes focused improvements that strengthen deliberate pra
 
 ## Before opening a change
 
-1. Read the [product boundary](README.md#product-boundary-by-design), [architecture overview](docs/architecture/overview.md), and [roadmap non-goals](ROADMAP.md#non-goals).
+1. Read the [product boundary](README.md#product-boundary-by-design), [privacy policy](PRIVACY.md), [architecture overview](docs/architecture/overview.md), and [roadmap non-goals](ROADMAP.md#non-goals).
 2. Open the most specific issue template and describe the learner or reviewer problem, the evidence of success, and the smallest useful scope.
 3. Use synthetic or fully redacted examples. Never add credentials, account data, personal journals, secure assessments, generated releases, or unlicensed market data.
 4. Keep provider identity, timestamps, limitations, provenance, and missing evidence visible.
@@ -24,6 +24,7 @@ Before submitting:
 ```powershell
 npm run docs:check
 npm run verify
+npm run e2e
 ```
 
 ## Pull-request checklist
@@ -34,6 +35,7 @@ npm run verify
 - Check keyboard operation, visible focus, reduced motion, narrow Windows layouts, and both appearance modes when the UI changes.
 - Update the README, documentation hub, screenshots, architecture, changelog, and release notes only where behavior actually changed.
 - Keep screenshots authentic, synthetic, and readable; follow [`docs/images/README.md`](docs/images/README.md).
+- Run `npm run privacy:check` and confirm that public text, metadata, fixtures, screenshots, and release notes reveal no learner-derived records or aggregates.
 - Confirm that the change adds no live signal, order placement, brokerage authentication, screen scraping, hidden AI call, or engagement pressure.
 
 ## Review priorities
@@ -41,4 +43,3 @@ npm run verify
 Reviewers evaluate financial-safety boundaries, privacy, calculation determinism, persistence and rollback, import ambiguity, accessibility, evidence quality, and testability before visual polish or feature breadth. A passing test suite does not justify a claim that the implementation or curriculum does not support.
 
 Report vulnerabilities through [GitHub private vulnerability reporting](https://github.com/NouraldinFarge/day-trading-teacher/security/advisories/new), not a public issue.
-

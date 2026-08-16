@@ -14,6 +14,7 @@ This directory explains the current Day-Trading Teacher product, its safety boun
 | How are the original trade lessons audited newest-to-oldest and consolidated without inventing intent? | [Trade-derived learning system](trade-derived-learning-system.md) |
 | How are external lesson plans created and imported without embedded AI? | [External lesson-plan workflow](development/lesson-plan-import.md) |
 | What are the application and financial-safety boundaries? | [Security policy](../SECURITY.md) |
+| What remains local, what may leave the device, and what is excluded from public releases? | [Privacy policy](../PRIVACY.md) |
 | What is planned—and explicitly not planned? | [Roadmap](../ROADMAP.md) |
 
 ## Current reference
@@ -45,7 +46,11 @@ These documents preserve the reasoning that led to the current system. Counts, v
 
 - [Contributing](../CONTRIBUTING.md) — issue-first workflow, privacy expectations, verification, and review checklist.
 - [Security](../SECURITY.md) — supported version, private reporting, trust boundaries, and safe evidence handling.
+- [Privacy](../PRIVACY.md) — local data, explicit exports, external-AI handoffs, deletion, and public-release exclusions.
 - [Dependency policy](../DEPENDENCY_POLICY.md) — update cadence, immutable Action pins, and exception requirements.
+- [Third-party notices](../THIRD_PARTY_NOTICES.md) and [trademark notice](../TRADEMARKS.md) — dependency and product-name boundaries.
+- [Release checklist](release-checklist.md) — evidence required before a version may be packaged, activated, or published.
+- [Public-data policy](public-data-policy.md) — the synthetic-only contract enforced by `npm run privacy:check`.
 - [Changelog](../CHANGELOG.md) — release-by-release behavior changes.
 - [Portable end-user guide](../release/PORTABLE-README.txt) — launch, storage, backup, Fidelity, and educational boundaries for the ZIP release.
 
@@ -55,4 +60,4 @@ These documents preserve the reasoning that led to the current system. Counts, v
 2. Link a claim to code, a test, or a release artifact when a reviewer may reasonably ask for proof.
 3. Use only synthetic or fully redacted screenshots and examples; never publish credentials, account identifiers, order histories, journal entries, or secure assessment material.
 4. Keep the no-signals, no-orders, external-AI-only, and historical-data limitations visible wherever an integration is described.
-5. Run `npm run docs:check` before publishing. It verifies local Markdown targets, image alternatives, media dimensions, and release-version references.
+5. Run `npm run docs:check` and `npm run privacy:check` before publishing. They verify local Markdown targets, image alternatives, media dimensions, release-version references, and the synthetic-only public-data contract.

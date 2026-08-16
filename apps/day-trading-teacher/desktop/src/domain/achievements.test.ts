@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   achievementDefinitions,
+  achievementEvidence,
   achievementXp,
   evaluateAchievements,
 } from "./achievements";
@@ -212,5 +213,34 @@ describe("achievement system", () => {
         .filter((item) => item.unlocked)
         .reduce((sum, item) => sum + item.rewardXp, 0),
     );
+  });
+
+  it("explains percentage denominators, exclusions, and sample gates", () => {
+    const definition = achievementDefinitions.find(
+      (item) => item.id === "risk-60",
+    )!;
+    const withoutRiskEvidence = reviewedTrade({
+      id: "unplanned",
+      planId: null,
+      journal: {
+        ...reviewedTrade().journal!,
+        postTradeChecklist: undefined,
+      },
+    });
+    const draft = reviewedTrade({ id: "draft", journal: undefined });
+    const evidence = achievementEvidence(
+      definition,
+      stateWith([reviewedTrade(), withoutRiskEvidence, draft]),
+    );
+
+    expect(evidence).toMatchObject({
+      eligible: 1,
+      excluded: 2,
+      sampleCurrent: 1,
+      sampleRequired: 3,
+      sampleMet: false,
+    });
+    expect(evidence.calculation).toContain("1 adhered ÷ 1");
+    expect(evidence.exclusionRule).toMatch(/Missing risk evidence/);
   });
 });

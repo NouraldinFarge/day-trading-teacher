@@ -47,7 +47,7 @@ export function LessonWorkspaceBanner({
 }: {
   workspace: keyof typeof content;
 }) {
-  const { state } = useAppState();
+  const { state, linkLearningCaseEvidence } = useAppState();
   const [lessonContext, setLessonContext] = useState(() =>
     readLessonWorkspaceContext(workspace),
   );
@@ -85,7 +85,17 @@ export function LessonWorkspaceBanner({
             className="button primary compact"
             onClick={() => {
               const updated = markLessonWorkspaceEvidenceReady();
-              if (updated?.workspaceId === workspace) setLessonContext(updated);
+              if (updated?.workspaceId === workspace) {
+                setLessonContext(updated);
+                linkLearningCaseEvidence(updated.learningCaseId, {
+                  id: crypto.randomUUID(),
+                  kind: "workspace_evidence",
+                  referenceId: `${updated.workspaceId}:${updated.evidenceMarkedAt}`,
+                  label: updated.artifact,
+                  workspace: updated.workspaceId,
+                  linkedAt: updated.evidenceMarkedAt!,
+                });
+              }
             }}
           >
             <CheckCircle2 size={15} />

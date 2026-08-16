@@ -1,5 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import {
   BarChart3,
   BookOpen,
@@ -8,6 +8,7 @@ import {
   GraduationCap,
   NotebookPen,
   Plus,
+  RefreshCw,
   Settings,
   ShieldAlert,
   ShieldCheck,
@@ -16,8 +17,13 @@ import { useAppState } from "../state/AppStateContext";
 import { isTauri } from "../platform/bridge";
 import { WelcomeFlow } from "../components/WelcomeFlow";
 import { EngagementChip } from "../components/EngagementPanel";
-import { QuickActions } from "../components/QuickActions";
 import { MarketDataAutoRefresh } from "../components/MarketDataAutoRefresh";
+
+const QuickActions = lazy(() =>
+  import("../components/QuickActions").then((module) => ({
+    default: module.QuickActions,
+  })),
+);
 
 const lessonNavigation = [
   { to: "/", label: "Lessons", icon: BookOpen },
@@ -256,14 +262,42 @@ export function AppShell() {
             </Link>
           </div>
         </header>
-        <main className="main-content" id="main-content" tabIndex={-1}>
-          <Outlet />
+        <main
+          className="main-content"
+          id="main-content"
+          tabIndex={-1}
+          aria-busy={undefined}
+        >
+          <Suspense
+            fallback={
+              <section
+                className="card compact-empty large route-empty"
+                role="status"
+                aria-live="polite"
+              >
+                <RefreshCw className="spin" size={28} aria-hidden="true" />
+                <h1>Opening this workspace…</h1>
+                <p>Your saved local work remains available while it loads.</p>
+              </section>
+            }
+          >
+            <Outlet />
+          </Suspense>
         </main>
       </div>
       <WelcomeFlow />
       <MarketDataAutoRefresh />
       {quickActionsOpen ? (
-        <QuickActions onClose={() => setQuickActionsOpen(false)} />
+        <Suspense
+          fallback={
+            <div className="quick-action-loading" role="status">
+              <RefreshCw className="spin" size={18} aria-hidden="true" />
+              Opening quick actions…
+            </div>
+          }
+        >
+          <QuickActions onClose={() => setQuickActionsOpen(false)} />
+        </Suspense>
       ) : null}
     </div>
   );

@@ -1,0 +1,48 @@
+- name: learning
+  color: "1d6753"
+  description: Lesson flow, assessment, transfer, retention, or remediation
+- name: curriculum
+  color: "278168"
+  description: Built-in or imported educational content and its contracts
+- name: charting
+  color: "315b88"
+  description: Historical chart, replay, indicators, drawings, or data quality
+- name: paper-trading
+  color: "4f6d7a"
+  description: Local simulated execution and its safety boundaries
+- name: journal
+  color: "85610c"
+  description: Trade evidence, reflection, review, or export
+- name: analytics
+  color: "6f5a93"
+  description: Descriptive metrics, patterns, summaries, or visualizations
+- name: achievements
+  color: "b7791f"
+  description: Process-first progress, milestones, and evidence criteria
+- name: accessibility
+  color: "0e8a16"
+  description: Keyboard, screen reader, contrast, motion, scaling, or cognition
+- name: ux
+  color: "67c0a1"
+  description: Information architecture, interaction, copy, or visual hierarchy
+- name: security
+  color: "b60205"
+  description: Security boundary, advisory, or hardening work
+- name: privacy
+  color: "7b1fa2"
+  description: Local data, redaction, credentials, or public-release boundary
+- name: reliability
+  color: "0052cc"
+  description: Persistence, recovery, import integrity, or release resilience
+- name: performance
+  color: "5319e7"
+  description: Responsiveness, memory, startup, rendering, or bundle size
+- name: fidelity-import
+  color: "0b5394"
+  description: Read-only Fidelity export discovery, parsing, and reconciliation
+- name: release
+  color: "0366d6"
+  description: Versioning, packaging, signing, provenance, or distribution
+- name: ignore-for-release
+  color: "ededed"
+  description: Exclude this pull request from generated release notes

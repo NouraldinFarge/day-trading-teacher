@@ -12,9 +12,9 @@
 
 **A local-first Windows learning environment that connects structured lessons, historical chart replay, paper practice, and evidence-based post-trade review.**
 
-[Download the latest verified release](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest) · [Take the five-minute project tour](#five-minute-project-tour) · [Browse the documentation](docs/README.md) · [Read the safety boundary](SECURITY.md)
+[Download the latest verified release](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest) · [Open the visual project site](https://nouraldinfarge.github.io/day-trading-teacher/) · [Take the five-minute project tour](#five-minute-project-tour) · [Browse the documentation](docs/README.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md)
 
-Active development · 2026 · Current release **0.36.0**
+Active development · 2026 · Current release **0.37.0**
 
 Day-Trading Teacher teaches the decision process without generating live buy/sell signals. Lessons open the relevant planning, replay, journaling, analytics, and practice workspace; the resulting evidence feeds reflection and spaced practice instead of rewarding trade count, profit, or time in market.
 
@@ -27,23 +27,23 @@ Day-Trading Teacher teaches the decision process without generating live buy/sel
 | **Learning loop** | Lessons → Decision Card → historical replay or no-trade practice → evidence journal → reflection and spaced retrieval |
 | **Practice boundary** | A persistent Daily Session Guard records readiness, setup eligibility, no-trade choices, and preset paper-trading stop rules before outcomes are known |
 | **Desktop stack** | React 19, TypeScript, Tauri 2, and Rust with deterministic decimal calculations |
-| **Data model** | Local application state, explicit file imports, user-controlled historical-data providers, and no mandatory cloud account |
+| **Data model** | Coordinated atomic local state with split high-volume collections, revision-matched recovery, explicit imports, and no mandatory cloud account |
 | **Broker boundary** | Read-only Trading Records evidence inbox and a deliberate manual handoff to Fidelity Trader+ Desktop—never credentials or order placement |
 | **External-AI boundary** | Optional lesson plans and journal drafts use explicit, schema-validated file handoffs; no model runs inside the application and nothing uploads automatically |
 | **Trade-derived learning** | Validated journal evidence becomes a newest-to-oldest audit that preserves each original lesson, separates hindsight, connects recurring mechanisms, and produces measurable practice rules |
-| **Release model** | Portable Windows ZIP, SHA-256 checksum, SPDX SBOM, immutable release, and build-provenance attestation |
+| **Release model** | Portable Windows ZIP, SHA-256 checksum, SPDX SBOM, third-party license inventory, optional Authenticode verification, immutable release, and build-provenance attestation |
 
 ## Product tour
 
 ### 1. Learn in context
 
-The default workspace begins with the curriculum. Each lesson explains the decision, names the evidence to produce, and opens only the practice tools that strengthen that objective.
+The default workspace begins with the curriculum. Every core or imported lesson opens with a brief summary and guide, explains why the decision matters, names the evidence to produce, and opens only the practice tools that strengthen that objective. Decision Cards, chart datasets, paper sessions, journal reflections, and lab practice then remain connected under one local learning case.
 
 [![Lesson-first learning workspace with connected Decision Card, Chart Replay, Evidence Journal, and Learning Lab tools](docs/images/day-trading-teacher-lessons.png)](docs/images/day-trading-teacher-lessons.png)
 
 ### 2. Replay without pretending to predict
 
-The chart supports granular zoom and pan, crosshair inspection, overlays, measurements, drawing tools, replay, transparent backtests, recorded-trade markers, and paper decisions. The pictured `DEMO` series is the app's clearly labeled synthetic practice data—not market data.
+The chart supports pointer-anchored 0.5% zoom, exact one-bar keyboard zoom, independent price-scale control, drag and shift-wheel panning, crosshair inspection, overlays, measurements, drawing tools, replay, transparent backtests, recorded-trade markers, and guarded paper decisions. The pictured `DEMO` series is the app's clearly labeled synthetic practice data—not market data.
 
 [![Focused historical chart replay with synthetic candles, moving averages, volume, trade markers, and inspection controls](docs/images/day-trading-teacher-chart.png)](docs/images/day-trading-teacher-chart.png)
 
@@ -53,9 +53,13 @@ The Journal separates descriptive performance from process evidence. Its Evidenc
 
 The Trade Lessons workspace then works backward from the newest record. It keeps the original lesson intact, distinguishes what was knowable before the entry from facts learned afterward, audits lesson quality, rewrites the lesson into eight decision-ready parts, and connects repeated mechanisms across older trades. Review status records reflection only; it never implies mastery. Progress rewards planning, risk discipline, reflection, correction, and separated practice; rest days and no-trade decisions are never treated as failures.
 
-| Evidence Journal | Learning contribution and achievement view |
+| Guided lesson opening | Process calendar and contribution heatmap |
 | --- | --- |
-| [![Journal analytics showing a sanitized synthetic six-trade sample, reflection queue, descriptive metrics, and equity curve](docs/images/day-trading-teacher-journal.png)](docs/images/day-trading-teacher-journal.png) | [![Learning contribution calendar and process achievement vault with rest-day-safe progress](docs/images/day-trading-teacher-progress.png)](docs/images/day-trading-teacher-progress.png) |
+| [![Core lesson opening with a brief summary, rationale, practice counts, and a connected learning-case explanation](docs/images/day-trading-teacher-lesson.png)](docs/images/day-trading-teacher-lesson.png) | [![Monthly trading calendar and GitHub-style process heatmap using a temporary fictional guided preview](docs/images/day-trading-teacher-calendar.png)](docs/images/day-trading-teacher-calendar.png) |
+
+| Evidence Journal | Achievement evidence detail |
+| --- | --- |
+| [![Journal analytics showing a temporary synthetic twelve-trade preview, descriptive metrics, and equity curve](docs/images/day-trading-teacher-journal.png)](docs/images/day-trading-teacher-journal.png) | [![Earned process achievement with its exact requirement, reward boundary, and evidence ledger](docs/images/day-trading-teacher-progress.png)](docs/images/day-trading-teacher-progress.png) |
 
 Screenshot provenance, privacy rules, and refresh instructions are documented in [`docs/images/README.md`](docs/images/README.md).
 
@@ -127,9 +131,10 @@ npm run tauri:dev
 ```powershell
 npm run docs:check
 npm run verify
+npm run e2e
 ```
 
-The complete gate checks repository documentation and media, formatting, TypeScript, React tests, portable deployment behavior, a production frontend build, Clippy with warnings denied, and the complete Rust workspace test suite.
+The native release gate checks documentation and media integrity, formatting, lint, public-data privacy, production dependencies, TypeScript, coverage thresholds, portable deployment and rollback, production bundle budgets, Clippy with warnings denied, and the complete Rust workspace. The separate Playwright run exercises onboarding, keyboard and screen-reader semantics, lesson-to-chart boundaries, responsive layouts, and the non-persistence of fictional Journal previews in desktop and compact Chromium; CI runs both gates.
 
 ## Build or activate the portable app
 
@@ -170,3 +175,5 @@ Focused contributions are welcome through [`CONTRIBUTING.md`](CONTRIBUTING.md). 
 ## License
 
 Copyright © 2026 Nouraldin Farge. All rights reserved—see [`LICENSE.md`](LICENSE.md). The repository is available for portfolio review; no permission to copy, modify, or redistribute is granted.
+
+Third-party components remain under their respective licenses; see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) and the release SBOM. Fidelity, Trader+, TradingView, and other third-party names belong to their respective owners; see [`TRADEMARKS.md`](TRADEMARKS.md). Local-data handling and the public-release boundary are described in [`PRIVACY.md`](PRIVACY.md).

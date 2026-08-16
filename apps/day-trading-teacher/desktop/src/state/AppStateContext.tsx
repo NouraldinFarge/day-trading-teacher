@@ -17,6 +17,11 @@ import {
 import { buildRecallRecord, type RecallRating } from "../domain/learning-tools";
 import { cancelPaperOrder } from "../domain/paper-trading";
 import { defaultChartWorkspace } from "../domain/chart-workspace";
+import {
+  completeLearningCase,
+  linkLearningCaseEvidence as linkLearningCaseEvidenceRecord,
+  upsertLearningCase as upsertLearningCaseRecord,
+} from "../domain/learning-cases";
 import type {
   AppState,
   ChartAcquisitionSettings,
@@ -26,6 +31,8 @@ import type {
   FidelityImportSettings,
   JournalDashboardPreferences,
   JournalGoal,
+  LearningCase,
+  LearningCaseEvidenceLink,
   LessonPracticeEvidence,
   MarketDataSet,
   PaperTradingSession,
@@ -79,6 +86,8 @@ export const defaultState: AppState = {
     autoDetect: true,
     lastScanAt: null,
     lastFileKey: null,
+    lastDiscoveryKey: null,
+    processedFileKeys: [],
   },
   journalGoals: [],
   journalDashboard: {
@@ -104,6 +113,7 @@ export const defaultState: AppState = {
   dailySessions: [],
   paperTradingSessions: [],
   setupPlaybooks: [],
+  learningCases: [],
 };
 
 function freshDefaultState() {
@@ -139,10 +149,16 @@ type AppStateActions = {
   removePaperTradingSession(sessionId: string): void;
   upsertSetupPlaybook(playbook: SetupPlaybook): void;
   removeSetupPlaybook(playbookId: string): void;
+  upsertLearningCase(learningCase: LearningCase): void;
+  linkLearningCaseEvidence(
+    learningCaseId: string,
+    link: LearningCaseEvidenceLink,
+  ): void;
   completeLesson(
     lessonId: string,
     confidence?: 1 | 2 | 3,
     evidence?: LessonPracticeEvidence,
+    learningCaseId?: string,
   ): void;
   recordLearningToolPractice(toolId: string): void;
   recordConceptRecall(conceptId: string, rating: RecallRating): void;
@@ -341,7 +357,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         ),
       },
     }));
-  }, [ready, state.trades, state.marketDataSets, state.progress]);
+  }, [ready, state]);
 
   const updateProfile = useCallback(
     (profile: Profile) => setState((current) => ({ ...current, profile })),
@@ -561,11 +577,35 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       })),
     [],
   );
+  const upsertLearningCase = useCallback(
+    (learningCase: LearningCase) =>
+      setState((current) => ({
+        ...current,
+        learningCases: upsertLearningCaseRecord(
+          current.learningCases ?? [],
+          learningCase,
+        ),
+      })),
+    [],
+  );
+  const linkLearningCaseEvidence = useCallback(
+    (learningCaseId: string, link: LearningCaseEvidenceLink) =>
+      setState((current) => ({
+        ...current,
+        learningCases: linkLearningCaseEvidenceRecord(
+          current.learningCases ?? [],
+          learningCaseId,
+          link,
+        ),
+      })),
+    [],
+  );
   const completeLesson = useCallback(
     (
       lessonId: string,
       confidence?: 1 | 2 | 3,
       evidence?: LessonPracticeEvidence,
+      learningCaseId?: string,
     ) =>
       setState((current) => {
         const now = new Date();
@@ -574,6 +614,14 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           current.progress.lessonMastery?.[lessonId] ?? null;
         return {
           ...current,
+          learningCases: learningCaseId
+            ? completeLearningCase(
+                current.learningCases ?? [],
+                learningCaseId,
+                evidence,
+                now.toISOString(),
+              )
+            : current.learningCases,
           progress: {
             ...current.progress,
             completedLessonIds: current.progress.completedLessonIds.includes(
@@ -774,6 +822,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       removePaperTradingSession,
       upsertSetupPlaybook,
       removeSetupPlaybook,
+      upsertLearningCase,
+      linkLearningCaseEvidence,
       replaceState,
       resetState,
       completeOnboarding,
@@ -803,6 +853,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       removePaperTradingSession,
       upsertSetupPlaybook,
       removeSetupPlaybook,
+      upsertLearningCase,
+      linkLearningCaseEvidence,
       completeLesson,
       recordLearningToolPractice,
       recordConceptRecall,

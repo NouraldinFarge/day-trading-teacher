@@ -492,6 +492,8 @@ export type FidelityImportSettings = {
   autoDetect?: boolean;
   lastScanAt: string | null;
   lastFileKey: string | null;
+  lastDiscoveryKey?: string | null;
+  processedFileKeys?: string[];
   lastScanSummary?: {
     tradingDayCount: number;
     filesRead: number;
@@ -503,6 +505,7 @@ export type FidelityImportSettings = {
     unsupportedCsvCount: number;
     skippedCsvCount: number;
     warningCount: number;
+    newOrChangedFileCount?: number;
   };
 };
 
@@ -744,6 +747,37 @@ export type ConceptRecallRecord = {
   lastRating: "again" | "hard" | "good";
 };
 
+export type LearningCaseEvidenceKind =
+  | "decision_plan"
+  | "chart_dataset"
+  | "paper_session"
+  | "journal_entry"
+  | "learning_tool"
+  | "workspace_evidence";
+
+export type LearningCaseEvidenceLink = {
+  id: string;
+  kind: LearningCaseEvidenceKind;
+  referenceId: string;
+  label: string;
+  workspace: "plan" | "chart" | "journal" | "lab";
+  linkedAt: string;
+};
+
+export type LearningCase = {
+  id: string;
+  lessonId: string;
+  lessonTitle: string;
+  source: "core" | "imported" | "trade_assigned";
+  status: "active" | "evidence_ready" | "completed";
+  startedAt: string;
+  updatedAt: string;
+  completedAt?: string;
+  currentWorkspace?: "plan" | "chart" | "journal" | "lab";
+  evidenceLinks: LearningCaseEvidenceLink[];
+  practiceEvidence?: LessonPracticeEvidence;
+};
+
 export type AppState = {
   schemaVersion: 1;
   onboardingComplete?: boolean;
@@ -763,4 +797,5 @@ export type AppState = {
   paperTradingSessions?: PaperTradingSession[];
   setupPlaybooks?: SetupPlaybook[];
   tradeLearningSystem?: TradeLearningSystem;
+  learningCases?: LearningCase[];
 };

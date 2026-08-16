@@ -1,6 +1,6 @@
 # Dependency audit notes
 
-Last reviewed: 2026-08-08 for v0.32.6.
+Last reviewed: 2026-08-15 for v0.37.0.
 
 ## JavaScript
 

@@ -179,7 +179,7 @@ describe("MarketChart", () => {
     fireEvent(chart, wheel);
 
     expect(wheel.defaultPrevented).toBe(true);
-    expect(screen.getByText(/98 of 120 bars/)).toBeInTheDocument();
+    expect(screen.getByText(/99 of 120 bars/)).toBeInTheDocument();
     expect(screen.getAllByText(selectedClose).length).toBeGreaterThan(0);
   });
 
@@ -207,9 +207,11 @@ describe("MarketChart", () => {
     await waitFor(() =>
       expect(screen.getByText("11 / 100")).toBeInTheDocument(),
     );
-    expect(container.querySelector("g.candle title")?.textContent).toMatch(
-      /O .* · H .* · L .* · C .* · Vol/,
-    );
+    expect(container.querySelector("g.candle title")).toBeNull();
+    expect(screen.getByText("Open")).toBeInTheDocument();
+    expect(screen.getByText("High")).toBeInTheDocument();
+    expect(screen.getByText("Low")).toBeInTheDocument();
+    expect(screen.getAllByText("Volume").length).toBeGreaterThan(0);
   });
 
   it("makes recorded trade markers directly inspectable by pointer and keyboard", () => {
@@ -392,12 +394,12 @@ describe("MarketChart", () => {
 
     expect(container.querySelectorAll("g.candle")).toHaveLength(3);
     expect(screen.getByText("3 / 3")).toBeInTheDocument();
-    const hitAreas = Array.from(
-      container.querySelectorAll<SVGRectElement>(".candle-hit"),
+    const candleWicks = Array.from(
+      container.querySelectorAll<SVGLineElement>("g.candle > line"),
     );
     expect(
-      Number(hitAreas[1].getAttribute("x")) -
-        Number(hitAreas[0].getAttribute("x")),
+      Number(candleWicks[1].getAttribute("x1")) -
+        Number(candleWicks[0].getAttribute("x1")),
     ).toBeGreaterThan(300);
 
     const chart = screen.getByRole("group", {
@@ -449,7 +451,7 @@ describe("MarketChart", () => {
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
-    expect(screen.getByText(/98 of 120 bars/)).toBeInTheDocument();
+    expect(screen.getByText(/99 of 120 bars/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Trend line" }));
     expect(
@@ -526,6 +528,26 @@ describe("MarketChart", () => {
     expect(screen.getByText("100 / 100")).toBeInTheDocument();
   });
 
+  it("offers independent granular price scaling without changing the timeline", () => {
+    render(
+      <MarketChart
+        dataSet={dataSet}
+        recordedTrades={[]}
+        simulationTrades={[]}
+        settings={settings}
+      />,
+    );
+
+    const priceScale = screen.getByRole("slider", {
+      name: "Adjust chart price scale",
+    });
+    fireEvent.change(priceScale, { target: { value: "0.5" } });
+    expect(screen.getByText("2.00×")).toBeInTheDocument();
+    expect(screen.getByText(/100 of 120 bars/)).toBeInTheDocument();
+    fireEvent.doubleClick(priceScale);
+    expect(screen.getByText("Auto")).toBeInTheDocument();
+  });
+
   it("supports horizontal trackpad panning without changing zoom", () => {
     render(
       <MarketChart
@@ -565,8 +587,16 @@ describe("MarketChart", () => {
       />,
     );
 
-    const hitAreas = container.querySelectorAll<SVGRectElement>(".candle-hit");
-    fireEvent.click(hitAreas[1]);
+    const chart = screen.getByRole("group", {
+      name: /TEST interactive candles chart/,
+    });
+    mockChartBounds(chart);
+    const candleWicks =
+      container.querySelectorAll<SVGLineElement>("g.candle > line");
+    fireEvent.click(chart, {
+      clientX: Number(candleWicks[1].getAttribute("x1")),
+      clientY: 200,
+    });
     expect(screen.getByText("2 / 100")).toBeInTheDocument();
 
     const marker = screen.getByRole("button", {

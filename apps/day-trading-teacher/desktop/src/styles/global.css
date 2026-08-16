@@ -4779,6 +4779,23 @@
     font-family: inherit;
     font-size: 9px;
   }
+  .quick-action-loading {
+    position: fixed;
+    z-index: 90;
+    right: 24px;
+    bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 14px;
+    color: var(--ink-700);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    font-size: 12px;
+    font-weight: 700;
+  }
   .quick-action-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5012,6 +5029,47 @@
   .journal-attention-banner p {
     margin: 0;
     font-size: 11px;
+  }
+  .synthetic-data-banner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+    padding: 15px 17px;
+    background:
+      radial-gradient(
+        circle at 10% 0%,
+        color-mix(in srgb, var(--brand-500) 18%, transparent),
+        transparent 34%
+      ),
+      var(--surface);
+    border: 1px solid color-mix(in srgb, var(--brand-600) 34%, var(--line));
+    border-radius: 13px;
+  }
+  .synthetic-data-banner > span {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    color: var(--brand-700);
+    background: var(--brand-100);
+    border-radius: 11px;
+  }
+  .synthetic-data-banner strong,
+  .synthetic-data-banner small {
+    display: block;
+  }
+  .synthetic-data-banner p {
+    max-width: 900px;
+    margin: 3px 0 0;
+    color: var(--ink-650);
+    font-size: 11px;
+  }
+  .synthetic-data-banner small {
+    margin-top: 5px;
+    color: var(--brand-700);
+    font-weight: 700;
   }
   .reflection-mode-tabs {
     display: grid;
@@ -6129,7 +6187,7 @@
   .market-chart path,
   .market-chart circle,
   .market-chart polygon,
-  .market-chart rect:not(.candle-hit) {
+  .market-chart rect {
     vector-effect: non-scaling-stroke;
   }
   .candle line {
@@ -6137,38 +6195,34 @@
     transition: stroke-width 100ms ease;
   }
   .candle.rising line,
-  .candle.rising > rect:not(.candle-hit) {
+  .candle.rising > rect {
     stroke: var(--brand-700);
     fill: var(--brand-600);
   }
   .candle.falling line,
-  .candle.falling > rect:not(.candle-hit) {
+  .candle.falling > rect {
     stroke: var(--danger-700);
     fill: color-mix(in srgb, var(--danger-700) 78%, var(--surface));
   }
-  .market-chart.hollow .candle.rising > rect:not(.candle-hit) {
+  .market-chart.hollow .candle.rising > rect {
     fill: var(--surface);
     stroke-width: 1.6;
   }
-  .market-chart.hollow .candle.falling > rect:not(.candle-hit) {
+  .market-chart.hollow .candle.falling > rect {
     fill: color-mix(in srgb, var(--danger-700) 70%, var(--surface));
     stroke-width: 1.5;
   }
-  .candle > rect:not(.candle-hit) {
+  .candle > rect {
     transition:
       stroke-width 100ms ease,
       filter 100ms ease;
   }
   .candle:hover line,
-  .candle:hover > rect:not(.candle-hit) {
+  .candle:hover > rect {
     stroke-width: 2.25;
     filter: drop-shadow(
       0 0 2px color-mix(in srgb, var(--ink-650) 30%, transparent)
     );
-  }
-  .candle-hit {
-    fill: transparent;
-    pointer-events: all;
   }
   .indicator-line {
     fill: none;
@@ -6675,7 +6729,7 @@
   }
   .chart-control-deck {
     display: grid;
-    grid-template-columns: 1.25fr 1fr 1fr;
+    grid-template-columns: 1.25fr repeat(3, 1fr);
     gap: 16px;
     padding: 12px 18px;
     border-top: 1px solid var(--line);
@@ -10629,10 +10683,12 @@
     grid-template-columns: 1fr;
   }
   .journal-attention-banner,
+  .synthetic-data-banner,
   .progress-next-step {
     grid-template-columns: auto 1fr;
   }
   .journal-attention-banner .button,
+  .synthetic-data-banner .button,
   .progress-next-cta {
     grid-column: 2;
     justify-self: start;
@@ -11811,6 +11867,178 @@
     scroll-behavior: auto !important;
     transition-duration: 0.001ms !important;
     animation-duration: 0.001ms !important;
+  }
+}
+
+.lesson-evidence-chain {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  margin: 0 0 14px;
+  padding: 15px 17px;
+  color: var(--ink-800);
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--brand-100) 72%, var(--surface)),
+    var(--surface)
+  );
+  border: 1px solid color-mix(in srgb, var(--brand-500) 24%, var(--line));
+  border-radius: 12px;
+  text-align: left;
+}
+
+.lesson-evidence-chain > svg {
+  color: var(--brand-700);
+}
+
+.lesson-evidence-chain strong,
+.lesson-evidence-chain small {
+  display: block;
+}
+
+.lesson-evidence-chain p {
+  margin: 4px 0;
+  color: var(--ink-600);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.lesson-evidence-chain small {
+  color: var(--ink-500);
+  font-size: 9px;
+}
+
+.lesson-evidence-chain.completed {
+  margin-top: 0;
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--success-100) 80%, var(--surface)),
+    var(--surface)
+  );
+}
+
+.achievement-evidence-numbers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.achievement-evidence-numbers > span {
+  padding: 12px;
+  background: var(--surface-muted);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.achievement-evidence-numbers strong,
+.achievement-evidence-numbers small {
+  display: block;
+}
+
+.achievement-evidence-numbers strong {
+  color: var(--ink-950);
+  font-size: 19px;
+}
+
+.achievement-evidence-numbers small {
+  margin-top: 2px;
+  color: var(--ink-500);
+  font-size: 9px;
+}
+
+.achievement-evidence-calculation {
+  display: grid;
+  gap: 3px;
+  margin: 13px 0 0;
+  padding: 12px 14px;
+  color: var(--ink-600);
+  background: var(--surface);
+  border-left: 3px solid var(--brand-500);
+}
+
+.achievement-evidence-calculation strong {
+  color: var(--ink-950);
+  font-size: 10px;
+}
+
+.achievement-sample-gate {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  color: var(--warning-800);
+  background: var(--warning-100);
+  border-radius: 10px;
+}
+
+.achievement-sample-gate.met {
+  color: var(--success-800);
+  background: var(--success-100);
+}
+
+.achievement-sample-gate strong,
+.achievement-sample-gate small {
+  display: block;
+}
+
+.achievement-sample-gate small {
+  margin-top: 2px;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.achievement-evidence-rules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.achievement-evidence-rules > div {
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.achievement-evidence-rules strong {
+  font-size: 10px;
+}
+
+.achievement-evidence-rules p {
+  margin: 3px 0 0;
+  color: var(--ink-600);
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.achievement-evidence-dates {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 9px;
+}
+
+.achievement-evidence-dates span {
+  color: var(--ink-500);
+  text-align: right;
+}
+
+@media (max-width: 680px) {
+  .achievement-evidence-rules {
+    grid-template-columns: 1fr;
+  }
+
+  .achievement-evidence-dates {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .achievement-evidence-dates span {
+    text-align: left;
   }
 }
 

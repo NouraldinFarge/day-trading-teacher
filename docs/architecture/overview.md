@@ -10,7 +10,7 @@ flowchart TB
     Domain["Deterministic TypeScript domain<br/>workflows, analytics, assessment, CSV parsing"]
     Bridge["Typed platform bridge<br/>browser preview or Tauri commands"]
     Rust["Tauri 2 + Rust authority<br/>persistence, files, provider requests, decimal calculations"]
-    Local["Local installation<br/>data/state.json + separated provider configuration"]
+    Local["Local installation<br/>coordinated state core + collection files"]
     Inputs["Untrusted local inputs<br/>lesson JSON, OHLCV CSV, Fidelity Orders CSV, state restore"]
     Providers["Explicit historical-data providers<br/>Massive, Alpaca, Tradier, Alpha Vantage"]
 
@@ -50,7 +50,7 @@ The React layer requests operations through a typed bridge. In the installed app
 
 ### Credentials are separated from normal state
 
-Provider credentials are written to provider-specific local configuration files and excluded from application-state exports. State restore rejects secret-shaped extension fields, while export sanitization removes such fields defensively. Fidelity credentials are never requested or stored.
+Provider credentials are stored as provider-specific entries in Windows Credential Manager for the current Windows user and excluded from application-state exports. On first successful access, a valid legacy plaintext credential is migrated into the protected store and its old primary, temporary, and backup files are removed. State restore rejects secret-shaped extension fields, while export sanitization removes such fields defensively. Fidelity credentials are never requested or stored.
 
 ### AI remains outside the runtime
 
@@ -62,21 +62,23 @@ Validated journal drafts can produce a local Trade Lessons system. The determini
 
 ## Core product flow
 
-1. **Prepare:** a lesson establishes the decision; the Daily Session Guard records readiness, setup eligibility, and preset paper-practice stop rules before any outcome is visible.
-2. **Apply:** the learner works with historical, synthetic, paper, or no-trade evidence; current-market prediction is not required.
+1. **Prepare:** opening a core, imported, or trade-assigned lesson creates a canonical learning case; the lesson establishes the decision, and the Daily Session Guard records readiness, setup eligibility, and preset paper-practice stop rules before any outcome is visible.
+2. **Apply:** the learner works with historical, synthetic, paper, or no-trade evidence; compatible Decision Cards, chart datasets, paper sessions, Journal reviews, and Learning Lab practices link back to the same case, and current-market prediction is not required.
 3. **Reflect:** completed executions or practice artifacts enter the Journal for factual reconstruction, tail/outlier stress testing, and process review; matched external journal evidence can also enter Trade Lessons for a preserved, newest-to-oldest lesson audit.
 4. **Measure:** the system keeps completion, objective-check performance, transfer, rubric evidence, retention, and remediation distinct.
 5. **Return:** a gap selects a focused practice route; a met standard advances the objective without turning frequency or P&L into a quota.
 
 ## Persistence and portable layout
 
-The portable application keeps app-controlled state under `data/` beside the executable and provider credentials under ignored `config/market-data-<provider>.json` files. Activation preserves both directories across verified upgrades and explicit downgrades. Historical versions remain immutable ZIP files; only the selected release is extracted into the root-level `active-build/` directory.
+The portable application keeps app-controlled state under `data/` beside the executable and non-secret provider configuration under `config/`. The native authority separates bulky trades, chart datasets, paper sessions, imported curricula, daily sessions, and trade-learning evidence into individually bounded collection files. `state.json` keeps the compact core plus one revision manifest. Every collection and core write is atomic and retains a matching recovery copy; loading accepts a revision only when the core and every declared collection agree, so a partially interrupted save falls back as one coordinated recovery point. Older monolithic `state.json` files load normally and are partitioned on the next successful save.
+
+Provider credentials remain in Windows Credential Manager and therefore survive verified application-folder upgrades for the same Windows user without being copied into the portable package. Activation preserves `data/` and `config/` across verified upgrades and explicit downgrades. Historical versions remain immutable ZIP files; only the selected release is extracted into the root-level `active-build/` directory.
 
 The one-click launcher inventories the workspace, historical source ZIPs, portable ZIPs, and active build; verifies registered hashes; and builds or activates the selected semantic version. Source builds run the complete verification gate before packaging.
 
 ## Current scope and deliberate limits
 
-The Fidelity evidence inbox recursively inventories supported Orders and chart CSVs in dated folders, reconstructs completed equity positions from multiple entry fills and partial exits, applies Fidelity's fractional-dollar buy semantics, pairs same-day one-minute charts by date and symbol, records reconciliation confidence, flags unresolved evidence, and ignores account identifiers. It can detect a root-level `Trading_Records/` directory beside an active portable build. It does not yet claim full brokerage-ledger fidelity for options, multi-leg positions, corporate actions, short-borrow state, or position flips.
+The Fidelity evidence inbox recursively inventories supported Orders and chart CSVs in dated folders, reconstructs completed equity positions from multiple entry fills and partial exits, applies Fidelity's fractional-dollar buy semantics, pairs same-day one-minute charts by date and symbol, records reconciliation confidence, flags unresolved evidence, and ignores account identifiers. It can detect a root-level `Trading_Records/` directory beside an active portable build. While the Journal remains open, a metadata-only revision probe runs before each polling cycle; unchanged folders are not reread in full, and changed file revisions are reported explicitly. It does not yet claim full brokerage-ledger fidelity for options, multi-leg positions, corporate actions, short-borrow state, or position flips.
 
 Chart data may come from supported CSVs, a clearly labeled synthetic sample, or configured historical-data providers. It remains historical learning context, not a consolidated live quote feed. Backtests expose their assumptions and limitations and are never forecasts.
 
@@ -84,6 +86,6 @@ The Daily Session Guard is a local educational control, not a brokerage control.
 
 ## Verification model
 
-`npm run verify` runs the documentation/media contract, formatting checks, TypeScript checks, React tests, portable-deployment tests, the production frontend build, Clippy with warnings denied, and Rust workspace tests. Tagged releases repeat the portable build on GitHub's Windows runner and publish a checksum, SPDX SBOM, and build-provenance attestation.
+`npm run verify` runs the documentation/media contract, formatting and lint checks, the public-data privacy scan, the production dependency audit, TypeScript checks, coverage thresholds, portable-deployment rollback tests, the production frontend build and bundle budgets, Clippy with warnings denied, and Rust workspace tests. `npm run e2e` separately exercises desktop and compact browser journeys with serious/critical accessibility scanning; CI runs both gates. Tagged releases repeat the portable build on GitHub's Windows runner and publish a checksum, SPDX SBOM, and build-provenance attestation.
 
 Return to the [documentation hub](../README.md) or take the [five-minute source tour](../../README.md#five-minute-project-tour).

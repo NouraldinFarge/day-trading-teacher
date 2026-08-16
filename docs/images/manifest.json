@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "capturedVersion": "0.37.0",
+  "capturedAt": "2026-08-15",
+  "captureAuthority": "isolated browser development build on a clean origin",
+  "files": [
+    {
+      "name": "day-trading-teacher-lessons.png",
+      "width": 1425,
+      "height": 891,
+      "sha256": "62b8d5284cda8aa8b8764561dcef4b9b3825da9785a41117dcca6083da2bea3e",
+      "dataClassification": "fresh documentation profile; no learner or brokerage records",
+      "synthetic": true
+    },
+    {
+      "name": "day-trading-teacher-lesson.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "e39d7dea7b7892b46c997f126d757943da5bf728253c32157a88ff9512270495",
+      "dataClassification": "bundled core lesson and fictional practice framing; no learner records",
+      "synthetic": true
+    },
+    {
+      "name": "day-trading-teacher-chart.png",
+      "width": 1425,
+      "height": 891,
+      "sha256": "f14397b3f6a62d373f1723684e268da65671bdda3f90ed3e67cfcec83824f6e6",
+      "dataClassification": "built-in DEMO synthetic practice series; no market or brokerage data",
+      "synthetic": true
+    },
+    {
+      "name": "day-trading-teacher-journal.png",
+      "width": 1425,
+      "height": 891,
+      "sha256": "4415836fdf3a9d2a37cb9a134eccae4f6822dad73c82e5d62808c5b905767c8e",
+      "dataClassification": "temporary guided journal preview with twelve fictional mixed-outcome records",
+      "synthetic": true
+    },
+    {
+      "name": "day-trading-teacher-calendar.png",
+      "width": 1425,
+      "height": 891,
+      "sha256": "bc8c55fbf4f0a76b75c86320df418c380541c38e45c28709de8850f5ccbf5eea",
+      "dataClassification": "temporary guided journal preview powering a fictional calendar and process heatmap",
+      "synthetic": true
+    },
+    {
+      "name": "day-trading-teacher-progress.png",
+      "width": 1425,
+      "height": 891,
+      "sha256": "38600de06ff74a4e12800058a1bf81ff6f07603ea46c2ee3b1af001c11c64e7b",
+      "dataClassification": "fresh documentation profile plus one built-in synthetic chart-practice achievement",
+      "synthetic": true
+    },
+    {
+      "name": "day-trading-teacher-social-preview.png",
+      "width": 1280,
+      "height": 640,
+      "sha256": "9a04cb687b2e2e22a92c75da467471d1da4625e35d3275f45047b89dd96bb1d8",
+      "dataClassification": "composite of reviewed synthetic product media and product-boundary copy",
+      "synthetic": true
+    }
+  ]
+}

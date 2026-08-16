@@ -650,6 +650,55 @@ const setupPlaybookSchema = z
   })
   .strict();
 
+const lessonPracticeEvidenceSchema = z
+  .object({
+    lessonVersion: z.string().max(40),
+    objectiveChecks: z.number().int().nonnegative(),
+    firstTryCorrect: z.number().int().nonnegative(),
+    correctionsCompleted: z.number().int().nonnegative(),
+    standardMet: z.boolean().optional(),
+    independentCases: z.number().int().nonnegative().optional(),
+    successfulCases: z.number().int().nonnegative().optional(),
+    rubricAverage: z.number().min(0).max(3).optional(),
+  })
+  .strict();
+
+const learningCaseSchema = z
+  .object({
+    id: shortText,
+    lessonId: shortText,
+    lessonTitle: z.string().max(300),
+    source: z.enum(["core", "imported", "trade_assigned"]),
+    status: z.enum(["active", "evidence_ready", "completed"]),
+    startedAt: dateText,
+    updatedAt: dateText,
+    completedAt: optionalDate.optional(),
+    currentWorkspace: z.enum(["plan", "chart", "journal", "lab"]).optional(),
+    evidenceLinks: z
+      .array(
+        z
+          .object({
+            id: shortText,
+            kind: z.enum([
+              "decision_plan",
+              "chart_dataset",
+              "paper_session",
+              "journal_entry",
+              "learning_tool",
+              "workspace_evidence",
+            ]),
+            referenceId: shortText,
+            label: z.string().max(500),
+            workspace: z.enum(["plan", "chart", "journal", "lab"]),
+            linkedAt: dateText,
+          })
+          .strict(),
+      )
+      .max(100),
+    practiceEvidence: lessonPracticeEvidenceSchema.optional(),
+  })
+  .strict();
+
 const appStateSchema = z
   .object({
     schemaVersion: z.literal(1),
@@ -755,6 +804,8 @@ const appStateSchema = z
         autoDetect: z.boolean().optional(),
         lastScanAt: optionalDate,
         lastFileKey: longText.nullable(),
+        lastDiscoveryKey: longText.nullable().optional(),
+        processedFileKeys: z.array(longText).max(500).optional(),
         lastScanSummary: z
           .object({
             tradingDayCount: z.number().int().nonnegative(),
@@ -767,6 +818,7 @@ const appStateSchema = z
             unsupportedCsvCount: z.number().int().nonnegative(),
             skippedCsvCount: z.number().int().nonnegative(),
             warningCount: z.number().int().nonnegative(),
+            newOrChangedFileCount: z.number().int().nonnegative().optional(),
           })
           .strict()
           .optional(),
@@ -822,6 +874,7 @@ const appStateSchema = z
     paperTradingSessions: z.array(paperTradingSessionSchema).max(50).optional(),
     setupPlaybooks: z.array(setupPlaybookSchema).max(200).optional(),
     tradeLearningSystem: tradeLearningSystemSchema.optional(),
+    learningCases: z.array(learningCaseSchema).max(1_000).optional(),
   })
   .passthrough();
 

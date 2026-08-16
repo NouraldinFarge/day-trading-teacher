@@ -46,7 +46,7 @@ const emptyForm = {
 };
 
 export function PlanPage() {
-  const { state, addPlan } = useAppState();
+  const { state, addPlan, linkLearningCaseEvidence } = useAppState();
   const guidedByLesson = !state.profile.standaloneTools;
   const [lessonContext] = useState(() => readLessonWorkspaceContext("plan"));
   const [form, setForm] = useState({
@@ -188,6 +188,15 @@ export function PlanPage() {
       lockedAt: locked ? now : null,
     };
     addPlan(plan);
+    if (lessonContext)
+      linkLearningCaseEvidence(lessonContext.learningCaseId, {
+        id: crypto.randomUUID(),
+        kind: "decision_plan",
+        referenceId: plan.id,
+        label: `${plan.symbol} decision card`,
+        workspace: "plan",
+        linkedAt: now,
+      });
     setSavedSymbol(plan.symbol);
     setForm({ ...emptyForm, maximumRisk: state.profile.maxRiskPerTrade });
     setCalculation(null);

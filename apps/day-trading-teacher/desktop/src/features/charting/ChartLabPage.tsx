@@ -106,10 +106,25 @@ export function ChartLabPage() {
     updateChartAcquisition,
     updateChartWorkspace,
     upsertPaperTradingSession,
+    linkLearningCaseEvidence,
   } = useAppState();
   const guidedByLesson = !state.profile.standaloneTools;
-  const dataSets = state.marketDataSets ?? [];
+  const dataSets = useMemo(
+    () => state.marketDataSets ?? [],
+    [state.marketDataSets],
+  );
   const [lessonContext] = useState(() => readLessonWorkspaceContext("chart"));
+  const linkChartDataSet = (dataSet: MarketDataSet) => {
+    if (!lessonContext) return;
+    linkLearningCaseEvidence(lessonContext.learningCaseId, {
+      id: crypto.randomUUID(),
+      kind: "chart_dataset",
+      referenceId: dataSet.id,
+      label: `${dataSet.symbol} ${dataSet.timeframe} chart evidence`,
+      workspace: "chart",
+      linkedAt: new Date().toISOString(),
+    });
+  };
   const [showAcquisition, setShowAcquisition] = useState(
     () => !guidedByLesson && dataSets.length === 0,
   );
@@ -266,7 +281,7 @@ export function ChartLabPage() {
       setProviderKey("");
       setProviderSecret("");
       setAcquisitionMessage(
-        `${activeProvider.shortName} credentials saved locally. They are excluded from app-state exports.`,
+        `${activeProvider.shortName} credentials are protected by Windows Credential Manager and excluded from app-state exports.`,
       );
     } catch (reason) {
       setAcquisitionError(
@@ -322,6 +337,7 @@ export function ChartLabPage() {
         acquisitionInterval,
       );
       addMarketDataSet(dataSet);
+      linkChartDataSet(dataSet);
       setSelectedId(dataSet.id);
       setAcquisitionSymbol(normalized);
       const checkedAt = new Date().toISOString();
@@ -361,18 +377,18 @@ export function ChartLabPage() {
     const failures: string[] = [];
     for (const request of acquisition.subscriptions) {
       try {
-        addMarketDataSet(
-          createProviderMarketDataSet(
+        const dataSet = createProviderMarketDataSet(
+          request.provider,
+          request.symbol,
+          await fetchMarketData(
             request.provider,
             request.symbol,
-            await fetchMarketData(
-              request.provider,
-              request.symbol,
-              request.interval,
-            ),
             request.interval,
           ),
+          request.interval,
         );
+        addMarketDataSet(dataSet);
+        linkChartDataSet(dataSet);
         refreshed += 1;
       } catch {
         failures.push(
@@ -458,6 +474,7 @@ export function ChartLabPage() {
         },
       };
       addMarketDataSet(dataSet);
+      linkChartDataSet(dataSet);
       setSelectedId(dataSet.id);
       setSymbol(normalizedSymbol);
       setImportMessage(
@@ -481,6 +498,7 @@ export function ChartLabPage() {
     }
     const sample = createGuidedSampleData();
     addMarketDataSet(sample);
+    linkChartDataSet(sample);
     setSelectedId(sample.id);
     setSymbol(sample.symbol);
     setImportMessage(
@@ -790,10 +808,12 @@ export function ChartLabPage() {
                 ) : null}
               </div>
               <small>
-                Credentials stay in <strong>active-build/config</strong>,
-                outside app-state exports. Requests go only to the selected
-                market-data provider. The app never receives trading permission
-                or places orders.
+                Credentials are protected by{" "}
+                <strong>Windows Credential Manager</strong> for your Windows
+                account and stay outside app-state exports. Moving the app to
+                another Windows user requires re-entering them. Requests go only
+                to the selected market-data provider. The app never receives
+                trading permission or places orders.
               </small>
             </div>
             <div className="watchlist-panel">
@@ -1020,6 +1040,7 @@ export function ChartLabPage() {
             className="file-input"
             type="file"
             accept=".csv,text/csv"
+            aria-label="Choose an OHLCV CSV file"
             onChange={(event) => void importFile(event.target.files?.[0])}
           />
           <button className="button secondary" onClick={loadSample}>
@@ -1194,7 +1215,18 @@ export function ChartLabPage() {
             paperDefaults={paperDefaults}
             dailySession={dailySession}
             paperEntryAccess={paperAccess}
-            onPaperSessionChange={upsertPaperTradingSession}
+            onPaperSessionChange={(session) => {
+              upsertPaperTradingSession(session);
+              if (lessonContext)
+                linkLearningCaseEvidence(lessonContext.learningCaseId, {
+                  id: crypto.randomUUID(),
+                  kind: "paper_session",
+                  referenceId: session.id,
+                  label: `${session.symbol} future-hidden paper session`,
+                  workspace: "chart",
+                  linkedAt: session.updatedAt,
+                });
+            }}
           />
 
           <section className="chart-lab-grid section-gap">

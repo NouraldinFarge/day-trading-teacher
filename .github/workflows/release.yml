@@ -36,6 +36,10 @@ jobs:
 
       - name: Build and verify portable package
         working-directory: project/workspace
+        env:
+          DTT_WINDOWS_CERTIFICATE_BASE64: ${{ secrets.WINDOWS_CERTIFICATE_BASE64 }}
+          DTT_WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+          DTT_REQUIRE_SIGNED_RELEASE: ${{ secrets.WINDOWS_CERTIFICATE_BASE64 != '' && '1' || '0' }}
         run: npm run portable:build
 
       - name: Prepare release assets and checksum
@@ -58,6 +62,13 @@ jobs:
           output-file: release/day-trading-teacher-${{ github.ref_name }}-sbom.spdx.json
           upload-artifact: false
 
+      - name: Generate reviewed release notes
+        working-directory: project/workspace
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME.TrimStart("v")
+          node scripts/generate-release-notes.mjs --version $version --output ../../release-notes.md
+
       - name: Attest portable package provenance
         uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
         with:
@@ -69,4 +80,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $assets = @(Get-ChildItem release -File | ForEach-Object FullName)
-          gh release create $env:GITHUB_REF_NAME @assets --repo $env:GITHUB_REPOSITORY --verify-tag --generate-notes --title "Day-Trading Teacher $env:GITHUB_REF_NAME"
+          gh release create $env:GITHUB_REF_NAME @assets --repo $env:GITHUB_REPOSITORY --verify-tag --latest --notes-file release-notes.md --title "Day-Trading Teacher $env:GITHUB_REF_NAME"

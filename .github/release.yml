@@ -20,11 +20,20 @@ changelog:
       labels:
         - accessibility
         - ux
+    - title: Performance
+      labels:
+        - performance
+    - title: Fidelity export integration
+      labels:
+        - fidelity-import
     - title: Reliability, privacy, and security
       labels:
         - security
         - reliability
         - privacy
+    - title: Release and distribution
+      labels:
+        - release
     - title: Documentation
       labels:
         - documentation

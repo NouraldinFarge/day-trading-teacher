@@ -9,3 +9,6 @@ contact_links:
   - name: Private security report
     url: https://github.com/NouraldinFarge/day-trading-teacher/security/advisories/new
     about: Report credential, import, path, or local-data vulnerabilities privately.
+  - name: Privacy and local data
+    url: https://github.com/NouraldinFarge/day-trading-teacher/blob/main/PRIVACY.md
+    about: Review what stays local, what optional network requests contain, and how to share evidence safely.

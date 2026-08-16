@@ -72,6 +72,19 @@ export type AchievementProgress = AchievementDefinition & {
   unlockedAt: string | null;
 };
 
+export type AchievementEvidenceSummary = {
+  counted: number;
+  eligible: number;
+  excluded: number;
+  calculation: string;
+  countingRule: string;
+  exclusionRule: string;
+  sampleCurrent: number | null;
+  sampleRequired: number | null;
+  sampleMet: boolean;
+  recentEvidenceDates: string[];
+};
+
 const tierRewards: Record<AchievementTier, number> = {
   Bronze: 20,
   Silver: 40,
@@ -793,6 +806,205 @@ function metricValue(definition: AchievementDefinition, state: AppState) {
       ? 1
       : 0;
   return longestRuleSequence(reviewed);
+}
+
+function recentDates(values: Array<string | null | undefined>) {
+  return Array.from(
+    new Set(
+      values
+        .filter((value): value is string => Boolean(value))
+        .map((value) => value.slice(0, 10)),
+    ),
+  )
+    .sort((left, right) => right.localeCompare(left))
+    .slice(0, 5);
+}
+
+export function achievementEvidence(
+  definition: AchievementDefinition,
+  state: AppState,
+): AchievementEvidenceSummary {
+  const reviewed = reviewedTrades(state);
+  const counted = metricValue(definition, state);
+  let eligible = reviewed.length;
+  let excluded = Math.max(0, state.trades.length - reviewed.length);
+  let calculation = `${counted} qualifying record${counted === 1 ? "" : "s"}`;
+  let countingRule =
+    "Only locally saved evidence that meets the published requirement counts.";
+  let exclusionRule =
+    "Draft, incomplete, or missing evidence does not count; rest days never subtract progress.";
+  let evidenceDates = recentDates(
+    reviewed.map((trade) => trade.journal?.reviewedAt ?? trade.occurredAt),
+  );
+  let sampleCurrent: number | null = definition.minimumSample ? eligible : null;
+
+  if (definition.metric === "core_lessons") {
+    eligible = lessonArtifacts.length;
+    excluded = eligible - counted;
+    calculation = `${counted} of ${eligible} core lessons have a recorded practice attempt`;
+    countingRule =
+      "A core lesson counts after at least one completed deliberate-practice pass.";
+    exclusionRule =
+      "Opening a lesson, imported lessons, and unfinished passes do not count.";
+    evidenceDates = recentDates(
+      lessonArtifacts.map(
+        ({ lessonId }) =>
+          state.progress.lessonMastery?.[lessonId]?.lastPracticedAt,
+      ),
+    );
+  } else if (definition.metric === "lesson_days") {
+    const days = definition.lessonId
+      ? lessonPracticeDays(state, definition.lessonId)
+      : [];
+    eligible = days.length;
+    excluded = 0;
+    calculation = `${days.length} separated practice date${days.length === 1 ? "" : "s"} met the lesson standard`;
+    countingRule =
+      "At most one standard-meeting pass per calendar date counts.";
+    exclusionRule =
+      "Repeated passes on the same date and passes below the independent standard do not advance this artifact.";
+    evidenceDates = [...days].sort((a, b) => b.localeCompare(a)).slice(0, 5);
+  } else if (
+    definition.metric === "corrected_lessons" ||
+    definition.metric === "spaced_lessons" ||
+    definition.metric === "retained_lessons" ||
+    definition.metric === "lesson_artifacts"
+  ) {
+    eligible = lessonArtifacts.length;
+    excluded = eligible - counted;
+    calculation = `${counted} of ${eligible} lesson evidence records qualify`;
+    countingRule =
+      definition.metric === "corrected_lessons"
+        ? "A lesson counts after at least one written reasoning correction."
+        : definition.metric === "spaced_lessons"
+          ? "A lesson counts after standard-meeting practice on at least two dates."
+          : definition.metric === "retained_lessons"
+            ? "A lesson counts after two standard dates and a 100% best first-try check score."
+            : "Each lesson artifact must meet its own separated-date target.";
+    exclusionRule =
+      "Same-day repetition, incomplete attempts, and confidence alone do not satisfy the evidence rule.";
+    evidenceDates = recentDates(
+      lessonArtifacts.map(
+        ({ lessonId }) =>
+          state.progress.lessonMastery?.[lessonId]?.lastPracticedAt,
+      ),
+    );
+  } else if (definition.metric === "reflections") {
+    calculation = `${reviewed.length} completed reflections from ${state.trades.length} saved trades`;
+    countingRule =
+      "A trade counts once its reflection is explicitly saved as reviewed.";
+    exclusionRule =
+      "Imported trades, AI drafts, and partial journal entries remain excluded until you review them.";
+  } else if (definition.metric === "review_days") {
+    calculation = `${counted} distinct calendar dates contain a completed reflection`;
+    countingRule =
+      "Any number of completed reflections on one date counts as one evidence day.";
+    exclusionRule =
+      "Trade frequency within a day and continuous streaks do not increase this measure.";
+  } else if (definition.metric === "plan_coverage") {
+    const linked = reviewed.filter((trade) => trade.planId).length;
+    calculation = `${linked} plan-linked ÷ ${reviewed.length} reviewed = ${counted.toFixed(1)}%`;
+    countingRule =
+      "The denominator is every completed reflection; the numerator has a saved pre-trade plan link.";
+    exclusionRule =
+      "Unreviewed trades are excluded from the percentage, and retroactive notes are not treated as pre-trade plans.";
+  } else if (definition.metric === "rule_adherence") {
+    const riskEvidence = reviewed.filter(
+      (trade) => trade.planId || trade.journal?.postTradeChecklist,
+    );
+    const adhered = riskEvidence.filter((trade) => trade.respectedStop).length;
+    eligible = riskEvidence.length;
+    excluded = state.trades.length - riskEvidence.length;
+    sampleCurrent = definition.minimumSample ? riskEvidence.length : null;
+    calculation = `${adhered} adhered ÷ ${riskEvidence.length} with risk evidence = ${counted.toFixed(1)}%`;
+    countingRule =
+      "Only reviewed trades with a plan or post-trade risk checklist enter the denominator.";
+    exclusionRule =
+      "Missing risk evidence is excluded rather than guessed; a documented violation remains in the denominator.";
+  } else if (definition.metric === "focus_logs") {
+    const logs = reviewed.filter((trade) => trade.journal?.focusRating).length;
+    calculation = `${logs} reviewed reflections include a focus rating`;
+    countingRule =
+      "Any honest 1–5 focus rating counts; the rating does not need to be high.";
+  } else if (definition.metric === "emotion_logs") {
+    const logs = reviewed.filter(
+      (trade) => trade.journal?.emotionBefore && trade.journal?.emotionAfter,
+    ).length;
+    calculation = `${logs} reviewed reflections include both before and after emotion labels`;
+    countingRule =
+      "Both timepoints must be present so the record can show change without judging the emotion.";
+  } else if (definition.metric === "strategy_labels") {
+    calculation = `${counted} reviewed reflections have a non-empty strategy label`;
+    countingRule =
+      "One stable strategy label on a reviewed reflection counts one example.";
+  } else if (definition.metric === "setup_depth") {
+    const labeled = reviewed.filter((trade) => trade.journal?.setup?.trim());
+    eligible = labeled.length;
+    excluded = state.trades.length - labeled.length;
+    calculation = `${counted} reviewed examples share the most-used setup label`;
+    countingRule =
+      "Depth is the largest sample under one exact, non-empty setup label.";
+    exclusionRule =
+      "Unreviewed trades and blank or inconsistent setup labels do not enter a setup sample.";
+  } else if (definition.metric === "historical_datasets") {
+    eligible = state.marketDataSets?.length ?? 0;
+    excluded = 0;
+    calculation = `${counted} historical chart dataset${counted === 1 ? "" : "s"} stored locally`;
+    countingRule =
+      "A validated imported, provider-downloaded, trading-record, or synthetic practice dataset counts.";
+    exclusionRule =
+      "Failed imports and removed datasets do not count; placing a trade is never required.";
+    evidenceDates = recentDates(
+      state.marketDataSets?.map((dataSet) => dataSet.importedAt) ?? [],
+    );
+  } else if (definition.metric === "positive_expectancy") {
+    const total = reviewed.reduce(
+      (sum, trade) => sum + Number(trade.netPnl),
+      0,
+    );
+    const mean = reviewed.length ? total / reviewed.length : 0;
+    calculation = `${reviewed.length} reviewed outcomes · average net P&L ${mean >= 0 ? "+" : ""}$${mean.toFixed(2)} · milestone ${counted ? "met" : "not met"}`;
+    countingRule =
+      "Every reviewed outcome enters the historical arithmetic after the minimum sample is met.";
+    exclusionRule =
+      "This is descriptive, grants no XP, and is never treated as a forecast or prompt to trade more.";
+  } else if (definition.metric === "active_months") {
+    calculation = `${counted} distinct calendar months contain completed reflections`;
+    countingRule =
+      "A month counts once, regardless of how many trades it contains.";
+  } else if (
+    definition.metric === "good_loss" ||
+    definition.metric === "honest_correction" ||
+    definition.metric === "calm_loss"
+  ) {
+    calculation = counted
+      ? "One qualifying process record is preserved"
+      : "No qualifying record yet";
+    countingRule = definition.requirement;
+    exclusionRule =
+      "Outcome or trade frequency alone cannot trigger this surprise achievement.";
+  } else if (definition.metric === "consecutive_rules") {
+    calculation = `Best sequence: ${counted} consecutive reviewed, risk-adherent trades`;
+    countingRule =
+      "Reviewed trades are ordered by occurrence time; each documented adherence extends the sequence.";
+    exclusionRule =
+      "A documented violation resets the sequence; rest days and no-trade days do not.";
+  }
+
+  const sampleRequired = definition.minimumSample ?? null;
+  return {
+    counted,
+    eligible,
+    excluded: Math.max(0, excluded),
+    calculation,
+    countingRule,
+    exclusionRule,
+    sampleCurrent,
+    sampleRequired,
+    sampleMet:
+      sampleRequired === null || (sampleCurrent ?? 0) >= sampleRequired,
+    recentEvidenceDates: evidenceDates,
+  };
 }
 
 export function evaluateAchievements(state: AppState): AchievementProgress[] {

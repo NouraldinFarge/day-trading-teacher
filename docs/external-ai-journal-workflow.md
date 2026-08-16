@@ -1,6 +1,6 @@
 # External-AI journal workflow
 
-Status: current for v0.36.0.
+Status: current for v0.37.0.
 
 Day-Trading Teacher does not run an AI model or upload trading data. It can create a redacted evidence package that the learner explicitly shares with an external AI, then validate the returned journal drafts locally.
 

@@ -148,6 +148,7 @@ export function PerformanceChart({
                 className={
                   value >= 0 ? "chart-bar positive" : "chart-bar negative"
                 }
+                role="img"
                 tabIndex={0}
                 aria-label={`${point.label}: ${formatValue(value, metric)}, ${point.tradeCount} trades`}
                 onFocus={() => setActive(index)}
@@ -171,6 +172,7 @@ export function PerformanceChart({
                 cy={y(valueFor(point, metric))}
                 r={active === index ? 6 : 3.5}
                 className="chart-point"
+                role="img"
                 tabIndex={0}
                 aria-label={`${point.label}: ${formatValue(valueFor(point, metric), metric)}, ${point.tradeCount} trades`}
                 onFocus={() => setActive(index)}

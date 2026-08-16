@@ -1,6 +1,6 @@
 # Trade-derived learning system
 
-Status: current for v0.36.0.
+Status: current for v0.37.0.
 
 The Trade Lessons workspace converts matched, validated Trading Records evidence into a structured retrospective curriculum. It starts with the newest execution, works backward through every matched record, and uses older trades to test and refine the newest conclusion. It does not modify the original trade, journal reflection, external-AI hypothesis, or original lesson.
 

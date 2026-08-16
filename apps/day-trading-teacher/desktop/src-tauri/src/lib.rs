@@ -6,6 +6,8 @@ use std::fs;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+#[cfg(target_os = "windows")]
+use std::sync::OnceLock;
 use teacher_calculations::{
     ExpectancyRequest, ExpectancyResult, PositionSizeRequest, PositionSizeResult, TradeResult,
     TradeResultRequest,
@@ -90,37 +92,161 @@ fn read_json_file(path: &Path) -> Result<Value, String> {
     serde_json::from_str(&raw).map_err(|_| "The saved data file is not valid JSON.".to_string())
 }
 
-#[tauri::command]
-fn load_app_state() -> Result<Option<Value>, String> {
-    let path = portable_data_root()?.join("state.json");
+const NATIVE_STORAGE_FIELD: &str = "_nativeStorage";
+const STATE_COLLECTIONS: [&str; 6] = [
+    "trades",
+    "customLessonPlans",
+    "marketDataSets",
+    "dailySessions",
+    "paperTradingSessions",
+    "tradeLearningSystem",
+];
+const CORE_STATE_LIMIT_BYTES: usize = 64_000_000;
+const COLLECTION_LIMIT_BYTES: usize = 384_000_000;
+
+fn storage_revision() -> String {
+    format!(
+        "{}-{}",
+        Utc::now().timestamp_nanos_opt().unwrap_or_default(),
+        std::process::id()
+    )
+}
+
+fn collection_path(root: &Path, key: &str) -> PathBuf {
+    root.join("collections").join(format!("{key}.json"))
+}
+
+fn collection_value_for_revision(root: &Path, key: &str, revision: &str) -> Result<Value, String> {
+    let primary = collection_path(root, key);
+    let backup = sibling_path(&primary, "backup");
+    for candidate in [&primary, &backup] {
+        if !candidate.exists() {
+            continue;
+        }
+        let Ok(envelope) = read_json_file(candidate) else {
+            continue;
+        };
+        if envelope.get("storageVersion").and_then(Value::as_u64) == Some(1)
+            && envelope.get("revision").and_then(Value::as_str) == Some(revision)
+            && envelope.get("key").and_then(Value::as_str) == Some(key)
+            && let Some(value) = envelope.get("value")
+        {
+            return Ok(value.clone());
+        }
+    }
+    Err(format!(
+        "The saved {key} collection does not match this app-state recovery point. No data was overwritten."
+    ))
+}
+
+fn hydrate_partitioned_state(root: &Path, mut state: Value) -> Result<Value, String> {
+    let Some(metadata) = state.get(NATIVE_STORAGE_FIELD).cloned() else {
+        return Ok(state);
+    };
+    let revision = metadata
+        .get("revision")
+        .and_then(Value::as_str)
+        .ok_or_else(|| "The saved app-state storage manifest is incomplete.".to_string())?;
+    let collections = metadata
+        .get("collections")
+        .and_then(Value::as_array)
+        .ok_or_else(|| "The saved app-state storage manifest is incomplete.".to_string())?;
+    let object = state
+        .as_object_mut()
+        .ok_or_else(|| "The saved app data is not a JSON object.".to_string())?;
+    object.remove(NATIVE_STORAGE_FIELD);
+    for item in collections {
+        let key = item
+            .as_str()
+            .filter(|key| STATE_COLLECTIONS.contains(key))
+            .ok_or_else(|| {
+                "The saved app-state storage manifest has an unknown collection.".to_string()
+            })?;
+        let value = collection_value_for_revision(root, key, revision)?;
+        if value.is_null() {
+            object.remove(key);
+        } else {
+            object.insert(key.to_string(), value);
+        }
+    }
+    Ok(state)
+}
+
+fn load_app_state_at_root(root: &Path) -> Result<Option<Value>, String> {
+    let path = root.join("state.json");
     let backup = sibling_path(&path, "backup");
     if !path.exists() && !backup.exists() {
         return Ok(None);
     }
-    if path.exists()
-        && let Ok(state) = read_json_file(&path)
-    {
-        return Ok(Some(state));
+    for candidate in [&path, &backup] {
+        if !candidate.exists() {
+            continue;
+        }
+        let Ok(state) = read_json_file(candidate) else {
+            continue;
+        };
+        if let Ok(hydrated) = hydrate_partitioned_state(root, state) {
+            return Ok(Some(hydrated));
+        }
     }
-    read_json_file(&backup).map(Some).map_err(|_| {
-        "The saved app data and its recovery copy are unreadable. Neither file was overwritten."
-            .to_string()
-    })
+    Err(
+        "The saved app data and its coordinated recovery copy are unreadable. No files were overwritten."
+            .to_string(),
+    )
+}
+
+fn save_app_state_at_root(root: &Path, state: Value) -> Result<(), String> {
+    let mut object = state
+        .as_object()
+        .cloned()
+        .ok_or_else(|| "Application state must be a JSON object".to_string())?;
+    fs::create_dir_all(root).map_err(|error| error.to_string())?;
+    fs::create_dir_all(root.join("collections")).map_err(|error| error.to_string())?;
+
+    let revision = storage_revision();
+    object.remove(NATIVE_STORAGE_FIELD);
+    for key in STATE_COLLECTIONS {
+        let value = object.remove(key).unwrap_or(Value::Null);
+        let envelope = serde_json::json!({
+            "storageVersion": 1,
+            "revision": revision,
+            "key": key,
+            "value": value,
+        });
+        let raw = serde_json::to_vec_pretty(&envelope).map_err(|error| error.to_string())?;
+        if raw.len() > COLLECTION_LIMIT_BYTES {
+            return Err(format!(
+                "The local {key} collection exceeds its 384 MB safety limit. Export or remove large attachments before continuing."
+            ));
+        }
+        atomic_write(&collection_path(root, key), &raw, true)?;
+    }
+
+    object.insert(
+        NATIVE_STORAGE_FIELD.to_string(),
+        serde_json::json!({
+            "version": 1,
+            "revision": revision,
+            "collections": STATE_COLLECTIONS,
+        }),
+    );
+    let raw =
+        serde_json::to_vec_pretty(&Value::Object(object)).map_err(|error| error.to_string())?;
+    if raw.len() > CORE_STATE_LIMIT_BYTES {
+        return Err("The core local data file exceeds its 64 MB safety limit.".to_string());
+    }
+    atomic_write(&root.join("state.json"), &raw, true)
+}
+
+#[tauri::command]
+fn load_app_state() -> Result<Option<Value>, String> {
+    load_app_state_at_root(&portable_data_root()?)
 }
 
 #[tauri::command]
 fn save_app_state(state: Value) -> Result<(), String> {
-    if !state.is_object() {
-        return Err("Application state must be a JSON object".to_string());
-    }
     let root = portable_data_root()?;
-    fs::create_dir_all(&root).map_err(|error| error.to_string())?;
-    let path = root.join("state.json");
-    let raw = serde_json::to_vec_pretty(&state).map_err(|error| error.to_string())?;
-    if raw.len() > 512_000_000 {
-        return Err("The local data file exceeds the 512 MB safety limit. Export or remove large screenshot attachments before continuing.".to_string());
-    }
-    atomic_write(&path, &raw, true)
+    save_app_state_at_root(&root, state)
 }
 
 fn portable_root() -> Result<PathBuf, String> {
@@ -205,6 +331,131 @@ struct ProviderCredentials {
     api_secret: String,
 }
 
+const CREDENTIAL_SERVICE: &str = "Day-Trading Teacher market data";
+
+#[cfg(target_os = "windows")]
+static CREDENTIAL_STORE_INITIALIZED: OnceLock<Result<(), String>> = OnceLock::new();
+
+#[cfg(target_os = "windows")]
+fn initialize_credential_store() -> Result<(), String> {
+    CREDENTIAL_STORE_INITIALIZED
+        .get_or_init(|| {
+            windows_native_keyring_store::Store::new()
+                .map(|store| keyring_core::set_default_store(store))
+                .map_err(|_| {
+                    "Windows Credential Manager could not be opened for market-data credentials."
+                        .to_string()
+                })
+        })
+        .clone()
+}
+
+#[cfg(target_os = "windows")]
+fn secure_credential_entry(spec: ProviderSpec) -> Result<keyring_core::Entry, String> {
+    use std::collections::HashMap;
+
+    initialize_credential_store()?;
+    let modifiers = HashMap::from([("persistence", "Local")]);
+    keyring_core::Entry::new_with_modifiers(CREDENTIAL_SERVICE, spec.id, &modifiers).map_err(|_| {
+        format!(
+            "Windows Credential Manager could not create the {} credential entry.",
+            spec.label
+        )
+    })
+}
+
+#[cfg(target_os = "windows")]
+fn read_secure_provider_credentials(
+    spec: ProviderSpec,
+) -> Result<Option<ProviderCredentials>, String> {
+    let entry = secure_credential_entry(spec)?;
+    match entry.get_password() {
+        Ok(raw) => {
+            let credentials = serde_json::from_str::<ProviderCredentials>(&raw).map_err(|_| {
+                format!(
+                    "The protected {} credential entry is unreadable. Remove and add it again.",
+                    spec.label
+                )
+            })?;
+            if !valid_provider_credential(&credentials.api_key)
+                || (spec.requires_secret && !valid_provider_credential(&credentials.api_secret))
+            {
+                return Err(format!(
+                    "The protected {} credential entry is invalid. Remove and add it again.",
+                    spec.label
+                ));
+            }
+            Ok(Some(credentials))
+        }
+        Err(keyring_core::Error::NoEntry) => Ok(None),
+        Err(_) => Err(format!(
+            "Windows Credential Manager could not read the {} credentials.",
+            spec.label
+        )),
+    }
+}
+
+#[cfg(not(target_os = "windows"))]
+fn read_secure_provider_credentials(
+    spec: ProviderSpec,
+) -> Result<Option<ProviderCredentials>, String> {
+    Err(format!(
+        "{} credentials require the Windows desktop application.",
+        spec.label
+    ))
+}
+
+#[cfg(target_os = "windows")]
+fn write_secure_provider_credentials(
+    spec: ProviderSpec,
+    credentials: &ProviderCredentials,
+) -> Result<(), String> {
+    let entry = secure_credential_entry(spec)?;
+    let raw = serde_json::to_string(credentials).map_err(|_| {
+        format!(
+            "The {} credentials could not be prepared for protected storage.",
+            spec.label
+        )
+    })?;
+    entry.set_password(&raw).map_err(|_| {
+        format!(
+            "Windows Credential Manager could not save the {} credentials.",
+            spec.label
+        )
+    })
+}
+
+#[cfg(not(target_os = "windows"))]
+fn write_secure_provider_credentials(
+    spec: ProviderSpec,
+    _credentials: &ProviderCredentials,
+) -> Result<(), String> {
+    Err(format!(
+        "{} credentials require the Windows desktop application.",
+        spec.label
+    ))
+}
+
+#[cfg(target_os = "windows")]
+fn delete_secure_provider_credentials(spec: ProviderSpec) -> Result<(), String> {
+    let entry = secure_credential_entry(spec)?;
+    match entry.delete_credential() {
+        Ok(()) | Err(keyring_core::Error::NoEntry) => Ok(()),
+        Err(_) => Err(format!(
+            "Windows Credential Manager could not remove the {} credentials.",
+            spec.label
+        )),
+    }
+}
+
+#[cfg(not(target_os = "windows"))]
+fn delete_secure_provider_credentials(spec: ProviderSpec) -> Result<(), String> {
+    Err(format!(
+        "{} credentials require the Windows desktop application.",
+        spec.label
+    ))
+}
+
 fn provider_credentials_path(spec: ProviderSpec) -> Result<PathBuf, String> {
     let config = portable_root()?.join("config");
     fs::create_dir_all(&config).map_err(|error| error.to_string())?;
@@ -224,7 +475,9 @@ fn valid_provider_credential(value: &str) -> bool {
             .all(|character| character.is_ascii_graphic() && !character.is_ascii_whitespace())
 }
 
-fn read_provider_credentials(spec: ProviderSpec) -> Result<ProviderCredentials, String> {
+fn read_legacy_provider_credentials(
+    spec: ProviderSpec,
+) -> Result<Option<ProviderCredentials>, String> {
     let path = provider_credentials_path(spec)?;
     let backup = sibling_path(&path, "backup");
     let mut found_unreadable_file = false;
@@ -243,7 +496,7 @@ fn read_provider_credentials(spec: ProviderSpec) -> Result<ProviderCredentials, 
         if valid_provider_credential(&credentials.api_key)
             && (!spec.requires_secret || valid_provider_credential(&credentials.api_secret))
         {
-            return Ok(credentials);
+            return Ok(Some(credentials));
         }
         found_unreadable_file = true;
     }
@@ -251,16 +504,46 @@ fn read_provider_credentials(spec: ProviderSpec) -> Result<ProviderCredentials, 
         && let Ok(value) = fs::read_to_string(legacy_market_data_key_path()?)
         && valid_provider_credential(value.trim())
     {
-        return Ok(ProviderCredentials {
+        return Ok(Some(ProviderCredentials {
             api_key: value.trim().to_string(),
             api_secret: String::new(),
-        });
+        }));
     }
     if found_unreadable_file {
         return Err(format!(
             "The saved {} credentials and their recovery copy are unreadable. Remove and add them again.",
             spec.label
         ));
+    }
+    Ok(None)
+}
+
+fn remove_legacy_provider_credentials(spec: ProviderSpec) -> Result<(), String> {
+    let path = provider_credentials_path(spec)?;
+    let temporary = sibling_path(&path, "tmp");
+    let backup = sibling_path(&path, "backup");
+    for candidate in [&path, &temporary, &backup] {
+        if candidate.exists() {
+            fs::remove_file(candidate).map_err(|error| error.to_string())?;
+        }
+    }
+    if spec.id == "alpha_vantage" {
+        let legacy = legacy_market_data_key_path()?;
+        if legacy.exists() {
+            fs::remove_file(legacy).map_err(|error| error.to_string())?;
+        }
+    }
+    Ok(())
+}
+
+fn read_provider_credentials(spec: ProviderSpec) -> Result<ProviderCredentials, String> {
+    if let Some(credentials) = read_secure_provider_credentials(spec)? {
+        return Ok(credentials);
+    }
+    if let Some(credentials) = read_legacy_provider_credentials(spec)? {
+        write_secure_provider_credentials(spec, &credentials)?;
+        remove_legacy_provider_credentials(spec)?;
+        return Ok(credentials);
     }
     Err(format!(
         "Add {} credentials before downloading chart data.",
@@ -274,7 +557,7 @@ fn provider_status(spec: ProviderSpec, configured: bool) -> MarketDataProviderSt
         provider: spec.id.to_string(),
         message: if configured {
             format!(
-                "{} credentials are stored only in this portable app's config folder.",
+                "{} credentials are protected by Windows Credential Manager for this Windows user.",
                 spec.label
             )
         } else {
@@ -359,9 +642,8 @@ fn save_market_data_provider_credentials(
         api_key: api_key.to_string(),
         api_secret: api_secret.to_string(),
     };
-    let path = provider_credentials_path(spec)?;
-    let raw = serde_json::to_vec_pretty(&credentials).map_err(|error| error.to_string())?;
-    atomic_write(&path, &raw, false)?;
+    write_secure_provider_credentials(spec, &credentials)?;
+    remove_legacy_provider_credentials(spec)?;
     Ok(provider_status(spec, true))
 }
 
@@ -370,20 +652,8 @@ fn clear_market_data_provider_credentials(
     provider: String,
 ) -> Result<MarketDataProviderStatus, String> {
     let spec = provider_spec(&provider)?;
-    let path = provider_credentials_path(spec)?;
-    let temporary = sibling_path(&path, "tmp");
-    let backup = sibling_path(&path, "backup");
-    for candidate in [&path, &temporary, &backup] {
-        if candidate.exists() {
-            fs::remove_file(candidate).map_err(|error| error.to_string())?;
-        }
-    }
-    if spec.id == "alpha_vantage" {
-        let legacy = legacy_market_data_key_path()?;
-        if legacy.exists() {
-            fs::remove_file(legacy).map_err(|error| error.to_string())?;
-        }
-    }
+    delete_secure_provider_credentials(spec)?;
+    remove_legacy_provider_credentials(spec)?;
     Ok(provider_status(spec, false))
 }
 
@@ -777,9 +1047,18 @@ struct FidelityExportFile {
     relative_path: String,
     modified_at: u64,
     size_bytes: u64,
+    fingerprint: String,
     kind: String,
     folder_date: Option<String>,
     content: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct FidelityFolderProbe {
+    discovery_key: String,
+    discovered_csv_count: usize,
+    latest_modified_at: Option<u64>,
 }
 
 #[derive(Serialize)]
@@ -885,6 +1164,54 @@ fn dated_parent(relative_path: &Path) -> Option<String> {
     })
 }
 
+fn fidelity_candidate_fingerprint(
+    relative_path: &Path,
+    candidate: &FidelityCsvCandidate,
+) -> String {
+    format!(
+        "{}:{}:{}",
+        relative_path.to_string_lossy(),
+        candidate.modified_at,
+        candidate.size_bytes
+    )
+}
+
+#[tauri::command]
+fn probe_fidelity_exports(folder_path: String) -> Result<FidelityFolderProbe, String> {
+    const MAX_FILES: usize = 500;
+    let requested = PathBuf::from(folder_path);
+    let folder = requested
+        .canonicalize()
+        .map_err(|_| "The selected Fidelity export folder is no longer available.".to_string())?;
+    if !folder.is_dir() {
+        return Err("The selected Fidelity export location is not a folder.".to_string());
+    }
+    let mut candidates = Vec::new();
+    collect_fidelity_csv_candidates(&folder, &folder, 8, &mut candidates);
+    let discovered_csv_count = candidates.len();
+    candidates.sort_by(|left, right| left.path.cmp(&right.path));
+    if candidates.len() > MAX_FILES {
+        candidates = candidates.split_off(candidates.len() - MAX_FILES);
+    }
+    let latest_modified_at = candidates.iter().map(|item| item.modified_at).max();
+    let discovery_key = candidates
+        .iter()
+        .filter_map(|candidate| {
+            candidate
+                .path
+                .strip_prefix(&folder)
+                .ok()
+                .map(|relative| fidelity_candidate_fingerprint(relative, candidate))
+        })
+        .collect::<Vec<_>>()
+        .join("\n");
+    Ok(FidelityFolderProbe {
+        discovery_key,
+        discovered_csv_count,
+        latest_modified_at,
+    })
+}
+
 #[tauri::command]
 fn scan_fidelity_exports(folder_path: String) -> Result<FidelityExportScan, String> {
     const MAX_FILE_BYTES: u64 = 12_000_000;
@@ -899,7 +1226,11 @@ fn scan_fidelity_exports(folder_path: String) -> Result<FidelityExportScan, Stri
     }
     let mut candidates = Vec::new();
     collect_fidelity_csv_candidates(&folder, &folder, 8, &mut candidates);
-    candidates.sort_by_key(|candidate| candidate.modified_at);
+    candidates.sort_by(|left, right| {
+        left.modified_at
+            .cmp(&right.modified_at)
+            .then_with(|| left.path.cmp(&right.path))
+    });
     let discovered_csv_count = candidates.len();
     let truncated_csv_count = discovered_csv_count.saturating_sub(MAX_FILES);
     if truncated_csv_count > 0 {
@@ -945,6 +1276,7 @@ fn scan_fidelity_exports(folder_path: String) -> Result<FidelityExportScan, Stri
             relative_path: relative.to_string_lossy().to_string(),
             modified_at: candidate.modified_at,
             size_bytes: candidate.size_bytes,
+            fingerprint: fidelity_candidate_fingerprint(relative, &candidate),
             kind: kind.to_string(),
             folder_date: dated_parent(relative),
             content,
@@ -1187,6 +1519,7 @@ pub fn run() {
             launch_fidelity_trader_plus,
             open_fidelity_setup_page,
             scan_fidelity_exports,
+            probe_fidelity_exports,
             detect_trading_records_folder,
             market_data_provider_status,
             save_market_data_provider_credentials,
@@ -1202,7 +1535,8 @@ pub fn run() {
 mod tests {
     use super::{
         atomic_write, bars_to_csv, checked_market_data_csv, find_trading_records_folder,
-        provider_spec, read_json_file, scan_fidelity_exports, sibling_path, valid_market_symbol,
+        load_app_state_at_root, probe_fidelity_exports, provider_spec, read_json_file,
+        save_app_state_at_root, scan_fidelity_exports, sibling_path, valid_market_symbol,
         valid_provider_credential,
     };
     use std::fs;
@@ -1272,6 +1606,57 @@ mod tests {
     }
 
     #[test]
+    fn partitions_large_collections_and_recovers_them_as_one_state() {
+        let unique = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let directory = std::env::temp_dir().join(format!(
+            "day-trading-teacher-partitioned-{}-{unique}",
+            std::process::id()
+        ));
+        fs::create_dir(&directory).unwrap();
+
+        let first = serde_json::json!({
+            "schemaVersion": 1,
+            "profile": {"displayName": "First"},
+            "trades": [{"id": "trade-one"}],
+            "marketDataSets": [{"id": "bars-one"}],
+        });
+        save_app_state_at_root(&directory, first.clone()).unwrap();
+        let on_disk = read_json_file(&directory.join("state.json")).unwrap();
+        assert!(on_disk.get("trades").is_none());
+        assert!(on_disk.get("marketDataSets").is_none());
+        assert!(on_disk.get("_nativeStorage").is_some());
+        assert_eq!(
+            load_app_state_at_root(&directory).unwrap(),
+            Some(first.clone())
+        );
+
+        let second = serde_json::json!({
+            "schemaVersion": 1,
+            "profile": {"displayName": "Second"},
+            "trades": [{"id": "trade-two"}],
+            "marketDataSets": [{"id": "bars-two"}],
+        });
+        save_app_state_at_root(&directory, second.clone()).unwrap();
+        assert_eq!(load_app_state_at_root(&directory).unwrap(), Some(second));
+
+        fs::write(
+            directory.join("collections").join("marketDataSets.json"),
+            b"not-json",
+        )
+        .unwrap();
+        assert_eq!(
+            load_app_state_at_root(&directory).unwrap(),
+            Some(first),
+            "the core recovery point and every matching collection recover together"
+        );
+
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
     fn scans_supported_fidelity_exports_in_dated_subfolders() {
         let unique = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -1293,8 +1678,17 @@ mod tests {
         .unwrap();
 
         let exports = scan_fidelity_exports(directory.to_string_lossy().to_string()).unwrap();
+        let probe = probe_fidelity_exports(directory.to_string_lossy().to_string()).unwrap();
         assert_eq!(exports.files.len(), 3);
         assert_eq!(exports.discovered_csv_count, 3);
+        assert_eq!(probe.discovered_csv_count, 3);
+        assert!(!probe.discovery_key.is_empty());
+        assert!(
+            exports
+                .files
+                .iter()
+                .all(|export| !export.fingerprint.is_empty())
+        );
         assert_eq!(
             exports
                 .files

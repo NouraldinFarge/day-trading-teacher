@@ -7,7 +7,8 @@ param(
 $ErrorActionPreference = "Stop"
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $forbidden = '(?i)(\.msi$|\.msix$|\.appx$|setup\.exe$|(^|/|\\)(bundle|installers?)(/|\\|$))'
-$required = @("Day-Trading Teacher.exe", "launch-portable.bat", "VERSION", "README.txt", "config", "data", "logs", "cache")
+$required = @("Day-Trading Teacher.exe", "launch-portable.bat", "VERSION", "README.txt", "config", "data", "logs", "cache", "licenses")
+$licenseInventory = "licenses/THIRD-PARTY-LICENSES.md"
 $curriculumPlan = "assets/curriculum-v7/evidence-to-execution-v7.dtlesson.json"
 $curriculumCompanions = @(
   "assets/curriculum-v7/resources/README.md",
@@ -61,10 +62,16 @@ function Test-RequiresReleaseWarning {
 if ($PSCmdlet.ParameterSetName -eq "Folder") {
   $folder = (Resolve-Path -LiteralPath $PortableFolder).Path
   foreach ($item in $required) { if (-not (Test-Path -LiteralPath (Join-Path $folder $item))) { throw "Portable folder is missing: $item" } }
+  if (-not (Test-Path -LiteralPath (Join-Path $folder $licenseInventory) -PathType Leaf)) { throw "Portable folder is missing its third-party license inventory." }
+  if (@(Get-ChildItem -LiteralPath (Join-Path $folder "licenses") -File).Count -lt 2) { throw "Portable folder does not contain bundled third-party license evidence." }
   $bad = Get-ChildItem -LiteralPath $folder -Recurse -Force | Where-Object { $_.FullName -match $forbidden }
   if ($bad) { throw "Portable folder contains prohibited installer content: $($bad.FullName -join ', ')" }
   $executableStream = [System.IO.File]::OpenRead((Join-Path $folder "Day-Trading Teacher.exe"))
   try { Assert-WindowsGuiExecutable -Stream $executableStream -Source "Day-Trading Teacher.exe" } finally { $executableStream.Dispose() }
+  if ($env:DTT_REQUIRE_SIGNED_RELEASE -eq "1") {
+    $signature = Get-AuthenticodeSignature -LiteralPath (Join-Path $folder "Day-Trading Teacher.exe")
+    if ($signature.Status -ne "Valid") { throw "Portable executable must have a valid Authenticode signature for this release." }
+  }
   $portableVersion = (Get-Content -LiteralPath (Join-Path $folder "VERSION") -Raw).Trim()
   if ((Test-RequiresReleaseWarning -Version $portableVersion) -and (Get-Content -LiteralPath (Join-Path $folder "README.txt") -Raw) -notlike "*$requiredWarning*") {
     throw "Portable README is missing the educational and financial-safety warning."
@@ -93,6 +100,8 @@ try {
   $entries = $zip.Entries.FullName | ForEach-Object { $_.Replace('\', '/') }
   $root = ($entries | Select-Object -First 1).Split('/')[0]
   foreach ($item in $required) { if (-not ($entries -contains "$root/$item") -and -not ($entries | Where-Object { $_ -like "$root/$item/*" })) { throw "Portable archive is missing: $item" } }
+  if ($entries -notcontains "$root/$licenseInventory") { throw "Portable archive is missing its third-party license inventory." }
+  if (@($entries | Where-Object { $_ -like "$root/licenses/*" -and $_ -ne "$root/licenses/" }).Count -lt 2) { throw "Portable archive does not contain bundled third-party license evidence." }
   $bad = $entries | Where-Object { $_ -match $forbidden }
   if ($bad) { throw "Portable archive contains prohibited installer content: $($bad -join ', ')" }
   $privateEntries = $entries | Where-Object {

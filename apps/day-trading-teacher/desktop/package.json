@@ -1,6 +1,6 @@
 {
   "name": "@day-trading-teacher/desktop",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json --pretty false",
     "test": "vitest --configLoader runner",
     "test:run": "vitest run --configLoader runner",
+    "test:coverage": "vitest run --configLoader runner --coverage",
     "tauri:dev": "tauri dev",
     "portable:binary": "cargo build --manifest-path src-tauri/Cargo.toml --release --features custom-protocol"
   },

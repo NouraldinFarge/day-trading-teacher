@@ -38,6 +38,8 @@ function New-TestPortableFolder {
   [System.IO.File]::WriteAllText((Join-Path $Path "VERSION"), $Version)
   [System.IO.File]::WriteAllText((Join-Path $Path "README.txt"), $warning)
   [System.IO.File]::WriteAllText((Join-Path $Path "config\default-config.example"), "# placeholder only")
+  [System.IO.File]::WriteAllText((Join-Path $Path "licenses\THIRD-PARTY-LICENSES.md"), "# Synthetic license inventory for deployment testing")
+  [System.IO.File]::WriteAllText((Join-Path $Path "licenses\synthetic-package-LICENSE"), "Synthetic permissive license fixture")
 }
 
 if (Test-Path -LiteralPath $testRoot) { throw "Portable deployment test staging already exists: $testRoot" }

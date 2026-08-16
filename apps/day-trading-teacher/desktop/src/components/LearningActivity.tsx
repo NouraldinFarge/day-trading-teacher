@@ -19,7 +19,7 @@ function streakFor(activity: Record<string, number>) {
     .sort();
   if (!dates.length) return 0;
   let streak = 1;
-  let cursor = new Date(`${dates[dates.length - 1]}T12:00:00`);
+  const cursor = new Date(`${dates[dates.length - 1]}T12:00:00`);
   for (let index = dates.length - 2; index >= 0; index -= 1) {
     cursor.setDate(cursor.getDate() - 1);
     if (dates[index] !== dateKey(cursor)) break;
