@@ -195,9 +195,9 @@ async function checkProjectSite() {
 async function checkReleaseReference() {
   const version = (await readFile(path.join(root, "VERSION"), "utf8")).trim();
   const readme = await readFile(path.join(root, "README.md"), "utf8");
-  if (!readme.includes(`Current release **${version}**`)) {
+  if (!readme.includes(`Current development version **${version}**`)) {
     failures.push(
-      `README.md: current release does not match VERSION (${version})`,
+      `README.md: current development version does not match VERSION (${version})`,
     );
   }
   for (const required of [
