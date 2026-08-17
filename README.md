@@ -12,9 +12,9 @@
 
 **A local-first Windows learning environment that connects structured lessons, historical chart replay, paper practice, and evidence-based post-trade review.**
 
-[Download the latest verified release](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest) · [Preview the visual project site source](site/index.html) · [Take the five-minute project tour](#five-minute-project-tour) · [Browse the documentation](docs/README.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md)
+[Download the latest verified release](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest) · [Preview the visual project site source](site/index.html) · [Take the five-minute project tour](#five-minute-project-tour) · [Browse the documentation](docs/README.md) · [Support](SUPPORT.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md)
 
-Active development · 2026 · Current release **0.37.0**
+Active development · 2026 · Current development version **0.37.0** · Latest public release **v0.36.0**
 
 Day-Trading Teacher teaches the decision process without generating live buy/sell signals. Lessons open the relevant planning, replay, journaling, analytics, and practice workspace; the resulting evidence feeds reflection and spaced practice instead of rewarding trade count, profit, or time in market.
 
