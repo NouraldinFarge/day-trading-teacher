@@ -29,7 +29,7 @@ This directory explains the current Day-Trading Teacher product, its safety boun
 | [External lesson-plan workflow](development/lesson-plan-import.md) | JSON authoring, local validation, quality review, approval, and provenance | Current |
 | [Curriculum v7 integration](curriculum-v7-integration.md) | Learner-safe normalization and deliberate exclusion of facilitator material | Current audit record |
 | [Stock Day Trading source integration](audits/stock-day-trading-source-integration.md) | Full-media audit, feature mapping, exclusions, source identities, and removal gate | Current audit record |
-| [Dependency audit](dependency-audit.md) | Latest JavaScript and Rust advisory analysis for the published release | Current audit record |
+| [Dependency audit](dependency-audit.md) | Latest JavaScript and Rust advisory analysis for the current development lockfiles | Current development audit record |
 | [Product media](images/README.md) | Screenshot provenance, privacy rules, social preview source, and refresh checklist | Current |
 
 ## Historical implementation records
@@ -50,6 +50,7 @@ These documents preserve the reasoning that led to the current system. Counts, v
 - [Dependency policy](../DEPENDENCY_POLICY.md) — update cadence, immutable Action pins, and exception requirements.
 - [Third-party notices](../THIRD_PARTY_NOTICES.md) and [trademark notice](../TRADEMARKS.md) — dependency and product-name boundaries.
 - [Release checklist](release-checklist.md) — evidence required before a version may be packaged, activated, or published.
+- [Repository-control activation](repository-controls.md) — exact branch, check, environment, and Pages settings to apply and verify after public access is restored.
 - [Public-data policy](public-data-policy.md) — the synthetic-only contract enforced by `npm run privacy:check`.
 - [Changelog](../CHANGELOG.md) — release-by-release behavior changes.
 - [Portable end-user guide](../release/PORTABLE-README.txt) — launch, storage, backup, Fidelity, and educational boundaries for the ZIP release.
