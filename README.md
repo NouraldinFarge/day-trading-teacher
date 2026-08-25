@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/ci.yml/badge.svg)](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/codeql.yml/badge.svg)](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/codeql.yml)
+[![Dependency audit](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/dependency-audit.yml/badge.svg)](https://github.com/NouraldinFarge/day-trading-teacher/actions/workflows/dependency-audit.yml)
 [![Release](https://img.shields.io/github/v/release/NouraldinFarge/day-trading-teacher)](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest)
 [![Windows x64](https://img.shields.io/badge/platform-Windows%20x64-357ec7)](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest)
 [![License: All rights reserved](https://img.shields.io/badge/license-all%20rights%20reserved-lightgrey.svg)](LICENSE.md)
@@ -12,7 +13,7 @@
 
 **A local-first Windows learning environment that connects structured lessons, historical chart replay, paper practice, and evidence-based post-trade review.**
 
-[Download the latest verified release](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest) · [Preview the visual project site source](site/index.html) · [Take the five-minute project tour](#five-minute-project-tour) · [Browse the documentation](docs/README.md) · [Support](SUPPORT.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md)
+[Download the latest verified release](https://github.com/NouraldinFarge/day-trading-teacher/releases/latest) · [View the visual project site](https://nouraldinfarge.github.io/day-trading-teacher/) · [Take the five-minute project tour](#five-minute-project-tour) · [Browse the documentation](docs/README.md) · [Support](SUPPORT.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md)
 
 Active development · 2026 · Current development version **0.37.0** · Latest public release **v0.36.0**
 
@@ -22,16 +23,14 @@ Day-Trading Teacher teaches the decision process without generating live buy/sel
 
 ## At a glance
 
-| Area | Current design |
-| --- | --- |
-| **Learning loop** | Lessons → Decision Card → historical replay or no-trade practice → evidence journal → reflection and spaced retrieval |
-| **Practice boundary** | A persistent Daily Session Guard records readiness, setup eligibility, no-trade choices, and preset paper-trading stop rules before outcomes are known |
-| **Desktop stack** | React 19, TypeScript, Tauri 2, and Rust with deterministic decimal calculations |
-| **Data model** | Coordinated atomic local state with split high-volume collections, revision-matched recovery, explicit imports, and no mandatory cloud account |
-| **Broker boundary** | Read-only Trading Records evidence inbox and a deliberate manual handoff to Fidelity Trader+ Desktop—never credentials or order placement |
-| **External-AI boundary** | Optional lesson plans and journal drafts use explicit, schema-validated file handoffs; no model runs inside the application and nothing uploads automatically |
-| **Trade-derived learning** | Validated journal evidence becomes a newest-to-oldest audit that preserves each original lesson, separates hindsight, connects recurring mechanisms, and produces measurable practice rules |
-| **Release model** | Portable Windows ZIP, SHA-256 checksum, SPDX SBOM, third-party license inventory, optional Authenticode verification, immutable release, and build-provenance attestation |
+- **Learning loop:** Lessons → Decision Card → historical replay or no-trade practice → evidence journal → reflection and spaced retrieval.
+- **Practice boundary:** A persistent Daily Session Guard records readiness, setup eligibility, no-trade choices, and preset paper-trading stop rules before outcomes are known.
+- **Desktop stack:** React 19, TypeScript, Tauri 2, and Rust with deterministic decimal calculations.
+- **Data model:** Coordinated atomic local state with split high-volume collections, revision-matched recovery, explicit imports, and no mandatory cloud account.
+- **Broker boundary:** A read-only Trading Records evidence inbox and deliberate manual handoff to Fidelity Trader+ Desktop—never credentials or order placement.
+- **External-AI boundary:** Optional lesson plans and journal drafts use explicit, schema-validated file handoffs; no model runs inside the application and nothing uploads automatically.
+- **Trade-derived learning:** Validated journal evidence becomes a newest-to-oldest audit that preserves each original lesson, separates hindsight, connects recurring mechanisms, and produces measurable practice rules.
+- **Release model:** Portable Windows ZIP, SHA-256 checksum, SPDX SBOM, third-party license inventory, optional Authenticode verification, immutable release, and build-provenance attestation.
 
 ## Product tour
 
@@ -53,43 +52,60 @@ The Journal separates descriptive performance from process evidence. Its Evidenc
 
 The Trade Lessons workspace then works backward from the newest record. It keeps the original lesson intact, distinguishes what was knowable before the entry from facts learned afterward, audits lesson quality, rewrites the lesson into eight decision-ready parts, and connects repeated mechanisms across older trades. Review status records reflection only; it never implies mastery. Progress rewards planning, risk discipline, reflection, correction, and separated practice; rest days and no-trade decisions are never treated as failures.
 
-| Guided lesson opening | Process calendar and contribution heatmap |
-| --- | --- |
-| [![Core lesson opening with a brief summary, rationale, practice counts, and a connected learning-case explanation](docs/images/day-trading-teacher-lesson.png)](docs/images/day-trading-teacher-lesson.png) | [![Monthly trading calendar and GitHub-style process heatmap using a temporary fictional guided preview](docs/images/day-trading-teacher-calendar.png)](docs/images/day-trading-teacher-calendar.png) |
+#### Guided lesson opening
 
-| Evidence Journal | Achievement evidence detail |
-| --- | --- |
-| [![Journal analytics showing a temporary synthetic twelve-trade preview, descriptive metrics, and equity curve](docs/images/day-trading-teacher-journal.png)](docs/images/day-trading-teacher-journal.png) | [![Earned process achievement with its exact requirement, reward boundary, and evidence ledger](docs/images/day-trading-teacher-progress.png)](docs/images/day-trading-teacher-progress.png) |
+[![Core lesson opening with a brief summary, rationale, practice counts, and a connected learning-case explanation](docs/images/day-trading-teacher-lesson.png)](docs/images/day-trading-teacher-lesson.png)
+
+#### Process calendar and contribution heatmap
+
+[![Monthly trading calendar and GitHub-style process heatmap using a temporary fictional guided preview](docs/images/day-trading-teacher-calendar.png)](docs/images/day-trading-teacher-calendar.png)
+
+#### Evidence Journal
+
+[![Journal analytics showing a temporary synthetic twelve-trade preview, descriptive metrics, and equity curve](docs/images/day-trading-teacher-journal.png)](docs/images/day-trading-teacher-journal.png)
+
+#### Achievement evidence detail
+
+[![Earned process achievement with its exact requirement, reward boundary, and evidence ledger](docs/images/day-trading-teacher-progress.png)](docs/images/day-trading-teacher-progress.png)
 
 Screenshot provenance, privacy rules, and refresh instructions are documented in [`docs/images/README.md`](docs/images/README.md).
 
 ## Product boundary by design
 
-| The application does | The application does not |
-| --- | --- |
-| Teach a 13-lesson core decision chain—beginning with a privacy-safe latest-record risk correction—and versioned imported curricula | Generate live signals, recommendations, or personalized investment advice |
-| Calculate risk, expectancy, position size, and descriptive journal analytics deterministically | Promise profitability or treat P&L as proof of decision quality |
-| Recursively read supported Fidelity order-history and chart files locally, with `Buy 10` interpreted as $10 invested | Read Fidelity credentials, scrape an account, watch the screen, or place an order |
-| Audit matched records newest-to-oldest, preserve the original lesson, label hindsight, and build rules from repeated evidence | Invent a missing thesis, infer a diagnosis, assume candle extremes were executable, or score a decision from P&L alone |
-| Download labeled historical OHLCV from configured providers using user-supplied credentials | Present historical bars as an execution-quality quote feed |
-| Validate and preview externally authored lesson plans and evidence-cited journal drafts before explicit approval | Call ChatGPT or any model automatically, upload records silently, diagnose a learner, or hide an AI runtime inside the app |
-| Reward reflection, risk adherence, corrections, no-trade discipline, and spaced practice | Reward trading frequency, position size, screen time, or streak preservation |
-| Enforce the learner’s preset Daily Session Guard across linked local paper sessions | Lock, cancel, or otherwise control an order in Fidelity or another brokerage |
+### The application does
+
+- Teach a 13-lesson core decision chain—beginning with a privacy-safe latest-record risk correction—and versioned imported curricula.
+- Calculate risk, expectancy, position size, and descriptive journal analytics deterministically.
+- Recursively read supported Fidelity order-history and chart files locally, with `Buy 10` interpreted as $10 invested.
+- Audit matched records newest-to-oldest, preserve the original lesson, label hindsight, and build rules from repeated evidence.
+- Download labeled historical OHLCV from configured providers using user-supplied credentials.
+- Validate and preview externally authored lesson plans and evidence-cited journal drafts before explicit approval.
+- Reward reflection, risk adherence, corrections, no-trade discipline, and spaced practice.
+- Enforce the learner’s preset Daily Session Guard across linked local paper sessions.
+
+### The application does not
+
+- Generate live signals, recommendations, or personalized investment advice.
+- Promise profitability or treat P&L as proof of decision quality.
+- Read Fidelity credentials, scrape an account, watch the screen, or place an order.
+- Invent a missing thesis, infer a diagnosis, assume candle extremes were executable, or score a decision from P&L alone.
+- Present historical bars as an execution-quality quote feed.
+- Call ChatGPT or any model automatically, upload records silently, diagnose a learner, or hide an AI runtime inside the app.
+- Reward trading frequency, position size, screen time, or streak preservation.
+- Lock, cancel, or otherwise control an order in Fidelity or another brokerage.
 
 ## What the engineering demonstrates
 
-| Capability | Implementation evidence |
-| --- | --- |
-| **Curriculum as product architecture** | Ordered Prepare → Apply → Reflect missions connect concepts to the correct workspace in [`lesson-workspaces.ts`](apps/day-trading-teacher/desktop/src/domain/lesson-workspaces.ts). |
-| **Deterministic financial tooling** | Rust-decimal risk and expectancy logic lives in [`crates/calculations`](crates/calculations/src/lib.rs), with a tested browser fallback for development mode. |
-| **Untrusted-content boundaries** | Imported curricula pass size, schema, source, skill, URL, active-content, and facilitator-material checks in [`crates/lesson-plan-import`](crates/lesson-plan-import/src/lib.rs). |
-| **Evidence-based mastery** | Completion, first-try checks, unseen-case transfer, rubric performance, retention, and remediation remain separate in [`lesson-assessment.ts`](apps/day-trading-teacher/desktop/src/domain/lesson-assessment.ts). |
-| **Process-first practice limits** | Readiness, no-trade, study-only, and automatic review-only transitions are deterministic and tested in [`daily-session.ts`](apps/day-trading-teacher/desktop/src/domain/daily-session.ts). |
-| **Honest brokerage integration** | The inbox inventories dated Orders and chart exports, reconstructs positions, pairs one-minute context, and preserves unresolved evidence in [`trading-records.ts`](apps/day-trading-teacher/desktop/src/domain/trading-records.ts). |
-| **Reviewable AI handoff** | Redacted evidence packages, strict response validation, evidence citations, non-diagnostic mental-state limits, and draft-only merging live in [`ai-journal.ts`](apps/day-trading-teacher/desktop/src/domain/ai-journal.ts). |
-| **Cross-trade learning synthesis** | Temporal evidence separation, per-trade lesson audits, recurring-pattern detection, bounded rules, and Markdown reporting live in [`trade-learning.ts`](apps/day-trading-teacher/desktop/src/domain/trade-learning.ts). |
-| **Local-state defense in depth** | State validation, migration, secret-shaped-field rejection, and export sanitization are covered under [`src/state`](apps/day-trading-teacher/desktop/src/state). |
-| **Recoverable portable releases** | Build, verification, checksum registration, activation, rollback, and downgrade behavior are implemented under [`build`](build) and exercised in paths containing spaces. |
+- **Curriculum as product architecture:** Ordered Prepare → Apply → Reflect missions connect concepts to the correct workspace in [`lesson-workspaces.ts`](apps/day-trading-teacher/desktop/src/domain/lesson-workspaces.ts).
+- **Deterministic financial tooling:** Rust-decimal risk and expectancy logic lives in [`crates/calculations`](crates/calculations/src/lib.rs), with a tested browser fallback for development mode.
+- **Untrusted-content boundaries:** Imported curricula pass size, schema, source, skill, URL, active-content, and facilitator-material checks in [`crates/lesson-plan-import`](crates/lesson-plan-import/src/lib.rs).
+- **Evidence-based mastery:** Completion, first-try checks, unseen-case transfer, rubric performance, retention, and remediation remain separate in [`lesson-assessment.ts`](apps/day-trading-teacher/desktop/src/domain/lesson-assessment.ts).
+- **Process-first practice limits:** Readiness, no-trade, study-only, and automatic review-only transitions are deterministic and tested in [`daily-session.ts`](apps/day-trading-teacher/desktop/src/domain/daily-session.ts).
+- **Honest brokerage integration:** The inbox inventories dated Orders and chart exports, reconstructs positions, pairs one-minute context, and preserves unresolved evidence in [`trading-records.ts`](apps/day-trading-teacher/desktop/src/domain/trading-records.ts).
+- **Reviewable AI handoff:** Redacted evidence packages, strict response validation, evidence citations, non-diagnostic mental-state limits, and draft-only merging live in [`ai-journal.ts`](apps/day-trading-teacher/desktop/src/domain/ai-journal.ts).
+- **Cross-trade learning synthesis:** Temporal evidence separation, per-trade lesson audits, recurring-pattern detection, bounded rules, and Markdown reporting live in [`trade-learning.ts`](apps/day-trading-teacher/desktop/src/domain/trade-learning.ts).
+- **Local-state defense in depth:** State validation, migration, secret-shaped-field rejection, and export sanitization are covered under [`src/state`](apps/day-trading-teacher/desktop/src/state).
+- **Recoverable portable releases:** Build, verification, checksum registration, activation, rollback, and downgrade behavior are implemented under [`build`](build) and exercised in paths containing spaces.
 
 ```mermaid
 flowchart LR

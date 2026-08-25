@@ -20,7 +20,8 @@ Use this checklist for every source build, portable activation, tag, and GitHub 
 ## Quality
 
 - Formatting, linting, type checking, unit/integration tests, accessibility checks, and production build pass.
-- Rust formatting, Clippy with warnings denied, tests, and the documented dependency-advisory policy pass.
+- Rust formatting, Clippy with warnings denied, tests, and the machine-checked dependency-advisory policy pass.
+- Both `Complete JavaScript lockfile` and `Rust advisory policy` finish green for the exact candidate head; a documented exception without its reachability check is not sufficient.
 - Portable deployment tests cover first install, upgrade, data/config preservation, checksum rejection, rollback, and paths containing spaces.
 - Bundle and chart-performance budgets remain within their recorded thresholds.
 
@@ -38,5 +39,6 @@ Use this checklist for every source build, portable activation, tag, and GitHub 
 - Publish from a protected tag only after the required checks pass.
 - Use reviewed generated notes, immutable assets, and a `Full Changelog` comparison link.
 - Test the download and first launch on a clean Windows profile.
-- Verify GitHub Pages, README images, release links, issue templates, and repository topics.
+- Verify GitHub Pages from a signed-out browser and require HTTP 200 for the expected URL; a green staging job or owner-only settings page is not publication evidence.
+- Verify README images, release links, issue templates, and repository topics.
 - Record known limits and any credential-bound or platform-bound step that could not be activated.

@@ -14,7 +14,7 @@
     "portable:binary": "cargo build --manifest-path src-tauri/Cargo.toml --release --features custom-protocol"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.130.2",
+    "@tanstack/react-router": "^1.170.32",
     "@tauri-apps/api": "^2.7.0",
     "@tauri-apps/plugin-dialog": "^2.7.2",
     "lucide-react": "^0.577.0",

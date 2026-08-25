@@ -6,4 +6,4 @@ Automated version-update pull requests intentionally exclude semantic-major upgr
 
 GitHub Actions are pinned to immutable commit identities with their release tag noted in comments. Dependabot may propose monthly action updates; maintainers verify the upstream repository and release notes before merge.
 
-Current ecosystem-specific advisory analysis and narrowly justified exceptions are recorded in [`docs/dependency-audit.md`](docs/dependency-audit.md). Exceptions must identify reachability and target-platform evidence; a passing ignore flag alone is not sufficient.
+Current ecosystem-specific advisory analysis and narrowly justified exceptions are recorded in [`docs/dependency-audit.md`](docs/dependency-audit.md). Exceptions must identify reachability and target-platform evidence; [`scripts/check-rust-advisory-exceptions.mjs`](scripts/check-rust-advisory-exceptions.mjs) enforces the current exception before invoking `cargo audit`. A passing ignore flag alone is not sufficient.

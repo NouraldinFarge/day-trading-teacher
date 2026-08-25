@@ -1,0 +1,72 @@
+name: Dependency audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "crates/**/Cargo.toml"
+      - "apps/day-trading-teacher/desktop/src-tauri/Cargo.toml"
+      - "scripts/check-rust-advisory-exceptions.mjs"
+      - ".github/workflows/dependency-audit.yml"
+  pull_request:
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "crates/**/Cargo.toml"
+      - "apps/day-trading-teacher/desktop/src-tauri/Cargo.toml"
+      - "scripts/check-rust-advisory-exceptions.mjs"
+      - ".github/workflows/dependency-audit.yml"
+  schedule:
+    - cron: "17 9 4 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  javascript:
+    name: Complete JavaScript lockfile
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .node-version
+
+      - name: Audit runtime and development dependencies
+        run: npm audit --audit-level=high
+
+  rust:
+    name: Rust advisory policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .node-version
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked --version 0.22.2
+
+      - name: Verify the exception and audit every other advisory
+        run: node scripts/check-rust-advisory-exceptions.mjs
