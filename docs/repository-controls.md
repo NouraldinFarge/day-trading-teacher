@@ -1,6 +1,6 @@
 # Repository controls
 
-Audit snapshot: **2026-08-25**. GitHub branch protection, signed commits, selected Actions, private vulnerability reporting, secret scanning, and the `github-pages` environment are active. The Pages API is enabled, but the project URL still returned HTTP 404 at the time of this audit; a successful deployment and signed-out HTTP 200 check are still required.
+Audit snapshot: **2026-08-25**. GitHub branch protection, signed commits, selected Actions, private vulnerability reporting, secret scanning, and the `github-pages` environment are active. The Pages API is enabled, HTTPS is enforced, and a signed-out request to the public project URL returned HTTP 200.
 
 ## Observed state
 
@@ -28,10 +28,11 @@ Required checks:
 - `Analyze JavaScript and TypeScript`
 - `Complete JavaScript lockfile`
 - `Rust advisory policy`
-- `Project-site contract` when the change touches site or presentation paths
+
+The path-filtered `Project-site contract` must pass whenever a change touches site or presentation paths, but do not add that conditional job as a classic globally required status check: on unrelated pull requests it does not run and would leave the branch permanently waiting. If project-site validation should become globally required, first make its workflow report the same check on every pull request or enforce the workflow with a ruleset.
 
 Do not require the Pages deployment job on every pull request: deployment runs only after merge and requires the protected `github-pages` environment. Keep the environment restricted to `main`; require a reviewer there if an independent deployment approval is desired.
 
 ## Activation proof
 
-After applying the remaining settings, open a documentation-only test pull request and confirm that direct merge, deletion, and force-push controls behave as configured; each required check appears under its exact name; the project-site contract passes on the pull request; and the post-merge Pages deployment completes. Record the protection URL and run URLs in the maintenance log. If any URL is still externally unavailable, stop—do not treat the setting page or a green validation job as proof of public deployment.
+After applying the remaining settings, open a documentation-only test pull request and confirm that direct merge, deletion, and force-push controls behave as configured; each globally required check appears under its exact name; the project-site contract passes when its paths are changed; and the post-merge Pages deployment completes. Record the protection URL and run URLs in the maintenance log. If any URL becomes externally unavailable, stop—do not treat the setting page or a green validation job as proof of public deployment.
