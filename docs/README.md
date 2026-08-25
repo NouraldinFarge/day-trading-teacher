@@ -50,7 +50,7 @@ These documents preserve the reasoning that led to the current system. Counts, v
 - [Dependency policy](../DEPENDENCY_POLICY.md) — update cadence, immutable Action pins, and exception requirements.
 - [Third-party notices](../THIRD_PARTY_NOTICES.md) and [trademark notice](../TRADEMARKS.md) — dependency and product-name boundaries.
 - [Release checklist](release-checklist.md) — evidence required before a version may be packaged, activated, or published.
-- [Repository-control activation](repository-controls.md) — exact branch, check, environment, and Pages settings to apply and verify after public access is restored.
+- [Repository controls](repository-controls.md) — observed branch, check, environment, and Pages state plus the remaining verification steps.
 - [Public-data policy](public-data-policy.md) — the synthetic-only contract enforced by `npm run privacy:check`.
 - [Changelog](../CHANGELOG.md) — release-by-release behavior changes.
 - [Portable end-user guide](../release/PORTABLE-README.txt) — launch, storage, backup, Fidelity, and educational boundaries for the ZIP release.
